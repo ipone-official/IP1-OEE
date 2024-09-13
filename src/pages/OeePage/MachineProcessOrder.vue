@@ -1,0 +1,685 @@
+<template>
+  <v-container fluid grid-list-xs>
+  <!-- {{ selectTransactionTProcess }} -->
+    <v-layout justify-end>
+      <v-tooltip top color="teal">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            fab
+            small
+            color="#007fc4"
+            dark
+            @click="(dialogTransactionOee = true), (CheckInDate = functions.formatDate())"
+            class="ma-2 small-export-button"
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon size="20">mdi-plus</v-icon>
+          </v-btn>
+        </template>
+        <span>Add Transaction</span>
+      </v-tooltip>
+    </v-layout>
+    <v-layout row wrap>
+      <v-flex xs12 sm3 md2>
+        <calendar
+          :value.sync="formDate"
+          label="Start Date"
+          :readonly="true"
+          :disabled="DateDisibled"
+        />
+      </v-flex>
+      <div style="margin-left: 3rem; margin-top: 1rem; font-weight: bold">TO</div>
+      <v-flex xs12 sm3 md2>
+        <calendar
+          :value.sync="toDate"
+          label="Current Date"
+          :disabled="DateDisibled"
+          :readonly="true"
+        />
+      </v-flex>
+      <v-flex style="margin-left: 2rem">
+        <v-tooltip top color="teal" v-if="!DateDisibled">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              fab
+              small
+              color="#007fc4"
+              dark
+              class="ma-2 small-export-button"
+              v-bind="attrs"
+              v-on="on"
+              @click="GetTProcessList"
+            >
+              <v-icon size="20">mdi-magnify</v-icon>
+            </v-btn>
+          </template>
+          <span>Search</span>
+        </v-tooltip>
+
+        <v-tooltip top color="teal" v-if="DateDisibled">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              fab
+              small
+              color="#007fc4"
+              dark
+              class="ma-2 small-export-button"
+              v-bind="attrs"
+              v-on="on"
+              @click="clearSearch"
+            >
+              <v-icon size="20">mdi-close</v-icon>
+            </v-btn>
+          </template>
+          <span>close</span>
+        </v-tooltip>
+      </v-flex>
+    </v-layout>
+    <v-toolbar
+      xs12
+      sm8
+      color="#f8c849"
+      dark
+      tabs
+      v-if="itemTransactionTProcess.length == 0"
+    >
+      <v-layout justify-center style="font-size: larger"> no data available </v-layout>
+    </v-toolbar>
+    <v-data-table
+      v-if="itemTransactionTProcess.length > 0"
+      :headers="headersTProcess"
+      :items="itemTransactionTProcess"
+      item-key="processID"
+      :pagination.sync="pagination"
+      :rows-per-page-items="rowsPerPageItem"
+    >
+      <template v-slot:items="props">
+        <tr>
+          <td class="text-xs-left">
+            {{ props.item.processID }}
+          </td>
+          <td class="text-xs-left">{{ props.item.lineProcessName }}</td>
+          <td class="text-xs-left">{{ props.item.username }}</td>
+          <td class="text-xs-left">
+            {{ props.item.shift }}
+          </td>
+          <td class="text-xs-left">
+            {{ props.item.materialCode }}
+          </td>
+          <td class="text-xs-left">
+            {{ props.item.materialDesc }}
+          </td>
+          <td class="text-xs-left">
+            {{ props.item.materialColor }}
+          </td>
+          <td class="text-xs-left">
+            {{ props.item.materialSize }}
+          </td>
+          <td class="text-xs-left">
+            {{ props.item.materialCategory }}
+          </td>
+          <td class="text-xs-left">
+            {{ props.item.filmDescription }}
+          </td>
+          <td class="text-xs-left">
+            {{ functions.formatDateFormat(props.item.checkIn) }}
+          </td>
+          <td class="text-xs-left">
+            {{ functions.formatDateFormat(props.item.checkOut) }}
+          </td>
+          <td class="text-xs-left">
+            {{ props.item.status }}
+          </td>
+
+          <v-btn
+            color="#007fc4"
+            fab
+            small
+            class="extra-small-btn"
+            @click="(dialogTransactionDetail = true), SelectProcesList(props.item)"
+          >
+            <v-icon style="margin-top: 0.1rem; color: white"
+              >mdi-washing-machine-alert</v-icon
+            >
+          </v-btn>
+          <v-btn color="red" fab small class="extra-small-btn" @click="">
+            <v-icon style="margin-top: 0.1rem; color: white">mdi-door-open</v-icon>
+          </v-btn>
+        </tr>
+      </template>
+    </v-data-table>
+
+    <v-dialog v-model="dialogTransactionOee" persistent max-width="1180px">
+      <v-card>
+        <v-card-title>
+          <v-flex xs12 sm5 md4>
+            <div class="pa-3 inner-card mt-3">
+              <v-layout>
+                <div class="font-weight-bold mb-2">Check-In Time :</div>
+                <div style="margin-left: 0.7rem">
+                  {{ functions.formatDateFormat(CheckInDate) }}
+                </div>
+              </v-layout>
+            </div>
+          </v-flex>
+          <v-spacer></v-spacer>
+          <v-flex xs12 sm5 md4>
+            <div class="pa-3 inner-card mt-3">
+              <v-layout>
+                <div class="font-weight-bold mb-2">Operator :</div>
+                <div style="margin-left: 0.7rem">piyapong.s</div>
+              </v-layout>
+            </div>
+          </v-flex>
+          <v-tooltip top color="teal">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                @click="dialogTransactionOee = false"
+                class="ma-2"
+                v-bind="attrs"
+                v-on="on"
+                style="position: absolute; top: -8px; right: -8px"
+              >
+                <v-icon size="20" style="color: red">mdi-close</v-icon>
+              </v-btn>
+            </template>
+            <span>close</span>
+          </v-tooltip>
+        </v-card-title>
+        <v-container style="margin-top: -2.5rem">
+          <v-layout>
+            <v-chip color="primary" text-color="white" class="mb-3"> Process </v-chip>
+            <v-spacer></v-spacer>
+            <v-tooltip top color="teal">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  fab
+                  small
+                  color="green"
+                  dark
+                  @click="CreateTProcessList"
+                  class="ma-2 small-export-button"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon size="20">mdi-content-save-outline</v-icon>
+                </v-btn>
+              </template>
+              <span>Submit</span>
+            </v-tooltip>
+          </v-layout>
+          <v-layout row wrap>
+            <v-flex xs12 sm4 md4>
+              <v-radio-group v-model="selectedOption" row>
+                <v-radio label="Production Order" value="productionOrder"></v-radio>
+                <v-radio label="Material Master" value="materialMaster"></v-radio>
+              </v-radio-group>
+            </v-flex>
+            <v-spacer></v-spacer>
+            <v-flex xs12 sm3 md4>
+              <v-autocomplete
+                placeholder="  Please select"
+                v-model="mLineProcess"
+                prepend-icon="mdi-washing-machine"
+                :items="itemLineProcess"
+                item-value="lineProcessID"
+                item-text="lineProcessName"
+                dense
+                label="Line Process"
+                return-object
+                hide-details
+                class="custom-autocomplete"
+              ></v-autocomplete>
+            </v-flex>
+            <v-spacer></v-spacer>
+            <v-flex xs12 sm3 md4>
+              <v-autocomplete
+                placeholder="  Please select"
+                v-model="mFilm"
+                prepend-icon="mdi-film"
+                :items="itemFilms"
+                item-value="filmID"
+                item-text="filmDescription"
+                dense
+                label="Films"
+                return-object
+                hide-details
+                class="custom-autocomplete"
+              ></v-autocomplete>
+            </v-flex>
+          </v-layout>
+          <v-data-table
+            :headers="headers"
+            :items="itemMaterialMaster"
+            :search="search"
+            v-model="selected"
+            item-key="materialCode"
+            :pagination.sync="pagination"
+            :rows-per-page-items="rowsPerPageItem"
+          >
+            <template v-slot:items="props">
+              <td style="background: #dbdbdb !important">
+                <v-checkbox
+                  v-model="props.selected"
+                  :disabled="disableCheckbox(props.item.materialCode)"
+                  primary
+                  hide-details
+                ></v-checkbox>
+              </td>
+              <td class="text-xs-left">{{ props.item.materialCode }}</td>
+              <td class="text-xs-left">{{ props.item.materialDescriptionTh }}</td>
+              <td class="text-xs-left">{{ props.item.displayHg1_3 }}</td>
+              <td class="text-xs-left">{{ props.item.hgLv5 }}</td>
+              <td>{{ props.item.hgDescLv7 }}</td>
+              <td class="text-xs-left">{{ props.item.speedStd }}</td>
+            </template>
+            <template v-slot:no-data> </template>
+          </v-data-table>
+        </v-container>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            flat
+            color="#007fc4"
+            style="border-radius: 12px"
+            @click="dialogTransactionOee = false"
+            >close</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <DetailProcess />
+  </v-container>
+</template>
+<script>
+import axios from "axios";
+import { sync } from "vuex-pathify";
+import Loading from "@/components/core/Loading";
+import calendar from "@/components/DatePiker.vue";
+import { isEmpty } from "lodash";
+import Swal from "sweetalert2";
+import functions from "@/plugins/functions";
+import DetailProcess from "@/components/DetailProcess.vue";
+
+export default {
+  components: {
+    calendar,
+    Loading,
+    DetailProcess,
+  },
+  data() {
+    return {
+      DateDisibled: false,
+      selected: [],
+      functions,
+      itemOee: [],
+      dialogTransactionOee: false,
+      itemLineProcess: [],
+      loadingDialog: false,
+      mLineProcess: "",
+      itemFilms: [],
+      mFilm: "",
+      selectedOption: "productionOrder",
+      itemMaterialMaster: [],
+      mMaterialMaster: "",
+      headers: [
+        { text: "", align: "left", sortable: false, value: "materialCode" },
+        { text: "Material Code", align: "left", sortable: false, value: "materialCode" },
+        {
+          text: "Material Description",
+          align: "left",
+          sortable: false,
+          value: "materialDescriptionTh",
+        },
+        {
+          text: "Hg",
+          align: "left",
+          sortable: false,
+          value: "displayHg1_3",
+        },
+        {
+          text: "HgLv5",
+          align: "left",
+          sortable: false,
+          value: "hgLv5",
+        },
+        {
+          text: "HgLv7",
+          align: "left",
+          sortable: false,
+          value: "hgDescLv7",
+        },
+        { text: "Speed Std.", align: "left", sortable: false, value: "speedStd" },
+      ],
+      search: "",
+      pagination: {
+        sortBy: "",
+        descending: false,
+        page: 1,
+        rowsPerPage: 5,
+      },
+      CheckInDate: "",
+      itemTransactionTProcess: [],
+      headersTProcess: [
+        { text: "Process ID", align: "left", sortable: false, value: "processID" },
+        {
+          text: "Line Process Name",
+          align: "left",
+          sortable: false,
+          value: "lineProcessName",
+        },
+        { text: "Operator", align: "left", sortable: false, value: "username" },
+        { text: "Shift", align: "left", sortable: false, value: "shift" },
+        {
+          text: "Material",
+          align: "left",
+          sortable: false,
+          value: "materialCode",
+        },
+        {
+          text: "Description",
+          align: "left",
+          sortable: false,
+          value: "materialDesc",
+        },
+        {
+          text: "Color",
+          align: "left",
+          sortable: false,
+          value: "materialColor",
+        },
+        {
+          text: "Size",
+          align: "left",
+          sortable: false,
+          value: "materialSize",
+        },
+        { text: "Category", align: "left", sortable: false, value: "materialCategory" },
+        { text: "Film", align: "left", sortable: false, value: "filmDescription" },
+        { text: "Check-In", align: "left", sortable: false, value: "checkIn" },
+        { text: "Check-Out", align: "left", sortable: false, value: "checkOut" },
+        { text: "Status", align: "left", sortable: false, value: "status" },
+        { text: "Action", align: "left", sortable: false, value: "Action" },
+      ],
+    };
+  },
+  computed: {
+    ...sync("*"),
+    rowsPerPageItem() {
+      return [
+        { text: "5", value: 5 },
+        { text: "20", value: 20 },
+        { text: "50", value: 50 },
+        { text: "100", value: 100 },
+      ];
+    },
+  },
+  created() {
+    this.getLineProcess();
+    this.getFilm();
+    this.getGetMaterialMaster();
+  },
+  methods: {
+    disableCheckbox(materialCode) {
+      return (
+        this.selected.length >= 1 && !this.selected[0].materialCode.includes(materialCode)
+      );
+    },
+    async GetTProcessList() {
+      this.loadingDialog = true;
+      this.itemTransactionTProcess = [];
+      let pProcessDate = {
+        startDate: this.formDate,
+        endDate: this.toDate,
+      };
+      const response = await axios.post(
+        `https://localhost:44350/OEE/v1/GetTProcessList`,
+        pProcessDate
+      );
+      console.log("response", response);
+      if (response.data.status == 200) {
+        this.loadingDialog = false;
+        response.data.results.forEach((element, index) =>
+          this.itemTransactionTProcess.push({
+            processID: element.processID,
+            lineProcessID: element.lineProcessID,
+            lineProcessName: element.lineProcessName,
+            userID: element.userID,
+            username: element.username,
+            shift: element.shift,
+            materialCode: element.materialCode,
+            materialDesc: element.materialDesc,
+            materialColor: element.materialColor,
+            materialSize: element.materialSize,
+            materialCategory: element.materialCategory,
+            filmID: element.filmID,
+            filmDescription: element.filmDescription,
+            machineSTD: element.machineSTD,
+            qtyDozen: element.qtyDozen,
+            qtyEA: element.qtyEA,
+            stdCycleTime: element.stdCycleTime,
+            operatingTime: element.operatingTime,
+            workingTime: element.workingTime,
+            workingTimeMin: element.workingTimeMin,
+            machineWorkingTime: element.machineWorkingTime,
+            plannedDowntime: element.plannedDowntime,
+            unplannedDowntime: element.unplannedDowntime,
+            speedLose: element.speedLose,
+            summaryDowntime: element.summaryDowntime,
+            damagePercentage: element.damagePercentage,
+            checkIn: element.checkIn,
+            checkOut: element.checkOut,
+            status: element.status,
+          })
+        );
+      } else {
+        this.loadingDialog = false;
+        Swal.fire({
+          text: `Internal Server Error`,
+          icon: "error",
+          showCancelButton: false,
+          allowOutsideClick: false,
+          confirmButtonColor: "#0c80c4",
+          cancelButtonColor: "#C0C0C0",
+          confirmButtonText: "Ok",
+        });
+      }
+    },
+    async getFilm() {
+      this.loadingDialog = true;
+      this.itemFilms = [];
+      const response = await axios.get(`https://localhost:44350/OEE/v1/GetFilms`);
+      console.log("response", response);
+      if (response.data.status == 200) {
+        this.loadingDialog = false;
+        response.data.results.forEach((element, index) =>
+          this.itemFilms.push({
+            filmID: element.filmID,
+            filmDescription: element.filmDescription,
+          })
+        );
+      } else {
+        this.loadingDialog = false;
+        Swal.fire({
+          text: `Internal Server Error`,
+          icon: "error",
+          showCancelButton: false,
+          allowOutsideClick: false,
+          confirmButtonColor: "#0c80c4",
+          cancelButtonColor: "#C0C0C0",
+          confirmButtonText: "Ok",
+        });
+      }
+    },
+    async CreateTProcessList() {
+      this.loadingDialog = true;
+      const init = {
+        processID: "",
+        lineProcessID: this.mLineProcess.lineProcessID,
+        userID: "003796",
+        prodOrderID: "123",
+        material_Code: this.selected[0].materialCode,
+        filmID: this.mFilm.filmID,
+        checkIN: this.CheckInDate,
+        status: "CheckIN",
+      };
+      const response = await axios.post(
+        `https://localhost:44350/OEE/v1/InsertProcessList`,
+        init
+      );
+      if (response.data.status == 200) {
+        Swal.fire({
+          html: `Successfully`,
+          icon: "success",
+          showCancelButton: true,
+          allowOutsideClick: false,
+          confirmButtonColor: "#0c80c4",
+          cancelButtonColor: "#C0C0C0",
+          confirmButtonText: "OK",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+          }
+        });
+      }
+    },
+    async getLineProcess() {
+      this.loadingDialog = true;
+      this.itemLineProcess = [];
+      const response = await axios.get(`https://localhost:44350/OEE/v1/GetLineProcess`);
+      if (response.data.status == 200) {
+        this.loadingDialog = false;
+        response.data.results.forEach((element, index) =>
+          this.itemLineProcess.push({
+            lineProcessID: element.lineProcessID,
+            lineProcessName: element.lineProcessName,
+          })
+        );
+      } else {
+        this.loadingDialog = false;
+        Swal.fire({
+          text: `Internal Server Error`,
+          icon: "error",
+          showCancelButton: false,
+          allowOutsideClick: false,
+          confirmButtonColor: "#0c80c4",
+          cancelButtonColor: "#C0C0C0",
+          confirmButtonText: "Ok",
+        });
+      }
+    },
+    async getGetMaterialMaster() {
+      this.loadingDialog = true;
+      this.itemMaterialMaster = [];
+      const response = await axios.get(
+        `https://localhost:44350/OEE/v1/GetMaterialMaster`
+      );
+      if (response.data.status == 200) {
+        this.loadingDialog = false;
+        response.data.results.forEach((element, index) =>
+          this.itemMaterialMaster.push({
+            hgLv1: element.hgLv1,
+            hgLv3: element.hgLv3,
+            hgLv5: element.hgLv5,
+            hgDescLv7: element.hgDescLv7,
+            materialCode: element.materialCode,
+            materialDescriptionTh: element.materialDescriptionTh,
+            materialDescriptionEn: element.materialDescriptionEn,
+            speedStd: element.speedStd,
+            displayHg1_3: `${element.hgLv1} ${
+              element.hgLv3 == "" ? "" : `- ${element.hgLv3}`
+            }`,
+          })
+        );
+      } else {
+        this.loadingDialog = false;
+        Swal.fire({
+          text: `Internal Server Error`,
+          icon: "error",
+          showCancelButton: false,
+          allowOutsideClick: false,
+          confirmButtonColor: "#0c80c4",
+          cancelButtonColor: "#C0C0C0",
+          confirmButtonText: "Ok",
+        });
+      }
+    },
+    SelectProcesList(val) {
+      this.selectTransactionTProcess = val;
+    },
+  },
+};
+</script>
+
+<style>
+.custom-autocomplete .v-input__prefix {
+  color: red;
+}
+.custom-autocomplete .v-input__slot {
+  color: red;
+}
+/* .inner-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 5px;
+  background-color: #f9f9f9;
+  height: 3.3rem;
+} */
+.theme--light.v-table thead th {
+  background-image: -webkit-gradient(
+    linear,
+    right top,
+    left top,
+    from(rgba(51, 148, 225, 0.18)),
+    to(transparent)
+  );
+  background-image: linear-gradient(270deg, rgba(51, 148, 225, 0.18), transparent);
+  background-color: #007fc4 !important;
+  font-size: 15px !important;
+  color: #ffffff !important;
+}
+
+.theme--light.v-datatable thead th.column.sortable.active,
+.theme--light.v-datatable thead th.column.sortable.active .v-icon,
+.theme--light.v-datatable thead th.column.sortable:hover {
+  color: #ffffff !important;
+}
+.inner-card {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  height: 3.2rem;
+}
+.font-weight-bold {
+  font-weight: bold;
+}
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+.mt-1 {
+  margin-top: 0.25rem;
+}
+.responsive-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.responsive-item {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+.extra-small-btn {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+}
+@media (max-width: 600px) {
+  .responsive-item {
+    width: calc(50% - 1rem);
+  }
+  .inner-card {
+    height: 3rem;
+  }
+}
+</style>

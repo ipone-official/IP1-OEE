@@ -1,0 +1,67 @@
+@font-face {
+  font-family: "SukhumvitSet";
+  src: url("../fonts/SukhumvitSet-Light.ttf") format("truetype");
+}
+
+* {
+  font-family: "SukhumvitSet";
+  /* zoom: 99%; */
+}
+
+.font-title {
+  font-size: 3em;
+}
+
+.font-subtitle {
+  font-size: 1.1em;
+}
+
+.font-100 {
+  font-weight: 100;
+}
+
+.font-200 {
+  font-weight: 200;
+}
+
+.font-300 {
+  font-weight: 300;
+}
+
+.font-300 {
+  font-weight: 400;
+}
+
+.font-500 {
+  font-weight: 400;
+}
+
+.font-500 {
+  font-weight: 500;
+}
+
+.font-600 {
+  font-weight: 600;
+}
+
+.font-700 {
+  font-weight: 700;
+}
+
+.font-btn {
+  font-size: 1.3em;
+}
+
+@media only screen and (max-width: 600px) {
+  .font-title {
+    font-size: 2em;
+  }
+
+  .font-subtitle {
+    font-size: 1em;
+  }
+
+  .font-btn {
+    font-size: 1.3em;
+  }
+}
