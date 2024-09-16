@@ -653,7 +653,7 @@ export default {
     async SelectProcesList(val) {
       this.machineDetail.selectTransactionTProcess = val;
       this.machineDetail.machineStd = this.machineDetail.selectTransactionTProcess.machineSTD;
-      this.machineDetail.QtyDz = this.machineDetail.selectTransactionTProcess.qtyDozen;
+      this.machineDetail.QtyDz = 0;
       this.machineDetail.itemDamageTable = [];
       this.machineDetail.itemProblemTable = [];
       this.getProblemDetail(this.machineDetail.selectTransactionTProcess.processID);

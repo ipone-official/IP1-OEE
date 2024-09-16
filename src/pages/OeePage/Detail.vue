@@ -1,7 +1,7 @@
 <template>
   <v-container fluid grid-list-xs>
     <v-layout row wrap class="custom-layout">
-      <v-flex xs12 sm5 md4 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Line Process Name</v-card-title>
           <v-card-text class="small-margin">{{
@@ -10,7 +10,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md2 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Film</v-card-title>
           <v-card-text class="small-margin">{{
@@ -19,7 +19,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md2 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Material</v-card-title>
           <v-card-text class="small-margin">{{
@@ -28,7 +28,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md4 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Description</v-card-title>
           <v-card-text class="small-margin">{{
@@ -39,7 +39,7 @@
     </v-layout>
 
     <v-layout row wrap class="custom-layout">
-      <v-flex xs12 sm5 md4 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Color</v-card-title>
           <v-card-text class="small-margin">{{
@@ -48,7 +48,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md2 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Size</v-card-title>
           <v-card-text class="small-margin">{{
@@ -57,7 +57,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md2 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Category</v-card-title>
           <v-card-text class="small-margin">{{
@@ -65,14 +65,22 @@
           }}</v-card-text>
         </v-card>
       </v-flex>
+      <v-flex xs12 sm3 md3 class="pa-0">
+        <v-card flat class="small-card">
+          <v-card-title class="custom-title small-margin">Beginning Qty. (DZ)</v-card-title>
+          <v-card-text class="small-margin">{{
+            machineDetail.selectTransactionTProcess.qtyDozen
+          }}</v-card-text>
+        </v-card>
+      </v-flex>
     </v-layout>
     <v-layout>
-      <v-flex xs12 sm5 md2 class="pa-0 mt-3">
+      <v-flex xs12 sm2 md2 class="pa-0 mt-3">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Machine STD.</v-card-title>
         </v-card>
       </v-flex>
-      <v-flex xs12 sm5 md4>
+      <v-flex xs12 sm4 md4>
         <v-text-field
           v-model="machineDetail.machineStd"
           prepend-icon=" "
@@ -83,12 +91,12 @@
         ></v-text-field>
       </v-flex>
 
-      <v-flex xs12 sm5 md2 class="pa-0 mt-3">
+      <v-flex xs12 sm2 md2 class="pa-0 mt-3">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Qty. (DZ)</v-card-title>
         </v-card>
       </v-flex>
-      <v-flex xs12 sm5 md4>
+      <v-flex xs12 sm4 md4>
         <v-text-field
           v-model="machineDetail.QtyDz"
           prepend-icon=" "
@@ -101,7 +109,7 @@
     </v-layout>
     <hr class="custom-hr" />
     <v-layout row wrap class="custom-layout">
-      <v-flex xs12 sm5 md4 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Qty. (EA)</v-card-title>
           <v-card-text class="small-margin">{{
@@ -110,7 +118,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md2 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Std. CycleTime</v-card-title>
           <v-card-text class="small-margin">{{
@@ -119,7 +127,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md2 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Opeating Time</v-card-title>
           <v-card-text class="small-margin">{{
@@ -128,7 +136,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md4 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Working Time</v-card-title>
           <v-card-text class="small-margin">{{
@@ -139,7 +147,7 @@
     </v-layout>
 
     <v-layout row wrap class="custom-layout">
-      <v-flex xs12 sm5 md4 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Working Time(Min)</v-card-title>
           <v-card-text class="small-margin">{{
@@ -148,7 +156,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md2 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin"
             >Machine Working Time</v-card-title
@@ -159,7 +167,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md2 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Planned Downtime</v-card-title>
           <v-card-text class="small-margin">{{
@@ -168,7 +176,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md4 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">UnPlan Downtime</v-card-title>
           <v-card-text class="small-margin">{{
@@ -179,7 +187,7 @@
     </v-layout>
 
     <v-layout row wrap class="custom-layout">
-      <v-flex xs12 sm5 md4 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Speed Lose</v-card-title>
           <v-card-text class="small-margin">{{
@@ -188,7 +196,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md2 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Summary Downtime</v-card-title>
           <v-card-text class="small-margin">{{
@@ -197,7 +205,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex xs12 sm5 md2 class="pa-0">
+      <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Damage%</v-card-title>
           <v-card-text class="small-margin">{{
