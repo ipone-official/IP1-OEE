@@ -230,6 +230,12 @@ export default {
           result.machineID == this.mMachine.machineID
       );
     },
+    mProblemDesc(val){
+      this.mDowntime = 0
+      if (this.editMode) return;
+      this.mDowntime = val.stdTime
+    }
+    
   },
   created() {
     this.GetProblem();
@@ -278,7 +284,7 @@ export default {
         this.showResult = true;
         return (this.msgResult = "Problem Description can't be null.");
       }
-      if (isEmpty(this.mDowntime)) {
+      if (this.mDowntime == 0) {
         this.showResult = true;
         return (this.msgResult = "Downtime can't be null. Or '0'");
       }
