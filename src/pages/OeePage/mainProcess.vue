@@ -184,7 +184,7 @@ export default {
             })),
           };
           const response = await axios.post(
-        `${EndpointPortal}/OEE/v1/InsertDetailReasonAndProblem`,
+        `${EndpointPortal}/ApiOEE/OEE/v1/InsertDetailReasonAndProblem`,
         initHeadDetail
       );
       if (response.data.status == 200) {

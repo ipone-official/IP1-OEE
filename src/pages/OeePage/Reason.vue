@@ -196,7 +196,7 @@ export default {
       this.loadingDialog = true;
       this.itemReason = [];
 
-      const response = await axios.get(`${EndpointPortal}/OEE/v1/GetReasonDamage`);
+      const response = await axios.get(`${EndpointPortal}/ApiOEE/OEE/v1/GetReasonDamage`);
       if (response.data.status == 200) {
         this.loadingDialog = false;
         this.itemReason = response.data.results;
