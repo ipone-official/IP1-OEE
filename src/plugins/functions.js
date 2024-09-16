@@ -13,25 +13,9 @@ export default {
     return `${year}${month}${day} ${hours}:${minutes}`;
 },
 formatDateFormat(val){
-  console.log(val.length, 'length')
-  if(val.length == 0 || val == undefined) return ''
+  if(val == undefined) return ""
   return `${val.substring(6,8)}/${val.substring(4,6)}/${val.substring(0,4)} ${val.substring(8)}`
 },
-  distinctArray(val){
-  let desired_output = (val) => {
-      let unique_values = [
-          ...new Set(val.map((element) => element.division_desc)),
-      ];
-      return unique_values;
-  };
-  let array = []
-  desired_output(val).forEach((element) => {
-    array.push({
-      division_desc: element
-    })
-});
-  return array
-  },
   async alertDialog(
     icon,
     title,

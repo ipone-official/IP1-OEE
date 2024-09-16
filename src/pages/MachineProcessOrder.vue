@@ -1,7 +1,18 @@
 <template>
   <v-container fluid grid-list-xs>
-  <!-- {{ selectTransactionTProcess }} -->
     <v-layout justify-end>
+      <v-flex xs12 sm4 md4 v-if="DateDisibled">
+        <v-text-field
+          v-model="search"
+          flat
+          label="Search"
+          prepend-inner-icon="search"
+          solo
+          box
+          hide-details
+          clearable
+        ></v-text-field>
+      </v-flex>
       <v-tooltip top color="teal">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -91,6 +102,7 @@
       :headers="headersTProcess"
       :items="itemTransactionTProcess"
       item-key="processID"
+       :search="search"
       :pagination.sync="pagination"
       :rows-per-page-items="rowsPerPageItem"
     >
@@ -137,7 +149,9 @@
             fab
             small
             class="extra-small-btn"
-            @click="(dialogTransactionDetail = true), SelectProcesList(props.item)"
+            @click="
+              (machineDetail.dialogTransactionDetail = true), SelectProcesList(props.item)
+            "
           >
             <v-icon style="margin-top: 0.1rem; color: white"
               >mdi-washing-machine-alert</v-icon
@@ -158,7 +172,7 @@
               <v-layout>
                 <div class="font-weight-bold mb-2">Check-In Time :</div>
                 <div style="margin-left: 0.7rem">
-                  {{ functions.formatDateFormat(CheckInDate) }}
+                  {{ CheckInDate == "" ? " " : functions.formatDateFormat(CheckInDate) }}
                 </div>
               </v-layout>
             </div>
@@ -168,7 +182,7 @@
             <div class="pa-3 inner-card mt-3">
               <v-layout>
                 <div class="font-weight-bold mb-2">Operator :</div>
-                <div style="margin-left: 0.7rem">piyapong.s</div>
+                <div style="margin-left: 0.7rem">{{ infoLogin.samAccount }}</div>
               </v-layout>
             </div>
           </v-flex>
@@ -188,9 +202,9 @@
             <span>close</span>
           </v-tooltip>
         </v-card-title>
-        <v-container style="margin-top: -2.5rem">
-          <v-layout>
-            <v-chip color="primary" text-color="white" class="mb-3"> Process </v-chip>
+        <div style="margin-top: -1.5rem; padding: 1rem">
+          <v-layout style="align-items: baseline;">
+            <v-chip color="primary" text-color="white" class="mb-2" > Process </v-chip>
             <v-spacer></v-spacer>
             <v-tooltip top color="teal">
               <template v-slot:activator="{ on, attrs }">
@@ -211,14 +225,14 @@
             </v-tooltip>
           </v-layout>
           <v-layout row wrap>
-            <v-flex xs12 sm4 md4>
+            <v-flex xs12 sm3 md4>
               <v-radio-group v-model="selectedOption" row>
                 <v-radio label="Production Order" value="productionOrder"></v-radio>
                 <v-radio label="Material Master" value="materialMaster"></v-radio>
               </v-radio-group>
             </v-flex>
             <v-spacer></v-spacer>
-            <v-flex xs12 sm3 md4>
+            <v-flex xs12 sm3 md2>
               <v-autocomplete
                 placeholder="  Please select"
                 v-model="mLineProcess"
@@ -234,7 +248,7 @@
               ></v-autocomplete>
             </v-flex>
             <v-spacer></v-spacer>
-            <v-flex xs12 sm3 md4>
+            <v-flex xs12 sm3 md2>
               <v-autocomplete
                 placeholder="  Please select"
                 v-model="mFilm"
@@ -249,11 +263,21 @@
                 class="custom-autocomplete"
               ></v-autocomplete>
             </v-flex>
+            <v-spacer></v-spacer>
+            <v-flex xs12 sm3 md3 >
+        <v-text-field
+          v-model="searchMaterial"
+          label="Search Material & Production Order"
+          prepend-icon="search"
+          clearable
+        ></v-text-field>
+      </v-flex>
           </v-layout>
+
           <v-data-table
             :headers="headers"
             :items="itemMaterialMaster"
-            :search="search"
+            :search="searchMaterial"
             v-model="selected"
             item-key="materialCode"
             :pagination.sync="pagination"
@@ -277,7 +301,7 @@
             </template>
             <template v-slot:no-data> </template>
           </v-data-table>
-        </v-container>
+        </div>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
@@ -301,7 +325,7 @@ import calendar from "@/components/DatePiker.vue";
 import { isEmpty } from "lodash";
 import Swal from "sweetalert2";
 import functions from "@/plugins/functions";
-import DetailProcess from "@/components/DetailProcess.vue";
+import DetailProcess from "@/pages/OeePage/mainProcess.vue";
 
 export default {
   components: {
@@ -354,6 +378,7 @@ export default {
         { text: "Speed Std.", align: "left", sortable: false, value: "speedStd" },
       ],
       search: "",
+      searchMaterial: '',
       pagination: {
         sortBy: "",
         descending: false,
@@ -416,10 +441,15 @@ export default {
       ];
     },
   },
+  watch: {
+    flagGetTProcess(val) {
+      if (val && this.DateDisibled) return this.GetTProcessList();
+    },
+  },
   created() {
     this.getLineProcess();
     this.getFilm();
-    this.getGetMaterialMaster();
+    this.GetMaterialMaster();
   },
   methods: {
     disableCheckbox(materialCode) {
@@ -430,17 +460,18 @@ export default {
     async GetTProcessList() {
       this.loadingDialog = true;
       this.itemTransactionTProcess = [];
+      this.flagGetTProcess = false;
       let pProcessDate = {
         startDate: this.formDate,
         endDate: this.toDate,
       };
       const response = await axios.post(
-        `https://localhost:44350/OEE/v1/GetTProcessList`,
+        `${EndpointPortal}/OEE/v1/GetTProcessList`,
         pProcessDate
       );
-      console.log("response", response);
       if (response.data.status == 200) {
         this.loadingDialog = false;
+        this.DateDisibled = true;
         response.data.results.forEach((element, index) =>
           this.itemTransactionTProcess.push({
             processID: element.processID,
@@ -490,7 +521,7 @@ export default {
     async getFilm() {
       this.loadingDialog = true;
       this.itemFilms = [];
-      const response = await axios.get(`https://localhost:44350/OEE/v1/GetFilms`);
+      const response = await axios.get(`${EndpointPortal}/OEE/v1/GetFilms`);
       console.log("response", response);
       if (response.data.status == 200) {
         this.loadingDialog = false;
@@ -514,11 +545,20 @@ export default {
       }
     },
     async CreateTProcessList() {
+      if (isEmpty(this.mLineProcess)) {
+        this.showResult = true;
+        return (this.msgResult = "line process can't be null.");
+      }
+      if (isEmpty(this.mFilm)) {
+        this.showResult = true;
+        return (this.msgResult = "Film can't be null.");
+      }
       this.loadingDialog = true;
+      let { empId } = this.infoLogin;
       const init = {
         processID: "",
         lineProcessID: this.mLineProcess.lineProcessID,
-        userID: "003796",
+        userID: empId,
         prodOrderID: "123",
         material_Code: this.selected[0].materialCode,
         filmID: this.mFilm.filmID,
@@ -526,7 +566,7 @@ export default {
         status: "CheckIN",
       };
       const response = await axios.post(
-        `https://localhost:44350/OEE/v1/InsertProcessList`,
+        `${EndpointPortal}/OEE/v1/InsertProcessList`,
         init
       );
       if (response.data.status == 200) {
@@ -540,6 +580,11 @@ export default {
           confirmButtonText: "OK",
         }).then(async (result) => {
           if (result.isConfirmed) {
+            this.flagGetTProcess = true;
+            this.dialogTransactionOee = false;
+            this.selectedOption = "productionOrder";
+            this.mMaterialMaster = "";
+            this.mFilm = "";
           }
         });
       }
@@ -547,7 +592,7 @@ export default {
     async getLineProcess() {
       this.loadingDialog = true;
       this.itemLineProcess = [];
-      const response = await axios.get(`https://localhost:44350/OEE/v1/GetLineProcess`);
+      const response = await axios.get(`${EndpointPortal}/OEE/v1/GetLineProcess`);
       if (response.data.status == 200) {
         this.loadingDialog = false;
         response.data.results.forEach((element, index) =>
@@ -569,11 +614,11 @@ export default {
         });
       }
     },
-    async getGetMaterialMaster() {
+    async GetMaterialMaster() {
       this.loadingDialog = true;
       this.itemMaterialMaster = [];
       const response = await axios.get(
-        `https://localhost:44350/OEE/v1/GetMaterialMaster`
+        `${EndpointPortal}/OEE/v1/GetMaterialMaster`
       );
       if (response.data.status == 200) {
         this.loadingDialog = false;
@@ -605,8 +650,59 @@ export default {
         });
       }
     },
-    SelectProcesList(val) {
-      this.selectTransactionTProcess = val;
+    async SelectProcesList(val) {
+      this.machineDetail.selectTransactionTProcess = val;
+      this.machineDetail.machineStd = this.machineDetail.selectTransactionTProcess.machineSTD;
+      this.machineDetail.QtyDz = this.machineDetail.selectTransactionTProcess.qtyDozen;
+      this.machineDetail.itemDamageTable = [];
+      this.machineDetail.itemProblemTable = [];
+      this.getProblemDetail(this.machineDetail.selectTransactionTProcess.processID);
+      this.getReasonDetail(this.machineDetail.selectTransactionTProcess.processID);
+    },
+    clearSearch() {
+      this.DateDisibled = false;
+      this.itemTransactionTProcess = [];
+    },
+    async getProblemDetail(processID) {
+      const response = await axios.get(
+        `${EndpointPortal}/OEE/v1/GetProblemDetailByID?processID=${processID}`
+      );
+      console.log(response, "getProblemDetail");
+      if (response.data.status == 200) {
+        for (let i = 0; i < response.data.results.length; i++) {
+          this.machineDetail.itemProblemTable.push({
+            problemID: response.data.results[i].problemID,
+            problemDescription: response.data.results[i].problemDescription,
+            lineProcessID: response.data.results[i].lineProcessID,
+            lineProcessName: response.data.results[i].lineProcessName,
+            machineID: response.data.results[i].machineID,
+            machineDescription: response.data.results[i].machineDescription,
+            planStatus: response.data.results[i].planStatus == "Y" ? "Plan" : "UnPlan",
+            unControlStatus:
+              response.data.results[i].unControlStatus == "N" ? true : false,
+            downtime: response.data.results[i].downtime,
+            itemNo: i + 1,
+          });
+        }
+      }
+    },
+    async getReasonDetail(processID) {
+      const response = await axios.get(
+        `${EndpointPortal}/OEE/v1/GetReasonDetailByID?processID=${processID}`
+      );
+      console.log(response, "getReasonDetail");
+      if (response.data.status == 200) {
+        for (let i = 0; i < response.data.results.length; i++) {
+          this.machineDetail.itemDamageTable.push({
+            reasonID: response.data.results[i].reasonID,
+            reasonHeader: response.data.results[i].reasonHeader,
+            reasonDescID: response.data.results[i].reasonDescID,
+            reasonDesc: response.data.results[i].reasonDesc,
+            QtyEA: response.data.results[i].qty,
+            itemNo: i + 1,
+          });
+        }
+      }
     },
   },
 };

@@ -106,7 +106,7 @@ export default {
   .active {
     font-weight: bold;
   }
-  .page-logo, .page-sidebar,, .bg-brand-gradient {
+  .page-logo, .page-sidebar, .bg-brand-gradient {
     background-image: -webkit-gradient(linear, right top, left top, from(rgba(51, 148, 225, 0.18)), to(transparent));
     background-image: linear-gradient(270deg, rgba(51, 148, 225, 0.18), transparent);
     background-color: #584475;

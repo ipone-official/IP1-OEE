@@ -3,8 +3,7 @@ import Router from 'vue-router';
 
 import Login from '../pages/core/Login.vue';
 import Error from '../pages/core/Error.vue';
-import PayinForm from '../pages/PayinForm.vue'
-import MachineProcessOrder from '../pages/OeePage/MachineProcessOrder.vue';
+import MachineProcessOrder from '@/pages/MachineProcessOrder.vue';
 
 Vue.use(Router);
 
@@ -17,16 +16,6 @@ export default new Router({
       meta: {
         breadcrumb: [
           { name: 'Machine Process Order' }
-        ]
-      }
-    },
-    {
-      path: '/PayinForm',
-      name: 'PayinForm',
-      component: PayinForm,
-      meta: {
-        breadcrumb: [
-          { name: 'Payin Form' }
         ]
       }
     },

@@ -46,9 +46,6 @@ export default {
     },
   },
  async mounted() {
-    const admin = this.$route.query.Admin;
-    console.log(admin);
-
     if (!localStorage.getItem("samAccountOEE")) {
       localStorage.removeItem('samAccountOEE')
       localStorage.removeItem('selectedIndexOEE')

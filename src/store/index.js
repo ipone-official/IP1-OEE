@@ -11,8 +11,15 @@ const getDefaultState = () => ({
   formDate: `${functions.getSysDate().format.substring(0,6)}01`,
   toDate: functions.getSysDate().format,
   manualPDF: false,
-  dialogTransactionDetail: false,
-  selectTransactionTProcess: []
+  flagGetTProcess: false,
+  machineDetail: {
+    dialogTransactionDetail: false,
+    selectTransactionTProcess: [],
+    machineStd: 0,
+    QtyDz: 0,
+    itemDamageTable: [],
+    itemProblemTable: [],
+  }
 });
 const loginInfo = () => ({
   drawer: false,
