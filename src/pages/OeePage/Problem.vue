@@ -240,7 +240,7 @@ export default {
       this.itemMachine = [];
 
       const response = await axios.get(
-        `${EndpointPortal}/ApiOEE/OEE/v1/GetProblems?lineProcessID=${this.machineDetail.selectTransactionTProcess.lineProcessID}`
+        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProblems?lineProcessID=${this.machineDetail.selectTransactionTProcess.lineProcessID}`
       );
       if (response.data.status == 200) {
         this.loadingDialog = false;

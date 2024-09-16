@@ -466,7 +466,7 @@ export default {
         endDate: this.toDate,
       };
       const response = await axios.post(
-        `${EndpointPortal}/ApiOEE/OEE/v1/GetTProcessList`,
+        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetTProcessList`,
         pProcessDate
       );
       if (response.data.status == 200) {
@@ -521,7 +521,7 @@ export default {
     async getFilm() {
       this.loadingDialog = true;
       this.itemFilms = [];
-      const response = await axios.get(`${EndpointPortal}/ApiOEE/OEE/v1/GetFilms`);
+      const response = await axios.get(`${this.EndpointPortal}/ApiOEE/OEE/v1/GetFilms`);
       console.log("response", response);
       if (response.data.status == 200) {
         this.loadingDialog = false;
@@ -566,7 +566,7 @@ export default {
         status: "CheckIN",
       };
       const response = await axios.post(
-        `${EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
+        `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
         init
       );
       if (response.data.status == 200) {
@@ -592,7 +592,7 @@ export default {
     async getLineProcess() {
       this.loadingDialog = true;
       this.itemLineProcess = [];
-      const response = await axios.get(`${EndpointPortal}/ApiOEE/OEE/v1/GetLineProcess`);
+      const response = await axios.get(`${this.EndpointPortal}/ApiOEE/OEE/v1/GetLineProcess`);
       if (response.data.status == 200) {
         this.loadingDialog = false;
         response.data.results.forEach((element, index) =>
@@ -618,7 +618,7 @@ export default {
       this.loadingDialog = true;
       this.itemMaterialMaster = [];
       const response = await axios.get(
-        `${EndpointPortal}/ApiOEE/OEE/v1/GetMaterialMaster`
+        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetMaterialMaster`
       );
       if (response.data.status == 200) {
         this.loadingDialog = false;
@@ -665,7 +665,7 @@ export default {
     },
     async getProblemDetail(processID) {
       const response = await axios.get(
-        `${EndpointPortal}/ApiOEE/OEE/v1/GetProblemDetailByID?processID=${processID}`
+        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProblemDetailByID?processID=${processID}`
       );
       console.log(response, "getProblemDetail");
       if (response.data.status == 200) {
@@ -688,7 +688,7 @@ export default {
     },
     async getReasonDetail(processID) {
       const response = await axios.get(
-        `${EndpointPortal}/ApiOEE/OEE/v1/GetReasonDetailByID?processID=${processID}`
+        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetReasonDetailByID?processID=${processID}`
       );
       console.log(response, "getReasonDetail");
       if (response.data.status == 200) {
