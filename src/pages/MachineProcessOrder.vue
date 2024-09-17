@@ -673,7 +673,7 @@ export default {
         prodOrderID: "123",
         material_Code: this.selected[0].materialCode,
         filmID: this.mFilm.filmID,
-        checkIN: this.CheckInDate,
+        checkINOut: this.CheckInDate,
         status: "InProcess",
       };
       const response = await axios.post(
