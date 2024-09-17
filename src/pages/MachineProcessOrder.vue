@@ -430,7 +430,7 @@ export default {
       headersTProcess: [
         { text: "Process ID", align: "left", sortable: false, value: "processID" },
         {
-          text: "Line Process Name",
+          text: "Line Process",
           align: "left",
           sortable: false,
           value: "lineProcessName",
