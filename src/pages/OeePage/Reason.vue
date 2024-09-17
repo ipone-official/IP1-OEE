@@ -40,6 +40,7 @@
           prefix="*"
           style="color: red"
           label="Qty. (EA)"
+          @keydown.native="keyFilter($event, 'number')"
         ></v-text-field>
       </v-flex>
       <v-spacer></v-spacer>

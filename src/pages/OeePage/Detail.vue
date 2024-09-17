@@ -88,6 +88,7 @@
           style="color: red"
           label="MachineSTD"
           solo
+          @keydown.native="keyFilter($event, 'number')"
         ></v-text-field>
       </v-flex>
 
@@ -104,6 +105,7 @@
           style="color: red"
           label="Qty. (DZ)"
           solo
+          @keydown.native="keyFilter($event, 'number')"
         ></v-text-field>
       </v-flex>
     </v-layout>

@@ -301,12 +301,6 @@
             </v-flex>
             <v-spacer></v-spacer>
             <v-flex xs12 sm3 md3>
-              <!-- <v-text-field
-                v-model="searchMaterial"
-                label="Search"
-                prepend-icon="search"
-                clearable
-              ></v-text-field> -->
               <v-text-field
                 v-model="searchMaterial"
                 flat
@@ -883,7 +877,7 @@ export default {
 }
 .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
     border-radius: 2px;
-    background: #ececec;
+    background: #f3f3f3;
 }
 @media (max-width: 600px) {
   .responsive-item {

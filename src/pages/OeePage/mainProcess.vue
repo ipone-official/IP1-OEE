@@ -116,7 +116,7 @@ import Swal from "sweetalert2";
 import loading from "@/components/core/Loading";
 import functions from "@/plugins/functions";
 // import { isEmpty } from "lodash";
-import keyFilter from "@/plugins/keyFilter";
+
 import Detail from "@/pages/OeePage/Detail.vue";
 import Reason from "@/pages/OeePage/Reason.vue";
 import Problem from "@/pages/OeePage/Problem.vue";
@@ -131,7 +131,6 @@ export default {
   data() {
     return {
       loadingDialog: false,
-      keyFilter,
       msgResult: "",
       showResult: false,
       functions,

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const keyFilter = (event, type, lang) => {
     const allowedArrowsAndKeys = [8, 37, 39]
-    const supportRules = ['All', 'number', 'En', 'Th', 'Group', 'value']
+    const supportRules = ['All', 'number', 'En', 'Th', 'Group', 'decimal']
     const stopEvent = () => {
       if (event) event.preventDefault()
       if (event) event.stopPropagation()
@@ -13,9 +13,8 @@ const keyFilter = (event, type, lang) => {
       if (['En'].includes(type)) return /[A-z .]/
       if (['Th'].includes(type)) return /[ก-์ ]/
       if (['Group'].includes(type)) return  /[0-9A-z/-]/
-      if (['value'].includes(type)) return /[0-9.]/
+      if (['decimal'].includes(type)) return /[0-9.]/
       if (type === 'number') return /[0-9]/
-  
       return null
     }
   
