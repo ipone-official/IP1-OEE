@@ -578,6 +578,7 @@ export default {
         `${this.EndpointPortal}/ApiOEE/OEE/v1/GetTProcessList`,
         pProcessDate
       );
+      console.log(response, "response");
       if (response.data.status == 200) {
         this.loadingDialog = false;
         this.DateDisibled = true;
@@ -624,6 +625,17 @@ export default {
           text: process,
         }));
         this.lineProcessItem = this.lineProcessItem.concat(lineProcessItems);
+      } else if (response.data.status == 404) {
+        this.loadingDialog = false;
+        Swal.fire({
+          text: `${response.data.message}`,
+          icon: "warning",
+          showCancelButton: false,
+          allowOutsideClick: false,
+          confirmButtonColor: "#0c80c4",
+          cancelButtonColor: "#C0C0C0",
+          confirmButtonText: "Ok",
+        });
       } else {
         this.loadingDialog = false;
         Swal.fire({
@@ -641,7 +653,6 @@ export default {
       this.loadingDialog = true;
       this.itemFilms = [];
       const response = await axios.get(`${this.EndpointPortal}/ApiOEE/OEE/v1/GetFilms`);
-      console.log("response", response);
       if (response.data.status == 200) {
         this.loadingDialog = false;
         response.data.results.forEach((element, index) =>
@@ -699,6 +710,7 @@ export default {
             init
           );
           if (response.data.status == 200) {
+            this.loadingDialog = true;
             Swal.fire({
               html: `Successfully`,
               icon: "success",
@@ -716,6 +728,17 @@ export default {
                 this.mFilm = "";
                 this.selected = [];
               }
+            });
+          } else {
+            this.loadingDialog = false;
+            Swal.fire({
+              text: `Internal Server Error`,
+              icon: "error",
+              showCancelButton: false,
+              allowOutsideClick: false,
+              confirmButtonColor: "#0c80c4",
+              cancelButtonColor: "#C0C0C0",
+              confirmButtonText: "Ok",
             });
           }
         }
@@ -801,7 +824,6 @@ export default {
       const response = await axios.get(
         `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProblemDetailByID?processID=${processID}`
       );
-      console.log(response, "getProblemDetail");
       if (response.data.status == 200) {
         for (let i = 0; i < response.data.results.length; i++) {
           this.machineDetail.itemProblemTable.push({
@@ -824,7 +846,6 @@ export default {
       const response = await axios.get(
         `${this.EndpointPortal}/ApiOEE/OEE/v1/GetReasonDetailByID?processID=${processID}`
       );
-      console.log(response, "getReasonDetail");
       if (response.data.status == 200) {
         for (let i = 0; i < response.data.results.length; i++) {
           this.machineDetail.itemDamageTable.push({
