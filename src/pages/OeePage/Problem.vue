@@ -202,7 +202,7 @@ export default {
     selectedPlanStatus(val) {
       this.itemProblemDesc = [];
       const status = val == "UnPlan" ? "N" : "Y";
-      const unControl = this.UnControl == true ? "N" : "Y";
+      const unControl = this.UnControl == true ? "Y" : "N";
       if (val == "UnPlan") {
         this.itemProblemDesc = this.itemMachine.filter(
           (result) =>
@@ -224,7 +224,7 @@ export default {
       if (this.selectedPlanStatus == "") return (this.itemProblemDesc = []);
       this.itemProblemDesc = [];
       const status = val == "UnPlan" ? "N" : "Y";
-      const unControl = val == true ? "N" : "Y";
+      const unControl = val == true ? "Y" : "N";
       this.itemProblemDesc = this.itemMachine.filter(
         (result) =>
           result.planStatus == status &&
@@ -311,7 +311,7 @@ export default {
               machineID: this.mMachine.machineID,
               machineDescription: this.mMachine.machineDescription,
               planStatus: this.selectedPlanStatus == "UnPlan" ? "N" : "Y",
-              unControlStatus: this.UnControl == "UnPlan" ? "N" : "Y",
+              unControlStatus: this.UnControl == true ? "Y" : "N",
               downtime: this.mDowntime,
               itemNo: this.editId,
             });
@@ -360,7 +360,7 @@ export default {
           machineID: this.mMachine.machineID,
           machineDescription: this.mMachine.machineDescription,
           planStatus: this.selectedPlanStatus == "UnPlan" ? "N" : "Y",
-          unControlStatus: this.UnControl == "UnPlan" ? "N" : "Y",
+          unControlStatus: this.UnControl == true ? "Y" : "N",
           downtime: this.mDowntime,
         });
         this.machineDetail.itemProblemTable.forEach(
@@ -416,7 +416,7 @@ export default {
       this.mDowntime = val.downtime;
       const statusPlan = initEdit[0].planStatus == "Y" ? "Plan" : "UnPlan";
       this.selectedPlanStatus = statusPlan;
-      const statusUncontrol = initEdit[0].unControlStatus == "N" ? true : false;
+      const statusUncontrol = initEdit[0].unControlStatus == "Y" ? true : false;
       this.UnControl = statusUncontrol;
     },
     deleteItemProblem(item) {

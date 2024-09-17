@@ -277,6 +277,7 @@
                 item-value="lineProcessID"
                 item-text="lineProcessName"
                 dense
+                prefix="*"
                 label="Line Process"
                 return-object
                 hide-details
@@ -286,7 +287,7 @@
             <v-spacer></v-spacer>
             <v-flex xs12 sm3 md2>
               <v-autocomplete
-                placeholder="  Please select"
+                placeholder="Please select"
                 v-model="mFilm"
                 prepend-icon="mdi-film"
                 :items="itemFilms"
@@ -355,6 +356,12 @@
       </v-card>
     </v-dialog>
     <DetailProcess />
+    <v-snackbar color="orange" v-model="showResult" :timeout="3500">
+      {{ msgResult }}
+    </v-snackbar>
+    <div v-if="loadingDialog">
+      <loading :value="loadingDialog" />
+    </div>
   </v-container>
 </template>
 <script>
@@ -375,6 +382,8 @@ export default {
   },
   data() {
     return {
+      msgResult: "",
+      showResult: false,
       DateDisibled: false,
       selected: [],
       functions,
@@ -658,10 +667,6 @@ export default {
       if (isEmpty(this.mLineProcess)) {
         this.showResult = true;
         return (this.msgResult = "line process can't be null.");
-      }
-      if (isEmpty(this.mFilm)) {
-        this.showResult = true;
-        return (this.msgResult = "Film can't be null.");
       }
       // if(this.selectedOption == "productionOrder"){
       //   this.showResult = true;

@@ -3,7 +3,7 @@
     <v-layout row wrap class="custom-layout">
       <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
-          <v-card-title class="custom-title small-margin">Line Process Name</v-card-title>
+          <v-card-title class="custom-title small-margin">Line Process</v-card-title>
           <v-card-text class="small-margin">{{
             machineDetail.selectTransactionTProcess.lineProcessName
           }}</v-card-text>
