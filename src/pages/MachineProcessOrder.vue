@@ -387,7 +387,6 @@ export default {
       mFilm: "",
       selectedOption: "productionOrder",
       itemMaterialMaster: [],
-      mMaterialMaster: "",
       headers: [
         { text: "", align: "left", sortable: false, value: "materialCode" },
         { text: "Material Code", align: "left", sortable: false, value: "materialCode" },
@@ -560,7 +559,7 @@ export default {
     async GetTProcessList() {
       this.loadingDialog = true;
       this.itemTransactionTProcess = [];
-      this.rawData = []
+      this.rawData = [];
       this.flagGetTProcess = false;
       let pProcessDate = {
         startDate: this.formDate,
@@ -664,41 +663,58 @@ export default {
         this.showResult = true;
         return (this.msgResult = "Film can't be null.");
       }
-      this.loadingDialog = true;
-      let { empId } = this.infoLogin;
-      const init = {
-        processID: "",
-        lineProcessID: this.mLineProcess.lineProcessID,
-        userID: empId,
-        prodOrderID: "123",
-        material_Code: this.selected[0].materialCode,
-        filmID: this.mFilm.filmID,
-        checkINOut: this.CheckInDate,
-        status: "InProcess",
-      };
-      const response = await axios.post(
-        `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
-        init
-      );
-      if (response.data.status == 200) {
-        Swal.fire({
-          html: `Successfully`,
-          icon: "success",
-          showCancelButton: true,
-          allowOutsideClick: false,
-          confirmButtonColor: "#0c80c4",
-          cancelButtonColor: "#C0C0C0",
-          confirmButtonText: "OK",
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            this.flagGetTProcess = true;
-            this.dialogTransactionOee = false;
-            this.selectedOption = "productionOrder";
-            this.mMaterialMaster = "";
-            this.mFilm = "";
+      // if(this.selectedOption == "productionOrder"){
+      //   this.showResult = true;
+      //   return (this.msgResult = "Production Order can't be null.");
+      // }
+      Swal.fire({
+        html: `Do you want insert to database ?`,
+        icon: "warning",
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: "#0c80c4",
+        cancelButtonColor: "#C0C0C0",
+        confirmButtonText: "OK",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          this.loadingDialog = true;
+          let { empId } = this.infoLogin;
+          const init = {
+            processID: "",
+            lineProcessID: this.mLineProcess.lineProcessID,
+            userID: empId,
+            prodOrderID: "123",
+            material_Code: this.selected[0].materialCode,
+            filmID: this.mFilm.filmID,
+            checkINOut: this.CheckInDate,
+            status: "InProcess",
+          };
+          const response = await axios.post(
+            `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
+            init
+          );
+          if (response.data.status == 200) {
+            Swal.fire({
+              html: `Successfully`,
+              icon: "success",
+              showCancelButton: false,
+              allowOutsideClick: false,
+              confirmButtonColor: "#0c80c4",
+              cancelButtonColor: "#C0C0C0",
+              confirmButtonText: "OK",
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                this.flagGetTProcess = true;
+                this.dialogTransactionOee = false;
+                this.selectedOption = "productionOrder";
+                this.mLineProcess = "";
+                this.mFilm = "";
+                this.selected = [];
+              }
+            });
           }
-        });
-      }
+        }
+      });
     },
     async getLineProcess() {
       this.loadingDialog = true;
@@ -876,9 +892,9 @@ export default {
   min-width: 30px !important;
   min-height: 30px !important;
 }
-.theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
-    border-radius: 2px;
-    background: #f3f3f3;
+.theme--light.v-text-field--solo > .v-input__control > .v-input__slot {
+  border-radius: 2px;
+  background: #f3f3f3;
 }
 @media (max-width: 600px) {
   .responsive-item {
