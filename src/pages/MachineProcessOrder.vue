@@ -560,6 +560,7 @@ export default {
     async GetTProcessList() {
       this.loadingDialog = true;
       this.itemTransactionTProcess = [];
+      this.rawData = []
       this.flagGetTProcess = false;
       let pProcessDate = {
         startDate: this.formDate,
