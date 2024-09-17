@@ -14,6 +14,7 @@ export default {
 },
 formatDateFormat(val){
   if(val == undefined) return ""
+  if(val.length == 0) return ""
   return `${val.substring(6,8)}/${val.substring(4,6)}/${val.substring(0,4)} ${val.substring(8)}`
 },
   async alertDialog(

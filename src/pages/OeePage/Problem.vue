@@ -177,6 +177,7 @@ export default {
       editMode: false,
       editId: 0,
       editItem: {},
+     
     };
   },
   computed: {

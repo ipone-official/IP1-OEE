@@ -1,18 +1,6 @@
 <template>
   <v-container fluid grid-list-xs>
     <v-layout justify-end>
-      <v-flex xs12 sm4 md4 v-if="DateDisibled">
-        <v-text-field
-          v-model="search"
-          flat
-          label="Search"
-          prepend-inner-icon="search"
-          solo
-          box
-          hide-details
-          clearable
-        ></v-text-field>
-      </v-flex>
       <v-tooltip top color="teal">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -32,7 +20,7 @@
       </v-tooltip>
     </v-layout>
     <v-layout row wrap>
-      <v-flex xs12 sm3 md2>
+      <v-flex xs9 sm3 md2>
         <calendar
           :value.sync="formDate"
           label="Start Date"
@@ -41,7 +29,7 @@
         />
       </v-flex>
       <div style="margin-left: 3rem; margin-top: 1rem; font-weight: bold">TO</div>
-      <v-flex xs12 sm3 md2>
+      <v-flex xs9 sm3 md2>
         <calendar
           :value.sync="toDate"
           label="Current Date"
@@ -87,7 +75,54 @@
         </v-tooltip>
       </v-flex>
     </v-layout>
+
+    <v-layout row wrap>
+      <v-flex xs12 sm5 md4 v-if="DateDisibled">
+        <v-text-field
+          v-model="search"
+          flat
+          label="Search"
+          prepend-inner-icon="search"
+          solo
+          dense
+          hide-details
+          clearable
+        ></v-text-field>
+      </v-flex>
+      <v-spacer></v-spacer>
+      <v-flex xs12 sm5 md3 v-if="DateDisibled">
+        <v-autocomplete
+          solo
+          v-model="mFilterProcess"
+          prepend-icon=" "
+          :items="lineProcessItem"
+          item-value="key"
+          item-text="text"
+          dense
+          label="Line Process"
+          return-object
+          hide-details
+          multiple
+        ></v-autocomplete>
+      </v-flex>
+      <v-flex xs12 sm5 md3 v-if="DateDisibled">
+        <v-autocomplete
+          solo
+          v-model="mFilterStatus"
+          prepend-icon=" "
+          :items="StatusItem"
+          item-value="key"
+          item-text="text"
+          dense
+          label="Status"
+          return-object
+          hide-details
+          multiple
+        ></v-autocomplete>
+      </v-flex>
+    </v-layout>
     <v-toolbar
+      style="margin-top: 0.5rem"
       xs12
       sm8
       color="#f8c849"
@@ -98,11 +133,12 @@
       <v-layout justify-center style="font-size: larger"> no data available </v-layout>
     </v-toolbar>
     <v-data-table
+      style="margin-top: 0.5rem"
       v-if="itemTransactionTProcess.length > 0"
       :headers="headersTProcess"
       :items="itemTransactionTProcess"
       item-key="processID"
-       :search="search"
+      :search="search"
       :pagination.sync="pagination"
       :rows-per-page-items="rowsPerPageItem"
     >
@@ -122,7 +158,7 @@
           <td class="text-xs-left">
             {{ props.item.materialDesc }}
           </td>
-          <td class="text-xs-left">
+          <!-- <td class="text-xs-left">
             {{ props.item.materialColor }}
           </td>
           <td class="text-xs-left">
@@ -130,7 +166,7 @@
           </td>
           <td class="text-xs-left">
             {{ props.item.materialCategory }}
-          </td>
+          </td> -->
           <td class="text-xs-left">
             {{ props.item.filmDescription }}
           </td>
@@ -203,8 +239,8 @@
           </v-tooltip>
         </v-card-title>
         <div style="margin-top: -1.5rem; padding: 1rem">
-          <v-layout style="align-items: baseline;">
-            <v-chip color="primary" text-color="white" class="mb-2" > Process </v-chip>
+          <v-layout style="align-items: baseline">
+            <v-chip color="primary" text-color="white" class="mb-2"> Process </v-chip>
             <v-spacer></v-spacer>
             <v-tooltip top color="teal">
               <template v-slot:activator="{ on, attrs }">
@@ -264,14 +300,24 @@
               ></v-autocomplete>
             </v-flex>
             <v-spacer></v-spacer>
-            <v-flex xs12 sm3 md3 >
-        <v-text-field
-          v-model="searchMaterial"
-          label="Search Material & Production Order"
-          prepend-icon="search"
-          clearable
-        ></v-text-field>
-      </v-flex>
+            <v-flex xs12 sm3 md3>
+              <!-- <v-text-field
+                v-model="searchMaterial"
+                label="Search"
+                prepend-icon="search"
+                clearable
+              ></v-text-field> -->
+              <v-text-field
+                v-model="searchMaterial"
+                flat
+                label="Search"
+                prepend-inner-icon="search"
+                solo
+                dense
+                hide-details
+                clearable
+              ></v-text-field>
+            </v-flex>
           </v-layout>
 
           <v-data-table
@@ -378,7 +424,7 @@ export default {
         { text: "Speed Std.", align: "left", sortable: false, value: "speedStd" },
       ],
       search: "",
-      searchMaterial: '',
+      searchMaterial: "",
       pagination: {
         sortBy: "",
         descending: false,
@@ -409,25 +455,47 @@ export default {
           sortable: false,
           value: "materialDesc",
         },
-        {
-          text: "Color",
-          align: "left",
-          sortable: false,
-          value: "materialColor",
-        },
-        {
-          text: "Size",
-          align: "left",
-          sortable: false,
-          value: "materialSize",
-        },
-        { text: "Category", align: "left", sortable: false, value: "materialCategory" },
+        // {
+        //   text: "Color",
+        //   align: "left",
+        //   sortable: false,
+        //   value: "materialColor",
+        // },
+        // {
+        //   text: "Size",
+        //   align: "left",
+        //   sortable: false,
+        //   value: "materialSize",
+        // },
+        // { text: "Category", align: "left", sortable: false, value: "materialCategory" },
         { text: "Film", align: "left", sortable: false, value: "filmDescription" },
         { text: "Check-In", align: "left", sortable: false, value: "checkIn" },
         { text: "Check-Out", align: "left", sortable: false, value: "checkOut" },
         { text: "Status", align: "left", sortable: false, value: "status" },
         { text: "Action", align: "left", sortable: false, value: "Action" },
       ],
+      mFilterProcess: [],
+      lineProcessItem: [],
+      mFilterStatus: [],
+      StatusItem: [
+        {
+          key: 1,
+          text: "InProcess",
+        },
+        {
+          key: 2,
+          text: "WaitConfirm",
+        },
+        {
+          key: 3,
+          text: "WaitApproved",
+        },
+        {
+          key: 4,
+          text: "Completed",
+        },
+      ],
+      rawData: [],
     };
   },
   computed: {
@@ -445,6 +513,14 @@ export default {
     flagGetTProcess(val) {
       if (val && this.DateDisibled) return this.GetTProcessList();
     },
+    mFilterProcess() {
+      if (this.lineProcessItem.length == 0) return "unknow";
+      this.changeFilter();
+    },
+    mFilterStatus() {
+      if (this.StatusItem.length == 0) return "unknow";
+      this.changeFilter();
+    },
   },
   created() {
     this.getLineProcess();
@@ -452,6 +528,36 @@ export default {
     this.GetMaterialMaster();
   },
   methods: {
+    changeFilter() {
+      this.itemTransactionTProcess = [];
+
+      let processArray = this.mFilterProcess.map((item) => item.text);
+      let statusArray = this.mFilterStatus.map((item) => item.text);
+      if (this.mFilterProcess.length == 0 && this.mFilterStatus.length == 0) {
+        this.itemTransactionTProcess = this.rawData;
+      } else if (this.mFilterProcess.length != 0 && this.mFilterStatus.length == 0) {
+        this.rawData.forEach((item) => {
+          if (processArray.includes(item.lineProcessName)) {
+            this.itemTransactionTProcess.push(item);
+          }
+        });
+      } else if (this.mFilterProcess.length == 0 && this.mFilterStatus.length != 0) {
+        this.rawData.forEach((item) => {
+          if (statusArray.includes(item.status)) {
+            this.itemTransactionTProcess.push(item);
+          }
+        });
+      } else if (this.mFilterProcess.length != 0 && this.mFilterStatus.length != 0) {
+        this.rawData.forEach((item) => {
+          if (
+            processArray.includes(item.lineProcessName) &&
+            statusArray.includes(item.status)
+          ) {
+            this.itemTransactionTProcess.push(item);
+          }
+        });
+      }
+    },
     disableCheckbox(materialCode) {
       return (
         this.selected.length >= 1 && !this.selected[0].materialCode.includes(materialCode)
@@ -473,7 +579,7 @@ export default {
         this.loadingDialog = false;
         this.DateDisibled = true;
         response.data.results.forEach((element, index) =>
-          this.itemTransactionTProcess.push({
+          this.rawData.push({
             processID: element.processID,
             lineProcessID: element.lineProcessID,
             lineProcessName: element.lineProcessName,
@@ -505,6 +611,16 @@ export default {
             status: element.status,
           })
         );
+        this.itemTransactionTProcess = this.rawData;
+        this.lineProcessItem = [];
+        const distinctLineProcess = [
+          ...new Set(this.rawData.map((item) => item.lineProcessName)),
+        ];
+        const lineProcessItems = distinctLineProcess.map((process, index) => ({
+          key: (index + 1).toString(),
+          text: process,
+        }));
+        this.lineProcessItem = this.lineProcessItem.concat(lineProcessItems);
       } else {
         this.loadingDialog = false;
         Swal.fire({
@@ -563,7 +679,7 @@ export default {
         material_Code: this.selected[0].materialCode,
         filmID: this.mFilm.filmID,
         checkIN: this.CheckInDate,
-        status: "CheckIN",
+        status: "InProcess",
       };
       const response = await axios.post(
         `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
@@ -592,7 +708,9 @@ export default {
     async getLineProcess() {
       this.loadingDialog = true;
       this.itemLineProcess = [];
-      const response = await axios.get(`${this.EndpointPortal}/ApiOEE/OEE/v1/GetLineProcess`);
+      const response = await axios.get(
+        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetLineProcess`
+      );
       if (response.data.status == 200) {
         this.loadingDialog = false;
         response.data.results.forEach((element, index) =>
@@ -715,13 +833,6 @@ export default {
 .custom-autocomplete .v-input__slot {
   color: red;
 }
-/* .inner-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 5px;
-  background-color: #f9f9f9;
-  height: 3.3rem;
-} */
 .theme--light.v-table thead th {
   background-image: -webkit-gradient(
     linear,
@@ -769,6 +880,10 @@ export default {
   height: 30px !important;
   min-width: 30px !important;
   min-height: 30px !important;
+}
+.theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+    border-radius: 2px;
+    background: #ececec;
 }
 @media (max-width: 600px) {
   .responsive-item {
