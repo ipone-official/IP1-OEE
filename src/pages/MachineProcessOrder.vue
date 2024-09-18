@@ -158,15 +158,6 @@
           <td class="text-xs-left">
             {{ props.item.materialDesc }}
           </td>
-          <!-- <td class="text-xs-left">
-            {{ props.item.materialColor }}
-          </td>
-          <td class="text-xs-left">
-            {{ props.item.materialSize }}
-          </td>
-          <td class="text-xs-left">
-            {{ props.item.materialCategory }}
-          </td> -->
           <td class="text-xs-left">
             {{ props.item.filmDescription }}
           </td>
@@ -193,7 +184,13 @@
               >mdi-washing-machine-alert</v-icon
             >
           </v-btn>
-          <v-btn color="red" fab small class="extra-small-btn" @click="">
+          <v-btn
+            color="red"
+            fab
+            small
+            class="extra-small-btn"
+            @click="UpdateCheckOut(props.item)"
+          >
             <v-icon style="margin-top: 0.1rem; color: white">mdi-door-open</v-icon>
           </v-btn>
         </tr>
@@ -314,8 +311,33 @@
               ></v-text-field>
             </v-flex>
           </v-layout>
+          <v-data-table v-if="selectedOption == 'productionOrder'"
+            :headers="headers"
+            :items="itemProductionOrder"
+            :search="searchMaterial"
+            v-model="selected"
+            item-key="productionOrderNumber"
+            :pagination.sync="pagination"
+            :rows-per-page-items="rowsPerPageItem"
+          >
+            <template v-slot:items="props">
+              <td style="background: #dbdbdb !important">
+                <v-checkbox
+                  v-model="props.selected"
+                  :disabled="disableCheckbox(props.item.productionOrderNumber)"
+                  primary
+                  hide-details
+                ></v-checkbox>
+              </td>
+              <td class="text-xs-left">{{ props.item.productionOrderNumber }}</td>
+              <td class="text-xs-left">{{ props.item.materialNumber }}</td>
+              <td class="text-xs-left">{{ props.item.materialDescription }}</td>
+              <td class="text-xs-left">{{ functions.numberWithCommas(props.item.baseQuantity) }}</td>
+            </template>
+            <template v-slot:no-data> </template>
+          </v-data-table>
 
-          <v-data-table
+          <v-data-table v-if="selectedOption == 'materialMaster'"
             :headers="headers"
             :items="itemMaterialMaster"
             :search="searchMaterial"
@@ -338,7 +360,6 @@
               <td class="text-xs-left">{{ props.item.displayHg1_3 }}</td>
               <td class="text-xs-left">{{ props.item.hgLv5 }}</td>
               <td>{{ props.item.hgDescLv7 }}</td>
-              <td class="text-xs-left">{{ props.item.speedStd }}</td>
             </template>
             <template v-slot:no-data> </template>
           </v-data-table>
@@ -396,35 +417,32 @@ export default {
       mFilm: "",
       selectedOption: "productionOrder",
       itemMaterialMaster: [],
-      headers: [
-        { text: "", align: "left", sortable: false, value: "materialCode" },
-        { text: "Material Code", align: "left", sortable: false, value: "materialCode" },
-        {
-          text: "Material Description",
-          align: "left",
-          sortable: false,
-          value: "materialDescriptionTh",
-        },
-        {
-          text: "Hg",
-          align: "left",
-          sortable: false,
-          value: "displayHg1_3",
-        },
-        {
-          text: "HgLv5",
-          align: "left",
-          sortable: false,
-          value: "hgLv5",
-        },
-        {
-          text: "HgLv7",
-          align: "left",
-          sortable: false,
-          value: "hgDescLv7",
-        },
-        { text: "Speed Std.", align: "left", sortable: false, value: "speedStd" },
-      ],
+      headers: [ { text: "", align: "left", sortable: false, value: "productionOrderNumber" },
+          {
+            text: "Prod. Order",
+            align: "left",
+            sortable: false,
+            value: "productionOrderNumber",
+          },
+          {
+            text: "Material No.",
+            align: "left",
+            sortable: false,
+            value: "materialNumber",
+          },
+          {
+            text: "Material Description",
+            align: "left",
+            sortable: false,
+            value: "materialDescription",
+          },
+          {
+            text: "Target Qty.",
+            align: "left",
+            sortable: false,
+            value: "baseQuantity",
+          },],
+      itemProductionOrder: [],
       search: "",
       searchMaterial: "",
       pagination: {
@@ -457,19 +475,6 @@ export default {
           sortable: false,
           value: "materialDesc",
         },
-        // {
-        //   text: "Color",
-        //   align: "left",
-        //   sortable: false,
-        //   value: "materialColor",
-        // },
-        // {
-        //   text: "Size",
-        //   align: "left",
-        //   sortable: false,
-        //   value: "materialSize",
-        // },
-        // { text: "Category", align: "left", sortable: false, value: "materialCategory" },
         { text: "Film", align: "left", sortable: false, value: "filmDescription" },
         { text: "Check-In", align: "left", sortable: false, value: "checkIn" },
         { text: "Check-Out", align: "left", sortable: false, value: "checkOut" },
@@ -523,11 +528,78 @@ export default {
       if (this.StatusItem.length == 0) return "unknow";
       this.changeFilter();
     },
+    selectedOption(val) {
+      this.selected = []
+      if (val == "productionOrder") {
+        this.headers = [
+          { text: "", align: "left", sortable: false, value: "productionOrderNumber" },
+          {
+            text: "Prod. Order",
+            align: "left",
+            sortable: false,
+            value: "productionOrderNumber",
+          },
+          {
+            text: "Material No.",
+            align: "left",
+            sortable: false,
+            value: "materialNumber",
+          },
+          {
+            text: "Material Description",
+            align: "left",
+            sortable: false,
+            value: "materialDescription",
+          },
+          {
+            text: "Target Qty.",
+            align: "left",
+            sortable: false,
+            value: "baseQuantity",
+          },
+        ];
+      } else if (val == "materialMaster") {
+        this.headers = [
+          { text: "", align: "left", sortable: false, value: "materialCode" },
+          {
+            text: "Material Code",
+            align: "left",
+            sortable: false,
+            value: "materialCode",
+          },
+          {
+            text: "Material Description",
+            align: "left",
+            sortable: false,
+            value: "materialDescriptionTh",
+          },
+          {
+            text: "Hg",
+            align: "left",
+            sortable: false,
+            value: "displayHg1_3",
+          },
+          {
+            text: "HgLv5",
+            align: "left",
+            sortable: false,
+            value: "hgLv5",
+          },
+          {
+            text: "HgLv7",
+            align: "left",
+            sortable: false,
+            value: "hgDescLv7",
+          },
+        ];
+      }
+    },
   },
   created() {
     this.getLineProcess();
     this.getFilm();
     this.GetMaterialMaster();
+    this.GetProductionOrder();
   },
   methods: {
     changeFilter() {
@@ -578,7 +650,6 @@ export default {
         `${this.EndpointPortal}/ApiOEE/OEE/v1/GetTProcessList`,
         pProcessDate
       );
-      console.log(response, "response");
       if (response.data.status == 200) {
         this.loadingDialog = false;
         this.DateDisibled = true;
@@ -679,10 +750,10 @@ export default {
         this.showResult = true;
         return (this.msgResult = "line process can't be null.");
       }
-      // if(this.selectedOption == "productionOrder"){
-      //   this.showResult = true;
-      //   return (this.msgResult = "Production Order can't be null.");
-      // }
+      if(this.selected.length == 0){
+        this.showResult = true;
+        return (this.msgResult = "Material can't be null.");
+      }
       Swal.fire({
         html: `Do you want insert to database ?`,
         icon: "warning",
@@ -699,7 +770,7 @@ export default {
             processID: "",
             lineProcessID: this.mLineProcess.lineProcessID,
             userID: empId,
-            prodOrderID: "123",
+            prodOrderID: this.selectedOption == 'productionOrder' ? this.selected[0].productionOrderNumber: '',
             material_Code: this.selected[0].materialCode,
             filmID: this.mFilm.filmID,
             checkINOut: this.CheckInDate,
@@ -788,10 +859,38 @@ export default {
             materialCode: element.materialCode,
             materialDescriptionTh: element.materialDescriptionTh,
             materialDescriptionEn: element.materialDescriptionEn,
-            speedStd: element.speedStd,
             displayHg1_3: `${element.hgLv1} ${
               element.hgLv3 == "" ? "" : `- ${element.hgLv3}`
             }`,
+          })
+        );
+      } else {
+        this.loadingDialog = false;
+        Swal.fire({
+          text: `Internal Server Error`,
+          icon: "error",
+          showCancelButton: false,
+          allowOutsideClick: false,
+          confirmButtonColor: "#0c80c4",
+          cancelButtonColor: "#C0C0C0",
+          confirmButtonText: "Ok",
+        });
+      }
+    },
+    async GetProductionOrder() {
+      this.loadingDialog = true;
+      this.itemProductionOrder = [];
+      const response = await axios.get(
+        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProductionOrder`
+      );
+      if (response.data.status == 200) {
+        this.loadingDialog = false;
+        response.data.results.forEach((element, index) =>
+          this.itemProductionOrder.push({
+            productionOrderNumber: element.productionOrderNumber,
+            materialNumber: element.materialNumber,
+            materialDescription: element.materialDescription,
+            baseQuantity: element.baseQuantity,
           })
         );
       } else {
@@ -858,6 +957,64 @@ export default {
           });
         }
       }
+    },
+    UpdateCheckOut(val) {
+      Swal.fire({
+        html: `Do you want Check-Out ?`,
+        icon: "warning",
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: "#0c80c4",
+        cancelButtonColor: "#C0C0C0",
+        confirmButtonText: "OK",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          this.loadingDialog = true;
+          let { empId } = this.infoLogin;
+          const init = {
+            processID: val.processID,
+            lineProcessID: val.lineProcessID,
+            userID: empId,
+            prodOrderID: "",
+            material_Code: val.materialCode,
+            filmID: val.filmID,
+            checkINOut: functions.formatDate(),
+            status: "WaitConfirm",
+          };
+          const response = await axios.post(
+            `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
+            init
+          );
+          if (response.data.status == 200) {
+            this.loadingDialog = true;
+            Swal.fire({
+              html: `Successfully`,
+              icon: "success",
+              showCancelButton: false,
+              allowOutsideClick: false,
+              confirmButtonColor: "#0c80c4",
+              cancelButtonColor: "#C0C0C0",
+              confirmButtonText: "OK",
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                this.loadingDialog = false;
+                this.flagGetTProcess = true;
+              }
+            });
+          } else {
+            this.loadingDialog = false;
+            Swal.fire({
+              text: `Internal Server Error`,
+              icon: "error",
+              showCancelButton: false,
+              allowOutsideClick: false,
+              confirmButtonColor: "#0c80c4",
+              cancelButtonColor: "#C0C0C0",
+              confirmButtonText: "Ok",
+            });
+          }
+        }
+      });
     },
   },
 };
