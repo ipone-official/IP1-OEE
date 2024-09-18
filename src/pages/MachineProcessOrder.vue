@@ -852,7 +852,7 @@ export default {
             init
           );
           if (response.data.status == 200) {
-            this.loadingDialog = true;
+            this.loadingDialog = false;
             Swal.fire({
               html: `Successfully`,
               icon: "success",
@@ -1066,7 +1066,6 @@ export default {
             init
           );
           if (response.data.status == 200) {
-            this.loadingDialog = true;
             Swal.fire({
               html: `Successfully`,
               icon: "success",
