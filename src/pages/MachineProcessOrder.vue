@@ -8,7 +8,7 @@
             small
             color="#007fc4"
             dark
-            @click="(dialogTransactionOee = true), (CheckInDate = functions.formatDate())"
+            @click="openDialogTranOee"
             class="ma-2 small-export-button"
             v-bind="attrs"
             v-on="on"
@@ -432,22 +432,40 @@ export default {
           value: "productionOrderNumber",
         },
         {
-          text: "Material No.",
+          text: "Material Code",
           align: "left",
           sortable: false,
-          value: "materialNumber",
+          value: "materialCode",
         },
         {
           text: "Material Description",
           align: "left",
           sortable: false,
-          value: "materialDescription",
+          value: "materialDescriptionTh",
         },
         {
-          text: "Target Qty.",
+          text: "Hg",
           align: "left",
           sortable: false,
-          value: "baseQuantity",
+          value: "displayHg1_3",
+        },
+        {
+          text: "HgLv5",
+          align: "left",
+          sortable: false,
+          value: "hgLv5",
+        },
+        {
+          text: "HgLv7",
+          align: "left",
+          sortable: false,
+          value: "hgDescLv7",
+        },
+        {
+          text: "Speed Std.",
+          align: "left",
+          sortable: false,
+          value: "speedStd",
         },
       ],
       itemProductionOrder: [],
@@ -536,19 +554,22 @@ export default {
       if (this.StatusItem.length == 0) return "unknow";
       this.changeFilter();
     },
-    mLineProcess(val){
-      
-        if(this.selectedOption  == "productionOrder" || val.length == 0) {
-            this.itemMaterialMaster = []
-          return "unknow";
-        }
-        
-        this.GetMaterialMaster(val.lineProcessID)
+    mLineProcess(val) {
+      if (val.length == 0) {
+        this.itemMaterialMaster = [];
+        this.itemProductionOrder = [];
+        return "unknow";
+      }
+      if (this.selectedOption == "productionOrder") {
+        this.GetProductionOrder(val.lineProcessID);
+      } else {
+        this.GetMaterialMaster(val.lineProcessID);
+      }
     },
     selectedOption(val) {
       this.selected = [];
-      this.mLineProcess = ''
-      this.mFilm = ''
+      this.mLineProcess = "";
+      this.mFilm = "";
       if (val == "productionOrder") {
         this.headers = [
           { text: "", align: "left", sortable: false, value: "productionOrderNumber" },
@@ -641,7 +662,6 @@ export default {
   created() {
     this.getLineProcess();
     this.getFilm();
-    this.GetProductionOrder();
   },
   methods: {
     changeFilter() {
@@ -929,11 +949,11 @@ export default {
         });
       }
     },
-    async GetProductionOrder() {
+    async GetProductionOrder(vlineProcessID) {
       this.loadingDialog = true;
       this.itemProductionOrder = [];
       const response = await axios.get(
-        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProductionOrder`
+        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProductionOrder?lineProcessID=${vlineProcessID}`
       );
       if (response.data.status == 200) {
         this.loadingDialog = false;
@@ -1075,6 +1095,15 @@ export default {
           }
         }
       });
+    },
+    openDialogTranOee() {
+      this.dialogTransactionOee = true;
+      this.CheckInDate = functions.formatDate();
+      this.selected = [];
+      this.mLineProcess = "";
+      this.mFilm = "";
+      this.itemMaterialMaster = [];
+      this.itemProductionOrder = [];
     },
   },
 };
