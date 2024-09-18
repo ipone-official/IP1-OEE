@@ -331,11 +331,12 @@
                 ></v-checkbox>
               </td>
               <td class="text-xs-left">{{ props.item.productionOrderNumber }}</td>
-              <td class="text-xs-left">{{ props.item.materialNumber }}</td>
-              <td class="text-xs-left">{{ props.item.materialDescription }}</td>
-              <td class="text-xs-left">
-                {{ functions.numberWithCommas(props.item.baseQuantity) }}
-              </td>
+              <td class="text-xs-left">{{ props.item.materialCode }}</td>
+              <td class="text-xs-left">{{ props.item.materialDescriptionTh }}</td>
+              <td class="text-xs-left">{{ props.item.displayHg1_3 }}</td>
+              <td class="text-xs-left">{{ props.item.hgLv5 }}</td>
+              <td class="text-xs-left">{{ props.item.hgDescLv7 }}</td>
+              <td class="text-xs-left">{{ props.item.speedStd }}</td>
             </template>
             <template v-slot:no-data> </template>
           </v-data-table>
@@ -363,7 +364,8 @@
               <td class="text-xs-left">{{ props.item.materialDescriptionTh }}</td>
               <td class="text-xs-left">{{ props.item.displayHg1_3 }}</td>
               <td class="text-xs-left">{{ props.item.hgLv5 }}</td>
-              <td>{{ props.item.hgDescLv7 }}</td>
+              <td class="text-xs-left">{{ props.item.hgDescLv7 }}</td>
+              <td class="text-xs-left">{{ props.item.speedStd }}</td>
             </template>
             <template v-slot:no-data> </template>
           </v-data-table>
@@ -534,8 +536,19 @@ export default {
       if (this.StatusItem.length == 0) return "unknow";
       this.changeFilter();
     },
+    mLineProcess(val){
+      
+        if(this.selectedOption  == "productionOrder" || val.length == 0) {
+            this.itemMaterialMaster = []
+          return "unknow";
+        }
+        
+        this.GetMaterialMaster(val.lineProcessID)
+    },
     selectedOption(val) {
       this.selected = [];
+      this.mLineProcess = ''
+      this.mFilm = ''
       if (val == "productionOrder") {
         this.headers = [
           { text: "", align: "left", sortable: false, value: "productionOrderNumber" },
@@ -546,22 +559,40 @@ export default {
             value: "productionOrderNumber",
           },
           {
-            text: "Material No.",
+            text: "Material Code",
             align: "left",
             sortable: false,
-            value: "materialNumber",
+            value: "materialCode",
           },
           {
             text: "Material Description",
             align: "left",
             sortable: false,
-            value: "materialDescription",
+            value: "materialDescriptionTh",
           },
           {
-            text: "Target Qty.",
+            text: "Hg",
             align: "left",
             sortable: false,
-            value: "baseQuantity",
+            value: "displayHg1_3",
+          },
+          {
+            text: "HgLv5",
+            align: "left",
+            sortable: false,
+            value: "hgLv5",
+          },
+          {
+            text: "HgLv7",
+            align: "left",
+            sortable: false,
+            value: "hgDescLv7",
+          },
+          {
+            text: "Speed Std.",
+            align: "left",
+            sortable: false,
+            value: "speedStd",
           },
         ];
       } else if (val == "materialMaster") {
@@ -597,6 +628,12 @@ export default {
             sortable: false,
             value: "hgDescLv7",
           },
+          {
+            text: "Speed Std.",
+            align: "left",
+            sortable: false,
+            value: "speedStd",
+          },
         ];
       }
     },
@@ -604,7 +641,6 @@ export default {
   created() {
     this.getLineProcess();
     this.getFilm();
-    this.GetMaterialMaster();
     this.GetProductionOrder();
   },
   methods: {
@@ -857,11 +893,11 @@ export default {
         });
       }
     },
-    async GetMaterialMaster() {
+    async GetMaterialMaster(vlineProcessID) {
       this.loadingDialog = true;
       this.itemMaterialMaster = [];
       const response = await axios.get(
-        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetMaterialMaster`
+        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetMaterialMaster?lineProcessID=${vlineProcessID}`
       );
       if (response.data.status == 200) {
         this.loadingDialog = false;
@@ -877,6 +913,7 @@ export default {
             displayHg1_3: `${element.hgLv1} ${
               element.hgLv3 == "" ? "" : `- ${element.hgLv3}`
             }`,
+            speedStd: element.speedStd,
           })
         );
       } else {
@@ -903,9 +940,17 @@ export default {
         response.data.results.forEach((element, index) =>
           this.itemProductionOrder.push({
             productionOrderNumber: element.productionOrderNumber,
-            materialNumber: element.materialNumber,
-            materialDescription: element.materialDescription,
-            baseQuantity: element.baseQuantity,
+            hgLv1: element.hgLv1,
+            hgLv3: element.hgLv3,
+            hgLv5: element.hgLv5,
+            hgDescLv7: element.hgDescLv7,
+            materialCode: element.materialCode,
+            materialDescriptionTh: element.materialDescriptionTh,
+            materialDescriptionEn: element.materialDescriptionEn,
+            displayHg1_3: `${element.hgLv1} ${
+              element.hgLv3 == "" ? "" : `- ${element.hgLv3}`
+            }`,
+            speedStd: element.speedStd,
           })
         );
       } else {
