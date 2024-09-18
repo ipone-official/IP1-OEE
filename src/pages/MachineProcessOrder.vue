@@ -1170,7 +1170,55 @@ export default {
       this.itemProductionOrder = [];
     },
     DeleteProcessList(val){
-
+      Swal.fire({
+        html: `Do you want delete process no. "<strong>" ${val.processID}</strong>" ?`,
+        icon: "warning",
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: "#0c80c4",
+        cancelButtonColor: "#C0C0C0",
+        confirmButtonText: "OK",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          this.loadingDialog = true;
+          let { empId } = this.infoLogin;
+          const init = {
+            processID: val.processID,
+            userID: empId
+          };
+          const response = await axios.post(
+            `${this.EndpointPortal}/ApiOEE/OEE/v1/DeleteProcessList`,
+            init
+          );
+          if (response.data.status == 200) {
+            Swal.fire({
+              html: `Successfully`,
+              icon: "success",
+              showCancelButton: false,
+              allowOutsideClick: false,
+              confirmButtonColor: "#0c80c4",
+              cancelButtonColor: "#C0C0C0",
+              confirmButtonText: "OK",
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                this.loadingDialog = false;
+                this.flagGetTProcess = true;
+              }
+            });
+          } else {
+            this.loadingDialog = false;
+            Swal.fire({
+              text: `Internal Server Error`,
+              icon: "error",
+              showCancelButton: false,
+              allowOutsideClick: false,
+              confirmButtonColor: "#0c80c4",
+              cancelButtonColor: "#C0C0C0",
+              confirmButtonText: "Ok",
+            });
+          }
+        }
+      });
     }
   },
 };

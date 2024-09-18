@@ -249,7 +249,7 @@ export default {
   async  UpdateProcessStatus(val) {
     const status = val == 'Completed'? 'Approve': 'Comfirm'
     Swal.fire({
-        html: `Do you want ${status} ?`,
+        html: `Do you want "<strong>${status}</strong>" ?`,
         icon: "warning",
         showCancelButton: true,
         allowOutsideClick: false,
