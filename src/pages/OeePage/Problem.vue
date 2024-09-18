@@ -1,7 +1,7 @@
 <template>
   <v-container fluid grid-list-xs>
     <v-layout row wrap>
-      <v-flex xs12 sm5 md4>
+      <v-flex xs12 sm5 md4 v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit"> 
         <v-autocomplete
           placeholder="  Please select"
           v-model="mMachine"
@@ -17,18 +17,18 @@
         ></v-autocomplete>
       </v-flex>
 
-      <v-flex xs12 sm4 md3 ml-4>
+      <v-flex xs12 sm4 md3 ml-4 v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit">
         <v-radio-group v-model="selectedPlanStatus" row>
           <v-radio label="Plan" value="Plan"></v-radio>
           <v-radio label="UnPlan" value="UnPlan"></v-radio>
         </v-radio-group>
       </v-flex>
       <v-spacer></v-spacer>
-      <v-flex xs12 sm4 md3 v-if="selectedPlanStatus == 'Plan'">
+      <v-flex xs12 sm4 md3 v-if="selectedPlanStatus == 'Plan'" >
         <v-checkbox v-model="UnControl" label="UnControl"></v-checkbox>
       </v-flex>
     </v-layout>
-    <v-layout row wrap>
+    <v-layout row wrap v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit">
       <v-flex xs12 sm5 md4>
         <v-autocomplete
           placeholder="  Please select"
@@ -90,6 +90,7 @@
           <td class="text-xs-left">
             {{ props.item.downtime }}
           </td>
+          <v-layout v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit">
           <v-btn
             color="#f8c849"
             fab
@@ -109,6 +110,17 @@
           >
             <v-icon style="margin-top: 0.1rem; color: white">mdi-delete</v-icon>
           </v-btn>
+          </v-layout>
+          <v-layout v-else>
+          <v-btn
+            color="green"
+            fab
+            small
+            class="extra-small-btn"
+          >
+            <v-icon style="margin-top: 0.1rem; color: white">mdi-check</v-icon>
+          </v-btn>
+        </v-layout>
         </tr>
       </template>
     </v-data-table>

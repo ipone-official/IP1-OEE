@@ -185,13 +185,30 @@
             >
           </v-btn>
           <v-btn
-            color="red"
+            v-if="props.item.status == 'InProcess'"
+            color="#f8c849"
             fab
             small
             class="extra-small-btn"
             @click="UpdateCheckOut(props.item)"
           >
             <v-icon style="margin-top: 0.1rem; color: white">mdi-door-open</v-icon>
+          </v-btn>
+          <v-btn
+            v-if="
+              (['OPERATOR'].some((i) => infoLogin.group.includes(i)) &&
+                props.item.status == 'InProcess') ||
+              ['ADMIN'].some((i) => infoLogin.group.includes(i)) ||
+              (['SUPERVISOR', 'MANAGER'].some((i) => infoLogin.group.includes(i)) &&
+                props.item.status != 'Completed')
+            "
+            color="red"
+            fab
+            small
+            class="extra-small-btn"
+            @click="DeleteProcessList(props.item)"
+          >
+            <v-icon style="margin-top: 0.1rem; color: white">mdi-delete</v-icon>
           </v-btn>
         </tr>
       </template>
@@ -721,39 +738,80 @@ export default {
       if (response.data.status == 200) {
         this.loadingDialog = false;
         this.DateDisibled = true;
-        response.data.results.forEach((element, index) =>
-          this.rawData.push({
-            processID: element.processID,
-            lineProcessID: element.lineProcessID,
-            lineProcessName: element.lineProcessName,
-            userID: element.userID,
-            username: element.username,
-            shift: element.shift,
-            materialCode: element.materialCode,
-            materialDesc: element.materialDesc,
-            materialColor: element.materialColor,
-            materialSize: element.materialSize,
-            materialCategory: element.materialCategory,
-            filmID: element.filmID,
-            filmDescription: element.filmDescription,
-            machineSTD: element.machineSTD,
-            qtyDozen: element.qtyDozen,
-            qtyEA: element.qtyEA,
-            stdCycleTime: element.stdCycleTime,
-            operatingTime: element.operatingTime,
-            workingTime: element.workingTime,
-            workingTimeMin: element.workingTimeMin,
-            machineWorkingTime: element.machineWorkingTime,
-            plannedDowntime: element.plannedDowntime,
-            unplannedDowntime: element.unplannedDowntime,
-            speedLose: element.speedLose,
-            summaryDowntime: element.summaryDowntime,
-            damagePercentage: element.damagePercentage,
-            checkIn: element.checkIn,
-            checkOut: element.checkOut,
-            status: element.status,
-          })
-        );
+        const Role = ["OPERATOR"].some((i) => this.infoLogin.group.includes(i));
+        if (Role) {
+          const dataFilter = response.data.results.filter(
+            (result) => result.userID == this.infoLogin.empId
+          );
+          console.log(dataFilter);
+          dataFilter.forEach((element, index) =>
+            this.rawData.push({
+              processID: element.processID,
+              lineProcessID: element.lineProcessID,
+              lineProcessName: element.lineProcessName,
+              userID: element.userID,
+              username: element.username,
+              shift: element.shift,
+              materialCode: element.materialCode,
+              materialDesc: element.materialDesc,
+              materialColor: element.materialColor,
+              materialSize: element.materialSize,
+              materialCategory: element.materialCategory,
+              filmID: element.filmID,
+              filmDescription: element.filmDescription,
+              machineSTD: element.machineSTD,
+              qtyDozen: element.qtyDozen,
+              qtyEA: element.qtyEA,
+              stdCycleTime: element.stdCycleTime,
+              operatingTime: element.operatingTime,
+              workingTime: element.workingTime,
+              workingTimeMin: element.workingTimeMin,
+              machineWorkingTime: element.machineWorkingTime,
+              plannedDowntime: element.plannedDowntime,
+              unplannedDowntime: element.unplannedDowntime,
+              speedLose: element.speedLose,
+              summaryDowntime: element.summaryDowntime,
+              damagePercentage: element.damagePercentage,
+              checkIn: element.checkIn,
+              checkOut: element.checkOut,
+              status: element.status,
+            })
+          );
+        } else {
+          response.data.results.forEach((element, index) =>
+            this.rawData.push({
+              processID: element.processID,
+              lineProcessID: element.lineProcessID,
+              lineProcessName: element.lineProcessName,
+              userID: element.userID,
+              username: element.username,
+              shift: element.shift,
+              materialCode: element.materialCode,
+              materialDesc: element.materialDesc,
+              materialColor: element.materialColor,
+              materialSize: element.materialSize,
+              materialCategory: element.materialCategory,
+              filmID: element.filmID,
+              filmDescription: element.filmDescription,
+              machineSTD: element.machineSTD,
+              qtyDozen: element.qtyDozen,
+              qtyEA: element.qtyEA,
+              stdCycleTime: element.stdCycleTime,
+              operatingTime: element.operatingTime,
+              workingTime: element.workingTime,
+              workingTimeMin: element.workingTimeMin,
+              machineWorkingTime: element.machineWorkingTime,
+              plannedDowntime: element.plannedDowntime,
+              unplannedDowntime: element.unplannedDowntime,
+              speedLose: element.speedLose,
+              summaryDowntime: element.summaryDowntime,
+              damagePercentage: element.damagePercentage,
+              checkIn: element.checkIn,
+              checkOut: element.checkOut,
+              status: element.status,
+            })
+          );
+        }
         this.itemTransactionTProcess = this.rawData;
         this.lineProcessItem = [];
         const distinctLineProcess = [
@@ -823,7 +881,7 @@ export default {
         return (this.msgResult = "Material can't be null.");
       }
       Swal.fire({
-        html: `Do you want insert to database ?`,
+        html: `Do you want Check-In ?`,
         icon: "warning",
         showCancelButton: true,
         allowOutsideClick: false,
@@ -987,6 +1045,9 @@ export default {
       }
     },
     async SelectProcesList(val) {
+      this.machineDetail.operatorEdit = ["OPERATOR"].some((i) => this.infoLogin.group.includes(i)) && val.status == 'InProcess'
+      this.machineDetail.supAndmanagerEdit = ["SUPERVISOR", 'MANAGER'].some((i) => this.infoLogin.group.includes(i)) && val.status != 'Completed'
+      this.machineDetail.adminEdit = ['ADMIN'].some((i) => this.infoLogin.group.includes(i))
       this.machineDetail.selectTransactionTProcess = val;
       this.machineDetail.machineStd = this.machineDetail.selectTransactionTProcess.machineSTD;
       this.machineDetail.QtyDz = 0;
@@ -1039,6 +1100,10 @@ export default {
       }
     },
     UpdateCheckOut(val) {
+      if (val.qtyDozen == 0) {
+        this.showResult = true;
+        return (this.msgResult = "Qty. (DZ) can't be null. Or `0` ");
+      }
       Swal.fire({
         html: `Do you want Check-Out ?`,
         icon: "warning",
@@ -1104,6 +1169,9 @@ export default {
       this.itemMaterialMaster = [];
       this.itemProductionOrder = [];
     },
+    DeleteProcessList(val){
+
+    }
   },
 };
 </script>

@@ -13,6 +13,9 @@ const getDefaultState = () => ({
   manualPDF: false,
   flagGetTProcess: false,
   machineDetail: {
+    operatorEdit: false,
+    supAndmanagerEdit: false,
+    adminEdit: false,
     dialogTransactionDetail: false,
     selectTransactionTProcess: [],
     machineStd: 0,

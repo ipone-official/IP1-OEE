@@ -1,6 +1,6 @@
 <template>
   <v-container fluid grid-list-xs>
-    <v-layout row wrap>
+    <v-layout row wrap v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit">
       <v-flex xs12 sm5 md3>
         <v-autocomplete
           placeholder="  Please select"
@@ -79,6 +79,7 @@
           <td class="text-xs-left">
             {{ props.item.QtyEA }}
           </td>
+          <v-layout v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit">
           <v-btn
             color="#f8c849"
             fab
@@ -98,6 +99,17 @@
           >
             <v-icon style="margin-top: 0.1rem; color: white">mdi-delete</v-icon>
           </v-btn>
+        </v-layout>
+        <v-layout v-else>
+          <v-btn
+            color="green"
+            fab
+            small
+            class="extra-small-btn"
+          >
+            <v-icon style="margin-top: 0.1rem; color: white">mdi-check</v-icon>
+          </v-btn>
+        </v-layout>
         </tr>
       </template>
     </v-data-table>

@@ -67,7 +67,9 @@
       </v-flex>
       <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
-          <v-card-title class="custom-title small-margin">Beginning Qty. (DZ)</v-card-title>
+          <v-card-title class="custom-title small-margin"
+            >Beginning Qty. (DZ)</v-card-title
+          >
           <v-card-text class="small-margin">{{
             machineDetail.selectTransactionTProcess.qtyDozen
           }}</v-card-text>
@@ -83,7 +85,11 @@
       <v-flex xs12 sm4 md4>
         <v-text-field
           v-model="machineDetail.machineStd"
-          prepend-icon=" "
+          :disabled="
+            !machineDetail.operatorEdit &&
+            !machineDetail.supAndmanagerEdit &&
+            !machineDetail.adminEdit
+          "
           prefix="*"
           style="color: red"
           label="MachineSTD"
@@ -100,7 +106,11 @@
       <v-flex xs12 sm4 md4>
         <v-text-field
           v-model="machineDetail.QtyDz"
-          prepend-icon=" "
+          :disabled="
+            !machineDetail.operatorEdit &&
+            !machineDetail.supAndmanagerEdit &&
+            !machineDetail.adminEdit
+          "
           prefix="*"
           style="color: red"
           label="Qty. (DZ)"
@@ -137,7 +147,17 @@
           }}</v-card-text>
         </v-card>
       </v-flex>
+      <v-flex xs12 sm3 md3 class="pa-0">
+        <v-card flat class="small-card">
+          <v-card-title class="custom-title small-margin">Speed Lose</v-card-title>
+          <v-card-text class="small-margin">{{
+            machineDetail.selectTransactionTProcess.speedLose
+          }}</v-card-text>
+        </v-card>
+      </v-flex>
+    </v-layout>
 
+    <v-layout row wrap class="custom-layout">
       <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Working Time</v-card-title>
@@ -146,9 +166,7 @@
           }}</v-card-text>
         </v-card>
       </v-flex>
-    </v-layout>
 
-    <v-layout row wrap class="custom-layout">
       <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Working Time(Min)</v-card-title>
@@ -171,6 +189,17 @@
 
       <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
+          <v-card-title class="custom-title small-margin">Damage%</v-card-title>
+          <v-card-text class="small-margin">{{
+            machineDetail.selectTransactionTProcess.damagePercentage
+          }}</v-card-text>
+        </v-card>
+      </v-flex>
+    </v-layout>
+
+    <v-layout row wrap class="custom-layout">
+      <v-flex xs12 sm3 md3 class="pa-0">
+        <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Planned Downtime</v-card-title>
           <v-card-text class="small-margin">{{
             machineDetail.selectTransactionTProcess.plannedDowntime
@@ -186,32 +215,12 @@
           }}</v-card-text>
         </v-card>
       </v-flex>
-    </v-layout>
-
-    <v-layout row wrap class="custom-layout">
-      <v-flex xs12 sm3 md3 class="pa-0">
-        <v-card flat class="small-card">
-          <v-card-title class="custom-title small-margin">Speed Lose</v-card-title>
-          <v-card-text class="small-margin">{{
-            machineDetail.selectTransactionTProcess.speedLose
-          }}</v-card-text>
-        </v-card>
-      </v-flex>
 
       <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Summary Downtime</v-card-title>
           <v-card-text class="small-margin">{{
             machineDetail.selectTransactionTProcess.summaryDowntime
-          }}</v-card-text>
-        </v-card>
-      </v-flex>
-
-      <v-flex xs12 sm3 md3 class="pa-0">
-        <v-card flat class="small-card">
-          <v-card-title class="custom-title small-margin">Damage%</v-card-title>
-          <v-card-text class="small-margin">{{
-            machineDetail.selectTransactionTProcess.damagePercentage
           }}</v-card-text>
         </v-card>
       </v-flex>
@@ -224,7 +233,6 @@ import functions from "@/plugins/functions";
 import keyFilter from "@/plugins/keyFilter";
 
 export default {
-
   data() {
     return {
       keyFilter,
@@ -234,11 +242,8 @@ export default {
   computed: {
     ...sync("*"),
   },
-  create(){
-  
-  },
-  methods: {
-  },
+  create() {},
+  methods: {},
 };
 </script>
 
