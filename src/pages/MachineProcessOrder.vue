@@ -311,7 +311,8 @@
               ></v-text-field>
             </v-flex>
           </v-layout>
-          <v-data-table v-if="selectedOption == 'productionOrder'"
+          <v-data-table
+            v-if="selectedOption == 'productionOrder'"
             :headers="headers"
             :items="itemProductionOrder"
             :search="searchMaterial"
@@ -332,12 +333,15 @@
               <td class="text-xs-left">{{ props.item.productionOrderNumber }}</td>
               <td class="text-xs-left">{{ props.item.materialNumber }}</td>
               <td class="text-xs-left">{{ props.item.materialDescription }}</td>
-              <td class="text-xs-left">{{ functions.numberWithCommas(props.item.baseQuantity) }}</td>
+              <td class="text-xs-left">
+                {{ functions.numberWithCommas(props.item.baseQuantity) }}
+              </td>
             </template>
             <template v-slot:no-data> </template>
           </v-data-table>
 
-          <v-data-table v-if="selectedOption == 'materialMaster'"
+          <v-data-table
+            v-if="selectedOption == 'materialMaster'"
             :headers="headers"
             :items="itemMaterialMaster"
             :search="searchMaterial"
@@ -417,31 +421,33 @@ export default {
       mFilm: "",
       selectedOption: "productionOrder",
       itemMaterialMaster: [],
-      headers: [ { text: "", align: "left", sortable: false, value: "productionOrderNumber" },
-          {
-            text: "Prod. Order",
-            align: "left",
-            sortable: false,
-            value: "productionOrderNumber",
-          },
-          {
-            text: "Material No.",
-            align: "left",
-            sortable: false,
-            value: "materialNumber",
-          },
-          {
-            text: "Material Description",
-            align: "left",
-            sortable: false,
-            value: "materialDescription",
-          },
-          {
-            text: "Target Qty.",
-            align: "left",
-            sortable: false,
-            value: "baseQuantity",
-          },],
+      headers: [
+        { text: "", align: "left", sortable: false, value: "productionOrderNumber" },
+        {
+          text: "Prod. Order",
+          align: "left",
+          sortable: false,
+          value: "productionOrderNumber",
+        },
+        {
+          text: "Material No.",
+          align: "left",
+          sortable: false,
+          value: "materialNumber",
+        },
+        {
+          text: "Material Description",
+          align: "left",
+          sortable: false,
+          value: "materialDescription",
+        },
+        {
+          text: "Target Qty.",
+          align: "left",
+          sortable: false,
+          value: "baseQuantity",
+        },
+      ],
       itemProductionOrder: [],
       search: "",
       searchMaterial: "",
@@ -529,7 +535,7 @@ export default {
       this.changeFilter();
     },
     selectedOption(val) {
-      this.selected = []
+      this.selected = [];
       if (val == "productionOrder") {
         this.headers = [
           { text: "", align: "left", sortable: false, value: "productionOrderNumber" },
@@ -633,6 +639,12 @@ export default {
       }
     },
     disableCheckbox(materialCode) {
+      if (this.selectedOption == "productionOrder") {
+        return (
+          this.selected.length >= 1 &&
+          !this.selected[0].productionOrderNumber.includes(materialCode)
+        );
+      }
       return (
         this.selected.length >= 1 && !this.selected[0].materialCode.includes(materialCode)
       );
@@ -750,7 +762,7 @@ export default {
         this.showResult = true;
         return (this.msgResult = "line process can't be null.");
       }
-      if(this.selected.length == 0){
+      if (this.selected.length == 0) {
         this.showResult = true;
         return (this.msgResult = "Material can't be null.");
       }
@@ -770,7 +782,10 @@ export default {
             processID: "",
             lineProcessID: this.mLineProcess.lineProcessID,
             userID: empId,
-            prodOrderID: this.selectedOption == 'productionOrder' ? this.selected[0].productionOrderNumber: '',
+            prodOrderID:
+              this.selectedOption == "productionOrder"
+                ? this.selected[0].productionOrderNumber
+                : "",
             material_Code: this.selected[0].materialCode,
             filmID: this.mFilm.filmID,
             checkINOut: this.CheckInDate,
