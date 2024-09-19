@@ -242,8 +242,6 @@ export default {
   computed: {
     ...sync("*"),
   },
-  create() {},
-  methods: {},
 };
 </script>
 

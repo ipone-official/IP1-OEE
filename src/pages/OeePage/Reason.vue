@@ -148,7 +148,6 @@ export default {
       itemReason: [],
       mReasonDetail: "",
       itemReasonDetail: [],
-      
       pagination: {
         sortBy: "",
         descending: false,
@@ -237,19 +236,19 @@ export default {
     addTransactionDamage(mode) {
       if (isEmpty(this.mReason)) {
         this.showResult = true;
-        return (this.msgResult = "Reason can't be null.");
+        return (this.msgResult = "The reason cannot be left blank.");
       }
       if (isEmpty(this.mReasonDetail)) {
         this.showResult = true;
-        return (this.msgResult = "Description can't be null.");
+        return (this.msgResult = "The description cannot be left blank.");
       }
       if (this.QtyEA == 0) {
         this.showResult = true;
-        return (this.msgResult = "Qty. (EA) can't be null. Or `0`");
+        return (this.msgResult = "Quantity (EA) cannot be blank or set to 0.");
       }
       if (mode) {
         Swal.fire({
-          html: `Do you want edit item no ${this.editId} `,
+          html: `Would you like to edit the item no. ${this.editId} `,
           icon: "warning",
           showCancelButton: true,
           allowOutsideClick: false,
@@ -344,7 +343,7 @@ export default {
     deleteItemDamage(item) {
       const index = this.machineDetail.itemDamageTable.indexOf(item);
       Swal.fire({
-        html: `Do you want delete item no "<strong>${item.itemNo} : ${item.reasonDesc}</strong>" ?`,
+        html: `Would you like to delete the item no. "<strong>${item.itemNo} : ${item.reasonDesc}</strong>" ?`,
         icon: "warning",
         showCancelButton: true,
         allowOutsideClick: false,

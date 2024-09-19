@@ -155,8 +155,6 @@ import { sync } from "vuex-pathify";
 import Swal from "sweetalert2";
 import loading from "@/components/core/Loading";
 import functions from "@/plugins/functions";
-// import { isEmpty } from "lodash";
-
 import Detail from "@/pages/OeePage/Detail.vue";
 import Reason from "@/pages/OeePage/Reason.vue";
 import Problem from "@/pages/OeePage/Problem.vue";
@@ -184,7 +182,7 @@ export default {
   methods: {
     async InsertDetailReasonAndProblem() {
       Swal.fire({
-        html: `Do you want insert to database`,
+        html: `Would you like to save ?`,
         icon: "warning",
         showCancelButton: true,
         allowOutsideClick: false,
@@ -249,7 +247,7 @@ export default {
   async  UpdateProcessStatus(val) {
     const status = val == 'Completed'? 'Approve': 'Comfirm'
     Swal.fire({
-        html: `Do you want "<strong>${status}</strong>" ?`,
+        html: `Would you like to "<strong>${status}</strong>" ?`,
         icon: "warning",
         showCancelButton: true,
         allowOutsideClick: false,

@@ -874,14 +874,14 @@ export default {
     async CreateTProcessList() {
       if (isEmpty(this.mLineProcess)) {
         this.showResult = true;
-        return (this.msgResult = "line process can't be null.");
+        return (this.msgResult = "Line process cannot be left blank.");
       }
       if (this.selected.length == 0) {
         this.showResult = true;
-        return (this.msgResult = "Material can't be null.");
+        return (this.msgResult = "Material cannot be left blank.");
       }
       Swal.fire({
-        html: `Do you want Check-In ?`,
+        html: `Would you like to check in?`,
         icon: "warning",
         showCancelButton: true,
         allowOutsideClick: false,
@@ -994,6 +994,17 @@ export default {
             speedStd: element.speedStd,
           })
         );
+      } else if (response.data.status == 404) {
+        this.loadingDialog = false;
+        Swal.fire({
+          text: `${response.data.message}`,
+          icon: "warning",
+          showCancelButton: false,
+          allowOutsideClick: false,
+          confirmButtonColor: "#0c80c4",
+          cancelButtonColor: "#C0C0C0",
+          confirmButtonText: "Ok",
+        });
       } else {
         this.loadingDialog = false;
         Swal.fire({
@@ -1031,6 +1042,17 @@ export default {
             speedStd: element.speedStd,
           })
         );
+      } else if (response.data.status == 404) {
+        this.loadingDialog = false;
+        Swal.fire({
+          text: `${response.data.message}`,
+          icon: "warning",
+          showCancelButton: false,
+          allowOutsideClick: false,
+          confirmButtonColor: "#0c80c4",
+          cancelButtonColor: "#C0C0C0",
+          confirmButtonText: "Ok",
+        });
       } else {
         this.loadingDialog = false;
         Swal.fire({
@@ -1102,10 +1124,10 @@ export default {
     UpdateCheckOut(val) {
       if (val.qtyDozen == 0) {
         this.showResult = true;
-        return (this.msgResult = "Qty. (DZ) can't be null. Or `0` ");
+        return (this.msgResult = "Quantity (DZ) cannot be blank or set to 0.");
       }
       Swal.fire({
-        html: `Do you want Check-Out ?`,
+        html: `Would you like to check out?`,
         icon: "warning",
         showCancelButton: true,
         allowOutsideClick: false,
@@ -1171,7 +1193,7 @@ export default {
     },
     DeleteProcessList(val){
       Swal.fire({
-        html: `Do you want delete process no. "<strong>" ${val.processID}</strong>" ?`,
+        html: `Would you like to delete the process no. "<strong>" ${val.processID}</strong>" ?`,
         icon: "warning",
         showCancelButton: true,
         allowOutsideClick: false,

@@ -292,19 +292,19 @@ export default {
     addTransactionProblem(mode) {
       if (isEmpty(this.mMachine)) {
         this.showResult = true;
-        return (this.msgResult = "Machine & Problem can't be null.");
+        return (this.msgResult = "Machine and problem fields cannot be left blank.");
       }
       if (isEmpty(this.mProblemDesc)) {
         this.showResult = true;
-        return (this.msgResult = "Problem Description can't be null.");
+        return (this.msgResult = "Problem description cannot be left blank.");
       }
       if (this.mDowntime == 0) {
         this.showResult = true;
-        return (this.msgResult = "Downtime can't be null. Or '0'");
+        return (this.msgResult = "Downtime cannot be blank or set to 0.");
       }
       if (mode) {
         Swal.fire({
-          html: `Do you want edit item no ${this.editId} `,
+          html: `Would you like to edit the item no. ${this.editId} `,
           icon: "warning",
           showCancelButton: true,
           allowOutsideClick: false,
@@ -434,7 +434,7 @@ export default {
     deleteItemProblem(item) {
       const index = this.machineDetail.itemProblemTable.indexOf(item);
       Swal.fire({
-        html: `Do you want delete item no "<strong>${item.itemNo} : ${item.problemDescription}</strong>" ?`,
+        html: `Would you like to delete the item no. "<strong>${item.itemNo} : ${item.problemDescription}</strong>" ?`,
         icon: "warning",
         showCancelButton: true,
         allowOutsideClick: false,

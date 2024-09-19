@@ -15,21 +15,8 @@
           </v-list-tile-action>
           <v-list-tile-title :class="[{'active': selectedIndex === 1}, 'item-title']">{{ $t('Machine Process Order') }}</v-list-tile-title>
         </v-list-tile>
-      <!-- <v-list-group 
-        v-model="menuOpen"
-        prepend-icon="mdi-file-document-check-outline">
-        <v-list-tile slot="activator">
-          <v-list-tile-title class="item-title">{{ $t('Form') }}</v-list-tile-title>
-        </v-list-tile>
-        <v-list-tile @click="changeRoute('MachineProcessOrder', 1)" style="margin-left: 1rem">
-          <v-list-tile-action>
-            <v-icon>mdi-file-sign</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-title :class="[{'active': selectedIndex === 1}, 'item-title']">{{ $t('Payin Form') }}</v-list-tile-title>
-        </v-list-tile>
-      </v-list-group> -->
     </v-list>
-     <PdfPreview v-if="manualPDF" @btncallback="manualPDF=false" />
+     <!-- <PdfPreview v-if="manualPDF" @btncallback="manualPDF=false" />
     <footer class="footer">
     <v-divider></v-divider>
       <v-list>
@@ -40,7 +27,7 @@
           <v-list-tile-title >{{ $t('User Manual') }}</v-list-tile-title>
         </v-list-tile>
       </v-list>
-    </footer>
+    </footer> -->
   </v-navigation-drawer>
 </template>
 
