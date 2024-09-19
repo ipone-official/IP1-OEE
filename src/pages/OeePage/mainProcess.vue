@@ -50,8 +50,15 @@
             <span>close</span>
           </v-tooltip>
         </v-card-title>
-        <v-layout justify-end style="margin-top: -1rem" v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit">
-         
+        <v-layout
+          justify-end
+          style="margin-top: -1rem"
+          v-if="
+            machineDetail.operatorEdit ||
+            machineDetail.supAndmanagerEdit ||
+            machineDetail.adminEdit
+          "
+        >
           <v-tooltip top color="teal">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -59,7 +66,10 @@
                 small
                 color="#007fc4"
                 dark
-                 v-if="(['MANAGER'].some((i) => infoLogin.group.includes(i))) ||['ADMIN'].some((i) => infoLogin.group.includes(i))"
+                v-if="
+                  ['MANAGER'].some((i) => infoLogin.group.includes(i)) ||
+                  ['ADMIN'].some((i) => infoLogin.group.includes(i))
+                "
                 @click="UpdateProcessStatus('WaitApproved')"
                 class="ma-2 small-export-button"
                 v-bind="attrs"
@@ -68,9 +78,9 @@
                 <v-icon size="20">mdi-check-bold</v-icon>
               </v-btn>
             </template>
-            <span>Approve</span>
+            <span>Comfirm</span>
           </v-tooltip>
-         
+
           <v-tooltip top color="teal">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -79,7 +89,10 @@
                 color="#007fc4"
                 dark
                 @click="UpdateProcessStatus('Completed')"
-                v-if="(['SUPERVISOR'].some((i) => infoLogin.group.includes(i))) ||['ADMIN'].some((i) => infoLogin.group.includes(i))"
+                v-if="
+                  ['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) ||
+                  ['ADMIN'].some((i) => infoLogin.group.includes(i))
+                "
                 class="ma-2 small-export-button"
                 v-bind="attrs"
                 v-on="on"
@@ -87,7 +100,7 @@
                 <v-icon size="20">mdi-hand-okay</v-icon>
               </v-btn>
             </template>
-            <span>Comfirm</span>
+            <span> Approve </span>
           </v-tooltip>
 
           <v-tooltip top color="teal">
@@ -107,7 +120,6 @@
             </template>
             <span>Submit</span>
           </v-tooltip>
-          
         </v-layout>
         <div style="padding: 1.5rem; margin-top: -1.5rem">
           <v-tabs v-model="tab" color="#007fc4" grow>
@@ -221,32 +233,32 @@ export default {
             })),
           };
           const response = await axios.post(
-        `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertDetailReasonAndProblem`,
-        initHeadDetail
-      );
-      if (response.data.status == 200) {
-        Swal.fire({
-          html: `Successfully`,
-          icon: "success",
-          showCancelButton: false,
-          allowOutsideClick: false,
-          confirmButtonColor: "#0c80c4",
-          cancelButtonColor: "#C0C0C0",
-          confirmButtonText: "OK",
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            this.machineDetail.dialogTransactionDetail = false
-            this.flagGetTProcess = true
-            this.tab = 0
+            `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertDetailReasonAndProblem`,
+            initHeadDetail
+          );
+          if (response.data.status == 200) {
+            Swal.fire({
+              html: `Successfully`,
+              icon: "success",
+              showCancelButton: false,
+              allowOutsideClick: false,
+              confirmButtonColor: "#0c80c4",
+              cancelButtonColor: "#C0C0C0",
+              confirmButtonText: "OK",
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                this.machineDetail.dialogTransactionDetail = false;
+                this.flagGetTProcess = true;
+                this.tab = 0;
+              }
+            });
           }
-        });
-      }
         }
       });
     },
-  async  UpdateProcessStatus(val) {
-    const status = val == 'Completed'? 'Approve': 'Comfirm'
-    Swal.fire({
+    async UpdateProcessStatus(val) {
+      const status = val == "Completed" ? "Approve" : "Comfirm";
+      Swal.fire({
         html: `Would you like to "<strong>${status}</strong>" ?`,
         icon: "warning",
         showCancelButton: true,
@@ -257,7 +269,12 @@ export default {
       }).then(async (result) => {
         if (result.isConfirmed) {
           this.loadingDialog = true;
-          let { processID, lineProcessID, materialCode, filmID } = this.machineDetail.selectTransactionTProcess;
+          let {
+            processID,
+            lineProcessID,
+            materialCode,
+            filmID,
+          } = this.machineDetail.selectTransactionTProcess;
           let { empId } = this.infoLogin;
           const init = {
             processID: processID,
@@ -302,7 +319,7 @@ export default {
           }
         }
       });
-    }
+    },
   },
 };
 </script>

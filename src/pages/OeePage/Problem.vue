@@ -1,7 +1,16 @@
 <template>
   <v-container fluid grid-list-xs>
     <v-layout row wrap>
-      <v-flex xs12 sm5 md4 v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit"> 
+      <v-flex
+        xs12
+        sm5
+        md4
+        v-if="
+          machineDetail.operatorEdit ||
+          machineDetail.supAndmanagerEdit ||
+          machineDetail.adminEdit
+        "
+      >
         <v-autocomplete
           placeholder="  Please select"
           v-model="mMachine"
@@ -17,18 +26,45 @@
         ></v-autocomplete>
       </v-flex>
 
-      <v-flex xs12 sm4 md3 ml-4 v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit">
+      <v-flex
+        xs12
+        sm4
+        md3
+        ml-4
+        v-if="
+          machineDetail.operatorEdit ||
+          machineDetail.supAndmanagerEdit ||
+          machineDetail.adminEdit
+        "
+      >
         <v-radio-group v-model="selectedPlanStatus" row>
           <v-radio label="Plan" value="Plan"></v-radio>
           <v-radio label="UnPlan" value="UnPlan"></v-radio>
         </v-radio-group>
       </v-flex>
       <v-spacer></v-spacer>
-      <v-flex xs12 sm4 md3 v-if="selectedPlanStatus == 'Plan'" >
-        <v-checkbox v-model="UnControl" label="UnControl"></v-checkbox>
+
+      <v-flex xs12 sm4 md3 v-if="selectedPlanStatus == 'Plan'">
+        <div
+          v-if="
+            machineDetail.operatorEdit ||
+            machineDetail.supAndmanagerEdit ||
+            machineDetail.adminEdit
+          "
+        >
+          <v-checkbox v-model="UnControl" label="UnControl"></v-checkbox>
+        </div>
       </v-flex>
     </v-layout>
-    <v-layout row wrap v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit">
+    <v-layout
+      row
+      wrap
+      v-if="
+        machineDetail.operatorEdit ||
+        machineDetail.supAndmanagerEdit ||
+        machineDetail.adminEdit
+      "
+    >
       <v-flex xs12 sm5 md4>
         <v-autocomplete
           placeholder="  Please select"
@@ -46,12 +82,12 @@
       </v-flex>
       <v-flex xs12 sm5 md3>
         <v-text-field
-          v-model="mDowntime"
+          v-model="formattedDowntime"
           prepend-icon=" "
           prefix="*"
           style="color: red"
           label="Downtime (min)"
-          @keydown.native="keyFilter($event, 'decimal')"
+          @keydown.native="keyFilter($event, 'number')"
         ></v-text-field>
       </v-flex>
       <v-spacer></v-spacer>
@@ -88,39 +124,40 @@
           <td class="text-xs-left">{{ props.item.machineDescription }}</td>
           <td class="text-xs-left">{{ props.item.problemDescription }}</td>
           <td class="text-xs-left">
-            {{ props.item.downtime }}
+            {{ functions.numberWithCommas(props.item.downtime) }}
           </td>
-          <v-layout v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit">
-          <v-btn
-            color="#f8c849"
-            fab
-            small
-            class="extra-small-btn"
-            @click="editItemProblem(props.item)"
+          <v-layout
+            v-if="
+              machineDetail.operatorEdit ||
+              machineDetail.supAndmanagerEdit ||
+              machineDetail.adminEdit
+            "
           >
-            <v-icon style="margin-top: 0.1rem; color: white">mdi-pencil-outline</v-icon>
-          </v-btn>
-          <v-btn
-            v-if="!editMode"
-            color="red"
-            fab
-            small
-            class="extra-small-btn"
-            @click="deleteItemProblem(props.item)"
-          >
-            <v-icon style="margin-top: 0.1rem; color: white">mdi-delete</v-icon>
-          </v-btn>
+            <v-btn
+              color="#f8c849"
+              fab
+              small
+              class="extra-small-btn"
+              @click="editItemProblem(props.item)"
+            >
+              <v-icon style="margin-top: 0.1rem; color: white">mdi-pencil-outline</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="!editMode"
+              color="red"
+              fab
+              small
+              class="extra-small-btn"
+              @click="deleteItemProblem(props.item)"
+            >
+              <v-icon style="margin-top: 0.1rem; color: white">mdi-delete</v-icon>
+            </v-btn>
           </v-layout>
           <v-layout v-else>
-          <v-btn
-            color="green"
-            fab
-            small
-            class="extra-small-btn"
-          >
-            <v-icon style="margin-top: 0.1rem; color: white">mdi-check</v-icon>
-          </v-btn>
-        </v-layout>
+            <v-btn color="green" fab small class="extra-small-btn">
+              <v-icon style="margin-top: 0.1rem; color: white">mdi-check</v-icon>
+            </v-btn>
+          </v-layout>
         </tr>
       </template>
     </v-data-table>
@@ -190,7 +227,6 @@ export default {
       editMode: false,
       editId: 0,
       editItem: {},
-     
     };
   },
   computed: {
@@ -203,13 +239,41 @@ export default {
         { text: "100", value: 100 },
       ];
     },
+    formattedDowntime: {
+      get() {
+        if (!this.mDowntime) return 0;
+        return this.mDowntime.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      },
+      set(value) {
+        this.mDowntime = Number(value.replace(/,/g, "")) || 0;
+      },
+    },
   },
   watch: {
     mMachine() {
       if (this.editMode) return;
-      this.selectedPlanStatus = "";
       this.itemProblemDesc = [];
       this.UnControl = false;
+      const status = this.selectedPlanStatus == "UnPlan" ? "N" : "Y";
+      const unControl = this.UnControl == true ? "Y" : "N";
+      if (this.mMachine.machineID == "M000") {
+        this.selectedPlanStatus = "Plan";
+        this.itemProblemDesc = this.itemMachine.filter(
+          (result) =>
+            result.planStatus == status &&
+            result.machineID == this.mMachine.machineID &&
+            result.unControlStatus == unControl
+        );
+      } else {
+        this.selectedPlanStatus = "UnPlan";
+        this.itemProblemDesc = this.itemMachine.filter(
+          (result) =>
+            result.planStatus == status &&
+            result.machineID == this.mMachine.machineID &&
+            result.unControlStatus == unControl
+        );
+        this.UnControl = false;
+      }
     },
     selectedPlanStatus(val) {
       this.itemProblemDesc = [];
@@ -244,12 +308,11 @@ export default {
           result.machineID == this.mMachine.machineID
       );
     },
-    mProblemDesc(val){
-      this.mDowntime = 0
+    mProblemDesc(val) {
+      this.mDowntime = 0;
       if (this.editMode) return;
-      this.mDowntime = val.stdTime
-    }
-    
+      this.mDowntime = val.stdTime;
+    },
   },
   created() {
     this.GetProblem();

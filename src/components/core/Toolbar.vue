@@ -61,7 +61,6 @@ export default {
           click: () => {
             const vm = this;
             vm.$store.commit("resetState");
-            vm.loginInfo.imageProfile = ''
             localStorage.removeItem('samAccountOEE')
             localStorage.removeItem('routeNameOEE')
             localStorage.removeItem('selectedIndexOEE')

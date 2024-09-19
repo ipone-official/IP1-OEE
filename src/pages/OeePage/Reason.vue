@@ -1,6 +1,14 @@
 <template>
   <v-container fluid grid-list-xs>
-    <v-layout row wrap v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit">
+    <v-layout
+      row
+      wrap
+      v-if="
+        machineDetail.operatorEdit ||
+        machineDetail.supAndmanagerEdit ||
+        machineDetail.adminEdit
+      "
+    >
       <v-flex xs12 sm5 md3>
         <v-autocomplete
           placeholder="  Please select"
@@ -35,7 +43,7 @@
       </v-flex>
       <v-flex xs12 sm5 md2>
         <v-text-field
-          v-model="QtyEA"
+          v-model="formattedQtyEA"
           prepend-icon=" "
           prefix="*"
           style="color: red"
@@ -77,39 +85,40 @@
           <td class="text-xs-left">{{ props.item.reasonHeader }}</td>
           <td class="text-xs-left">{{ props.item.reasonDesc }}</td>
           <td class="text-xs-left">
-            {{ props.item.QtyEA }}
+            {{ functions.numberWithCommas(props.item.QtyEA) }}
           </td>
-          <v-layout v-if="machineDetail.operatorEdit || machineDetail.supAndmanagerEdit || machineDetail.adminEdit">
-          <v-btn
-            color="#f8c849"
-            fab
-            small
-            class="extra-small-btn"
-            @click="editItemDamage(props.item)"
+          <v-layout
+            v-if="
+              machineDetail.operatorEdit ||
+              machineDetail.supAndmanagerEdit ||
+              machineDetail.adminEdit
+            "
           >
-            <v-icon style="margin-top: 0.1rem; color: white">mdi-pencil-outline</v-icon>
-          </v-btn>
-          <v-btn
-            v-if="!editMode"
-            color="red"
-            fab
-            small
-            class="extra-small-btn"
-            @click="deleteItemDamage(props.item)"
-          >
-            <v-icon style="margin-top: 0.1rem; color: white">mdi-delete</v-icon>
-          </v-btn>
-        </v-layout>
-        <v-layout v-else>
-          <v-btn
-            color="green"
-            fab
-            small
-            class="extra-small-btn"
-          >
-            <v-icon style="margin-top: 0.1rem; color: white">mdi-check</v-icon>
-          </v-btn>
-        </v-layout>
+            <v-btn
+              color="#f8c849"
+              fab
+              small
+              class="extra-small-btn"
+              @click="editItemDamage(props.item)"
+            >
+              <v-icon style="margin-top: 0.1rem; color: white">mdi-pencil-outline</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="!editMode"
+              color="red"
+              fab
+              small
+              class="extra-small-btn"
+              @click="deleteItemDamage(props.item)"
+            >
+              <v-icon style="margin-top: 0.1rem; color: white">mdi-delete</v-icon>
+            </v-btn>
+          </v-layout>
+          <v-layout v-else>
+            <v-btn color="green" fab small class="extra-small-btn">
+              <v-icon style="margin-top: 0.1rem; color: white">mdi-check</v-icon>
+            </v-btn>
+          </v-layout>
         </tr>
       </template>
     </v-data-table>
@@ -191,6 +200,15 @@ export default {
         { text: "100", value: 100 },
       ];
     },
+    formattedQtyEA: {
+      get() {
+        if (!this.QtyEA) return 0;
+        return this.QtyEA.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      },
+      set(value) {
+        this.QtyEA = Number(value.replace(/,/g, "")) || 0;
+      },
+    },
   },
   watch: {
     mReason(val) {
@@ -204,11 +222,16 @@ export default {
     this.GetReason();
   },
   methods: {
+    ChangeQtyEA(value) {
+      this.QtyEA = Number(value.replace(/,/g, "")); // ลบเครื่องหมายจุลภาคทั้งหมดก่อนบันทึกลง mTransferAmount
+    },
     async GetReason() {
       this.loadingDialog = true;
       this.itemReason = [];
 
-      const response = await axios.get(`${this.EndpointPortal}/ApiOEE/OEE/v1/GetReasonDamage`);
+      const response = await axios.get(
+        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetReasonDamage`
+      );
       if (response.data.status == 200) {
         this.loadingDialog = false;
         this.itemReason = response.data.results;
@@ -309,7 +332,8 @@ export default {
         });
 
         this.machineDetail.itemDamageTable.forEach(
-          (element, index) => (this.machineDetail.itemDamageTable[index].itemNo = index + 1)
+          (element, index) =>
+            (this.machineDetail.itemDamageTable[index].itemNo = index + 1)
         );
         this.machineDetail.itemDamageTable.sort((a, b) => a.itemNo - b.itemNo);
 
@@ -354,7 +378,8 @@ export default {
         if (result.isConfirmed) {
           this.machineDetail.itemDamageTable.splice(index, 1);
           this.machineDetail.itemDamageTable.forEach(
-            (element, index) => (this.machineDetail.itemDamageTable[index].itemNo = index + 1)
+            (element, index) =>
+              (this.machineDetail.itemDamageTable[index].itemNo = index + 1)
           );
           this.QtyEA = 0;
           this.mReason = "";
