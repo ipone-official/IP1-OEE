@@ -87,7 +87,7 @@
           prefix="*"
           style="color: red"
           label="Downtime (min)"
-          @keydown.native="keyFilter($event, 'number')"
+          @keydown.native="keyFilter($event, 'decimal')"
         ></v-text-field>
       </v-flex>
       <v-spacer></v-spacer>

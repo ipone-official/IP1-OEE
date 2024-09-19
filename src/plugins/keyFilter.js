@@ -14,7 +14,7 @@ const keyFilter = (event, type, lang) => {
       if (['Th'].includes(type)) return /[ก-์ ]/
       if (['Group'].includes(type)) return  /[0-9A-z/-]/
       if (['decimal'].includes(type)) return /[0-9.]/
-      if (type === 'number') return /[0-9]/
+      if (type === 'number') return /[0-9 -]/
       return null
     }
   
