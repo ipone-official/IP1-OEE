@@ -110,6 +110,11 @@
                 small
                 color="green"
                 dark
+                v-if="
+                  (['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) &&  (machineDetail.selectTransactionTProcess.status != 'WaitApproved')) ||
+                  (['MANAGER'].some((i) => infoLogin.group.includes(i)) &&  (machineDetail.selectTransactionTProcess.status != 'Completed')) ||
+                  ['ADMIN'].some((i) => infoLogin.group.includes(i))
+                "
                 @click="InsertDetailReasonAndProblem"
                 class="ma-2 small-export-button"
                 v-bind="attrs"
