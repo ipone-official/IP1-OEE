@@ -158,9 +158,9 @@
           <td class="text-xs-left">
             {{ props.item.materialDesc }}
           </td>
-          <td class="text-xs-left">
+          <!-- <td class="text-xs-left">
             {{ props.item.filmDescription }}
-          </td>
+          </td> -->
           <td class="text-xs-left">
             {{ functions.formatDateFormat(props.item.checkIn) }}
           </td>
@@ -518,7 +518,7 @@ export default {
           sortable: false,
           value: "materialDesc",
         },
-        { text: "Film", align: "left", sortable: false, value: "filmDescription" },
+        // { text: "Film", align: "left", sortable: false, value: "filmDescription" },
         { text: "Check-In", align: "left", sortable: false, value: "checkIn" },
         { text: "Check-Out", align: "left", sortable: false, value: "checkOut" },
         { text: "Status", align: "left", sortable: false, value: "status" },
