@@ -67,7 +67,7 @@
                 color="#007fc4"
                 dark
                 v-if="
-                  ['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) ||
+                  (['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) &&  (machineDetail.selectTransactionTProcess.status != 'WaitApproved')) ||
                   ['ADMIN'].some((i) => infoLogin.group.includes(i))
                 "
                 @click="UpdateProcessStatus('WaitApproved')"

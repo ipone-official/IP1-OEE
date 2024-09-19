@@ -775,6 +775,10 @@ export default {
               checkIn: element.checkIn,
               checkOut: element.checkOut,
               status: element.status,
+              availability: element.availability,
+              performance:  element.performance,
+              quality:  element.quality,
+              oeePercentage:  element.oeePercentage
             })
           );
         } else {
@@ -809,6 +813,10 @@ export default {
               checkIn: element.checkIn,
               checkOut: element.checkOut,
               status: element.status,
+              availability: element.availability,
+              performance:  element.performance,
+              quality:  element.quality,
+              oeePercentage:  element.oeePercentage
             })
           );
         }

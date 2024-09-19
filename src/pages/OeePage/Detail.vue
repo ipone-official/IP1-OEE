@@ -79,19 +79,19 @@
     <v-layout>
       <v-flex xs12 sm2 md2 class="pa-0 mt-3">
         <v-card flat class="small-card">
-          <v-card-title class="custom-title small-margin">Machine STD.</v-card-title>
+          <v-card-title class="custom-title small-margin">Speed Std.</v-card-title>
         </v-card>
       </v-flex>
       <v-flex xs12 sm4 md4>
         <v-text-field
           v-model="formattedMachineStd"
           :disabled="
-            !machineDetail.supAndmanagerEdit &&
+            !['MANAGER'].some((i) => infoLogin.group.includes(i)) &&
             !machineDetail.adminEdit
           "
           prefix="*"
           style="color: red"
-          label="MachineSTD"
+          label="Speed Std."
           solo
           @keydown.native="keyFilter($event, 'number')"
         ></v-text-field>
@@ -224,6 +224,50 @@
         </v-card>
       </v-flex>
     </v-layout>
+    <hr class="custom-hr" v-if="
+                  ['MANAGER'].some((i) => infoLogin.group.includes(i)) ||
+                  ['ADMIN'].some((i) => infoLogin.group.includes(i))
+                " />
+    <v-layout row wrap class="custom-layout" v-if="
+                  ['MANAGER'].some((i) => infoLogin.group.includes(i)) ||
+                  ['ADMIN'].some((i) => infoLogin.group.includes(i))
+                ">
+      <v-flex xs12 sm3 md3 class="pa-0">
+        <v-card flat class="small-card">
+          <v-card-title class="custom-title small-margin">Availability (A)</v-card-title>
+          <v-card-text class="small-margin">{{
+            machineDetail.selectTransactionTProcess.length == 0 ? "": machineDetail.selectTransactionTProcess.availability
+          }}</v-card-text>
+        </v-card>
+      </v-flex>
+
+      <v-flex xs12 sm3 md3 class="pa-0">
+        <v-card flat class="small-card">
+          <v-card-title class="custom-title small-margin">Performance (P)</v-card-title>
+          <v-card-text class="small-margin">{{
+            machineDetail.selectTransactionTProcess.length == 0 ? "": machineDetail.selectTransactionTProcess.performance
+          }}</v-card-text>
+        </v-card>
+      </v-flex>
+
+      <v-flex xs12 sm3 md3 class="pa-0">
+        <v-card flat class="small-card">
+          <v-card-title class="custom-title small-margin">Quality (Q)</v-card-title>
+          <v-card-text class="small-margin">{{
+            machineDetail.selectTransactionTProcess.length == 0 ? "": machineDetail.selectTransactionTProcess.quality
+          }}</v-card-text>
+        </v-card>
+      </v-flex>
+      <v-flex xs12 sm3 md3 class="pa-0">
+        <v-card flat class="small-card">
+          <v-card-title class="custom-title small-margin">%OEE</v-card-title>
+          <v-card-text class="small-margin">{{
+            machineDetail.selectTransactionTProcess.length == 0 ? "": machineDetail.selectTransactionTProcess.oeePercentage
+          }}</v-card-text>
+        </v-card>
+      </v-flex>
+    </v-layout>
+    
   </v-container>
 </template>
 <script>
