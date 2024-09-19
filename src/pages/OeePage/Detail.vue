@@ -71,7 +71,7 @@
             >Beginning Qty. (DZ)</v-card-title
           >
           <v-card-text class="small-margin">{{
-            machineDetail.selectTransactionTProcess ? "" : functions.numberWithCommas(machineDetail.selectTransactionTProcess.qtyDozen)
+            machineDetail.selectTransactionTProcess.length == 0 ? "" : functions.numberWithCommas(machineDetail.selectTransactionTProcess.qtyDozen)
           }}</v-card-text>
         </v-card>
       </v-flex>
@@ -125,7 +125,7 @@
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Qty. (EA)</v-card-title>
           <v-card-text class="small-margin">{{
-            machineDetail.selectTransactionTProcess ? "" : functions.numberWithCommas(machineDetail.selectTransactionTProcess.qtyEA)
+            machineDetail.selectTransactionTProcess.length == 0 ? "": functions.numberWithCommas(machineDetail.selectTransactionTProcess.qtyEA)
           }}</v-card-text>
         </v-card>
       </v-flex>
@@ -171,7 +171,7 @@
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Working Time(Min)</v-card-title>
           <v-card-text class="small-margin">{{
-            machineDetail.selectTransactionTProcess ? "" : functions.numberWithCommas(machineDetail.selectTransactionTProcess.workingTimeMin)
+            machineDetail.selectTransactionTProcess.length == 0 ? "": functions.numberWithCommas(machineDetail.selectTransactionTProcess.workingTimeMin)
           }}</v-card-text>
         </v-card>
       </v-flex>
@@ -182,7 +182,7 @@
             >Machine Working Time(Min)</v-card-title
           >
           <v-card-text class="small-margin">{{
-            machineDetail.selectTransactionTProcess ? "" : functions.numberWithCommas(machineDetail.selectTransactionTProcess.machineWorkingTime)
+            machineDetail.selectTransactionTProcess.length == 0 ? "": functions.numberWithCommas(machineDetail.selectTransactionTProcess.machineWorkingTime)
           }}</v-card-text>
         </v-card>
       </v-flex>
@@ -202,7 +202,7 @@
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Planned Downtime(Min)</v-card-title>
           <v-card-text class="small-margin">{{
-            machineDetail.selectTransactionTProcess ? "" : functions.numberWithCommas(machineDetail.selectTransactionTProcess.plannedDowntime)
+            machineDetail.selectTransactionTProcess.length == 0 ? "" : functions.numberWithCommas(machineDetail.selectTransactionTProcess.plannedDowntime)
           }}</v-card-text>
         </v-card>
       </v-flex>
@@ -211,7 +211,7 @@
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">UnPlan Downtime(Min)</v-card-title>
           <v-card-text class="small-margin">{{
-            machineDetail.selectTransactionTProcess ? "" : functions.numberWithCommas(machineDetail.selectTransactionTProcess.unplannedDowntime)
+            machineDetail.selectTransactionTProcess.length == 0 ? "" : functions.numberWithCommas(machineDetail.selectTransactionTProcess.unplannedDowntime)
           }}</v-card-text>
         </v-card>
       </v-flex>
@@ -220,7 +220,7 @@
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin">Summary Downtime(Min)</v-card-title>
           <v-card-text class="small-margin">{{
-            machineDetail.selectTransactionTProcess ? "" : functions.numberWithCommas(machineDetail.selectTransactionTProcess.summaryDowntime)
+            machineDetail.selectTransactionTProcess.length == 0 ? "" : functions.numberWithCommas(machineDetail.selectTransactionTProcess.summaryDowntime)
           }}</v-card-text>
         </v-card>
       </v-flex>
