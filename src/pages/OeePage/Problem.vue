@@ -254,6 +254,7 @@ export default {
       if (this.editMode) return;
       this.itemProblemDesc = [];
       this.UnControl = false;
+      this.mDowntime = 0
       const status = this.selectedPlanStatus == "UnPlan" ? "N" : "Y";
       const unControl = this.UnControl == true ? "Y" : "N";
       if (this.mMachine.machineID == "M000") {
@@ -277,6 +278,7 @@ export default {
     },
     selectedPlanStatus(val) {
       this.itemProblemDesc = [];
+      this.mDowntime = 0
       const status = val == "UnPlan" ? "N" : "Y";
       const unControl = this.UnControl == true ? "Y" : "N";
       if (val == "UnPlan") {
@@ -299,6 +301,7 @@ export default {
     UnControl(val) {
       if (this.selectedPlanStatus == "") return (this.itemProblemDesc = []);
       this.itemProblemDesc = [];
+      this.mDowntime = 0
       const status = val == "UnPlan" ? "N" : "Y";
       const unControl = val == true ? "Y" : "N";
       this.itemProblemDesc = this.itemMachine.filter(

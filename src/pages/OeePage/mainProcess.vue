@@ -67,7 +67,7 @@
                 color="#007fc4"
                 dark
                 v-if="
-                  ['MANAGER'].some((i) => infoLogin.group.includes(i)) ||
+                  ['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) ||
                   ['ADMIN'].some((i) => infoLogin.group.includes(i))
                 "
                 @click="UpdateProcessStatus('WaitApproved')"
@@ -90,7 +90,7 @@
                 dark
                 @click="UpdateProcessStatus('Completed')"
                 v-if="
-                  ['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) ||
+                  ['MANAGER'].some((i) => infoLogin.group.includes(i)) ||
                   ['ADMIN'].some((i) => infoLogin.group.includes(i))
                 "
                 class="ma-2 small-export-button"

@@ -86,7 +86,6 @@
         <v-text-field
           v-model="formattedMachineStd"
           :disabled="
-            !machineDetail.operatorEdit &&
             !machineDetail.supAndmanagerEdit &&
             !machineDetail.adminEdit
           "

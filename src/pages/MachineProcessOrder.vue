@@ -901,7 +901,7 @@ export default {
                 ? this.selected[0].productionOrderNumber
                 : "",
             material_Code: this.selected[0].materialCode,
-            filmID: this.mFilm.filmID,
+            filmID: this.mFilm == "" ? "" :this.mFilm.filmID,
             checkINOut: this.CheckInDate,
             status: "InProcess",
           };
@@ -1193,7 +1193,7 @@ export default {
     },
     DeleteProcessList(val){
       Swal.fire({
-        html: `Would you like to delete the process no. "<strong>" ${val.processID}</strong>" ?`,
+        html: `Would you like to delete the process no. "<strong> ${val.processID}</strong>" ?`,
         icon: "warning",
         showCancelButton: true,
         allowOutsideClick: false,
