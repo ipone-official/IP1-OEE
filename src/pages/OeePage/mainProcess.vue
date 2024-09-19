@@ -303,6 +303,8 @@ export default {
               if (result.isConfirmed) {
                 this.loadingDialog = false;
                 this.flagGetTProcess = true;
+                this.machineDetail.dialogTransactionDetail = false;
+                this.tab = 0;
               }
             });
           } else {
