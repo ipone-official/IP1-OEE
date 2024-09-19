@@ -65,6 +65,7 @@ export default {
             localStorage.removeItem('routeNameOEE')
             localStorage.removeItem('selectedIndexOEE')
             localStorage.removeItem('empIdOEE')
+            this.imageProfile = ""
             vm.$router.push({ name: 'Login' });
           }
         }
