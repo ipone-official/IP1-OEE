@@ -120,6 +120,7 @@
           <v-layout
             v-if="
               machineDetail.operatorEdit ||
+              machineDetail.supervisorEdit ||
               machineDetail.managerEdit ||
               machineDetail.adminEdit
             "
