@@ -776,9 +776,9 @@ export default {
               checkOut: element.checkOut,
               status: element.status,
               availability: element.availability,
-              performance:  element.performance,
-              quality:  element.quality,
-              oeePercentage:  element.oeePercentage
+              performance: element.performance,
+              quality: element.quality,
+              oeePercentage: element.oeePercentage,
             })
           );
         } else {
@@ -814,9 +814,9 @@ export default {
               checkOut: element.checkOut,
               status: element.status,
               availability: element.availability,
-              performance:  element.performance,
-              quality:  element.quality,
-              oeePercentage:  element.oeePercentage
+              performance: element.performance,
+              quality: element.quality,
+              oeePercentage: element.oeePercentage,
             })
           );
         }
@@ -832,6 +832,7 @@ export default {
         this.lineProcessItem = this.lineProcessItem.concat(lineProcessItems);
       } else if (response.data.status == 404) {
         this.loadingDialog = false;
+        this.DateDisibled = false;
         Swal.fire({
           text: `${response.data.message}`,
           icon: "warning",
@@ -909,7 +910,7 @@ export default {
                 ? this.selected[0].productionOrderNumber
                 : "",
             material_Code: this.selected[0].materialCode,
-            filmID: this.mFilm == "" ? "" :this.mFilm.filmID,
+            filmID: this.mFilm == "" ? "" : this.mFilm.filmID,
             checkINOut: this.CheckInDate,
             status: "InProcess",
           };
@@ -1075,9 +1076,15 @@ export default {
       }
     },
     async SelectProcesList(val) {
-      this.machineDetail.operatorEdit = ["OPERATOR"].some((i) => this.infoLogin.group.includes(i)) && val.status == 'InProcess'
-      this.machineDetail.supAndmanagerEdit = ["SUPERVISOR", 'MANAGER'].some((i) => this.infoLogin.group.includes(i)) && val.status != 'Completed'
-      this.machineDetail.adminEdit = ['ADMIN'].some((i) => this.infoLogin.group.includes(i))
+      this.machineDetail.operatorEdit =
+        ["OPERATOR"].some((i) => this.infoLogin.group.includes(i)) &&
+        val.status == "InProcess";
+      this.machineDetail.supAndmanagerEdit =
+        ["SUPERVISOR", "MANAGER"].some((i) => this.infoLogin.group.includes(i)) &&
+        val.status != "Completed";
+      this.machineDetail.adminEdit = ["ADMIN"].some((i) =>
+        this.infoLogin.group.includes(i)
+      );
       this.machineDetail.selectTransactionTProcess = val;
       this.machineDetail.machineStd = this.machineDetail.selectTransactionTProcess.machineSTD;
       this.machineDetail.QtyDz = 0;
@@ -1199,7 +1206,7 @@ export default {
       this.itemMaterialMaster = [];
       this.itemProductionOrder = [];
     },
-    DeleteProcessList(val){
+    DeleteProcessList(val) {
       Swal.fire({
         html: `Would you like to delete the process no. "<strong> ${val.processID}</strong>" ?`,
         icon: "warning",
@@ -1214,7 +1221,7 @@ export default {
           let { empId } = this.infoLogin;
           const init = {
             processID: val.processID,
-            userID: empId
+            userID: empId,
           };
           const response = await axios.post(
             `${this.EndpointPortal}/ApiOEE/OEE/v1/DeleteProcessList`,
@@ -1249,7 +1256,7 @@ export default {
           }
         }
       });
-    }
+    },
   },
 };
 </script>

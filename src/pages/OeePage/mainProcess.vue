@@ -111,6 +111,7 @@
                 color="green"
                 dark
                 v-if="
+                (['OPERATOR'].some((i) => infoLogin.group.includes(i)) &&  (machineDetail.selectTransactionTProcess.status != 'WaitConfirm')) ||
                   (['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) &&  (machineDetail.selectTransactionTProcess.status != 'WaitApproved')) ||
                   (['MANAGER'].some((i) => infoLogin.group.includes(i)) &&  (machineDetail.selectTransactionTProcess.status != 'Completed')) ||
                   ['ADMIN'].some((i) => infoLogin.group.includes(i))
