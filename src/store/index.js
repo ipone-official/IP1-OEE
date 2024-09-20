@@ -14,7 +14,8 @@ const getDefaultState = () => ({
   flagGetTProcess: false,
   machineDetail: {
     operatorEdit: false,
-    supAndmanagerEdit: false,
+    managerEdit: false,
+    supervisorEdit: false,
     adminEdit: false,
     dialogTransactionDetail: false,
     selectTransactionTProcess: [],

@@ -1,15 +1,15 @@
 <template>
   <v-container fluid grid-list-xs>
-    <v-layout row wrap>
+    <v-layout row wrap   v-if="
+        machineDetail.operatorEdit ||
+        machineDetail.supervisorEdit ||
+        machineDetail.managerEdit ||
+        machineDetail.adminEdit
+      ">
       <v-flex
         xs12
         sm5
         md4
-        v-if="
-          machineDetail.operatorEdit ||
-          machineDetail.supAndmanagerEdit ||
-          machineDetail.adminEdit
-        "
       >
         <v-autocomplete
           placeholder="  Please select"
@@ -31,11 +31,6 @@
         sm4
         md3
         ml-4
-        v-if="
-          machineDetail.operatorEdit ||
-          machineDetail.supAndmanagerEdit ||
-          machineDetail.adminEdit
-        "
       >
         <v-radio-group v-model="selectedPlanStatus" row>
           <v-radio label="Plan" value="Plan"></v-radio>
@@ -46,11 +41,6 @@
 
       <v-flex xs12 sm4 md3 v-if="selectedPlanStatus == 'Plan'">
         <div
-          v-if="
-            machineDetail.operatorEdit ||
-            machineDetail.supAndmanagerEdit ||
-            machineDetail.adminEdit
-          "
         >
           <v-checkbox v-model="UnControl" label="UnControl"></v-checkbox>
         </div>
@@ -61,7 +51,8 @@
       wrap
       v-if="
         machineDetail.operatorEdit ||
-        machineDetail.supAndmanagerEdit ||
+        machineDetail.supervisorEdit ||
+        machineDetail.managerEdit ||
         machineDetail.adminEdit
       "
     >
@@ -129,7 +120,7 @@
           <v-layout
             v-if="
               machineDetail.operatorEdit ||
-              machineDetail.supAndmanagerEdit ||
+              machineDetail.managerEdit ||
               machineDetail.adminEdit
             "
           >
@@ -254,7 +245,7 @@ export default {
       if (this.editMode) return;
       this.itemProblemDesc = [];
       this.UnControl = false;
-      this.mDowntime = 0
+      this.mDowntime = 0;
       const status = this.selectedPlanStatus == "UnPlan" ? "N" : "Y";
       const unControl = this.UnControl == true ? "Y" : "N";
       if (this.mMachine.machineID == "M000") {
@@ -278,7 +269,7 @@ export default {
     },
     selectedPlanStatus(val) {
       this.itemProblemDesc = [];
-      this.mDowntime = 0
+      this.mDowntime = 0;
       const status = val == "UnPlan" ? "N" : "Y";
       const unControl = this.UnControl == true ? "Y" : "N";
       if (val == "UnPlan") {
@@ -301,7 +292,7 @@ export default {
     UnControl(val) {
       if (this.selectedPlanStatus == "") return (this.itemProblemDesc = []);
       this.itemProblemDesc = [];
-      this.mDowntime = 0
+      this.mDowntime = 0;
       const status = val == "UnPlan" ? "N" : "Y";
       const unControl = val == true ? "Y" : "N";
       this.itemProblemDesc = this.itemMachine.filter(

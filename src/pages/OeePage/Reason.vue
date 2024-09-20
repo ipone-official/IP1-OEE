@@ -5,7 +5,8 @@
       wrap
       v-if="
         machineDetail.operatorEdit ||
-        machineDetail.supAndmanagerEdit ||
+        machineDetail.supervisorEdit ||
+        machineDetail.managerEdit ||
         machineDetail.adminEdit
       "
     >
@@ -90,7 +91,7 @@
           <v-layout
             v-if="
               machineDetail.operatorEdit ||
-              machineDetail.supAndmanagerEdit ||
+              machineDetail.managerEdit ||
               machineDetail.adminEdit
             "
           >

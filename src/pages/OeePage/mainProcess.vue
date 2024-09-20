@@ -55,7 +55,8 @@
           style="margin-top: -1rem"
           v-if="
             machineDetail.operatorEdit ||
-            machineDetail.supAndmanagerEdit ||
+            machineDetail.supervisorEdit ||
+            machineDetail.managerEdit ||
             machineDetail.adminEdit
           "
         >
@@ -66,10 +67,7 @@
                 small
                 color="#007fc4"
                 dark
-                v-if="
-                  (['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) &&  (machineDetail.selectTransactionTProcess.status != 'WaitApproved')) ||
-                  ['ADMIN'].some((i) => infoLogin.group.includes(i))
-                "
+                v-if="machineDetail.supervisorEdit || machineDetail.adminEdit"
                 @click="UpdateProcessStatus('WaitApproved')"
                 class="ma-2 small-export-button"
                 v-bind="attrs"
@@ -89,10 +87,7 @@
                 color="#007fc4"
                 dark
                 @click="UpdateProcessStatus('Completed')"
-                v-if="
-                  ['MANAGER'].some((i) => infoLogin.group.includes(i)) ||
-                  ['ADMIN'].some((i) => infoLogin.group.includes(i))
-                "
+                v-if="machineDetail.managerEdit || machineDetail.adminEdit"
                 class="ma-2 small-export-button"
                 v-bind="attrs"
                 v-on="on"
@@ -111,10 +106,10 @@
                 color="green"
                 dark
                 v-if="
-                (['OPERATOR'].some((i) => infoLogin.group.includes(i)) &&  (machineDetail.selectTransactionTProcess.status != 'WaitConfirm')) ||
-                  (['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) &&  (machineDetail.selectTransactionTProcess.status != 'WaitApproved')) ||
-                  (['MANAGER'].some((i) => infoLogin.group.includes(i)) &&  (machineDetail.selectTransactionTProcess.status != 'Completed')) ||
-                  ['ADMIN'].some((i) => infoLogin.group.includes(i))
+                  machineDetail.operatorEdit ||
+                  machineDetail.supervisorEdit ||
+                  machineDetail.managerEdit ||
+                  machineDetail.adminEdit
                 "
                 @click="InsertDetailReasonAndProblem"
                 class="ma-2 small-export-button"

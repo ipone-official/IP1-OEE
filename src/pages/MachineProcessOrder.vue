@@ -1079,8 +1079,11 @@ export default {
       this.machineDetail.operatorEdit =
         ["OPERATOR"].some((i) => this.infoLogin.group.includes(i)) &&
         val.status == "InProcess";
-      this.machineDetail.supAndmanagerEdit =
-        ["SUPERVISOR", "MANAGER"].some((i) => this.infoLogin.group.includes(i)) &&
+        this.machineDetail.supervisorEdit =
+        ["SUPERVISOR"].some((i) => this.infoLogin.group.includes(i)) &&
+        val.status != "WaitApproved";
+      this.machineDetail.managerEdit =
+        ["MANAGER"].some((i) => this.infoLogin.group.includes(i)) &&
         val.status != "Completed";
       this.machineDetail.adminEdit = ["ADMIN"].some((i) =>
         this.infoLogin.group.includes(i)
