@@ -4,11 +4,22 @@ import Router from 'vue-router';
 import Login from '../pages/core/Login.vue';
 import Error from '../pages/core/Error.vue';
 import MachineProcessOrder from '@/pages/MachineProcessOrder.vue';
+import ReportOee from '@/pages/Report/ReportOee.vue'
 
 Vue.use(Router);
 
 export default new Router({
   routes: [
+    {
+      path: '/ReportOee',
+      name: 'ReportOee',
+      component: ReportOee,
+      meta: {
+        breadcrumb: [
+          { name: 'Report OEE' }
+        ]
+      }
+    },
     {
       path: '/MachineProcessOrder',
       name: 'MachineProcessOrder',

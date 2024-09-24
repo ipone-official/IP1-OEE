@@ -9,13 +9,23 @@
        <h3>{{ headerProject }}</h3> 
     </v-toolbar>
     <v-list> 
+      <v-list-tile @click="changeRoute('ReportOee', 2)" v-if="(['MANAGER'].some((i) => infoLogin.group.includes(i)))">
+          <v-list-tile-action>
+            <v-icon>mdi-monitor-dashboard</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title :class="[{'active': selectedIndex === 2}, 'item-title']">{{ $t('Report OEE') }}</v-list-tile-title>
+        </v-list-tile>
+
             <v-list-tile @click="changeRoute('MachineProcessOrder', 1)">
           <v-list-tile-action>
             <v-icon>mdi-file-sign</v-icon>
           </v-list-tile-action>
           <v-list-tile-title :class="[{'active': selectedIndex === 1}, 'item-title']">{{ $t('Machine Process Order') }}</v-list-tile-title>
         </v-list-tile>
+
+
     </v-list>
+
      <!-- <PdfPreview v-if="manualPDF" @btncallback="manualPDF=false" />
     <footer class="footer">
     <v-divider></v-divider>
