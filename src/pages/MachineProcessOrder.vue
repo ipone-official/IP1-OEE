@@ -1079,7 +1079,7 @@ export default {
       this.machineDetail.operatorEdit =
         ["OPERATOR"].some((i) => this.infoLogin.group.includes(i)) &&
         val.status == "InProcess";
-        this.machineDetail.supervisorEdit =
+      this.machineDetail.supervisorEdit =
         ["SUPERVISOR"].some((i) => this.infoLogin.group.includes(i)) &&
         val.status != "WaitApproved";
       this.machineDetail.managerEdit =
@@ -1200,7 +1200,7 @@ export default {
         }
       });
     },
-    openDialogTranOee() {
+    async openDialogTranOee() {
       this.dialogTransactionOee = true;
       this.CheckInDate = functions.formatDate();
       this.selected = [];
@@ -1208,6 +1208,8 @@ export default {
       this.mFilm = "";
       this.itemMaterialMaster = [];
       this.itemProductionOrder = [];
+      await this.getLineProcess();
+      await this.getFilm();
     },
     DeleteProcessList(val) {
       Swal.fire({
