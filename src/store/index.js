@@ -12,6 +12,7 @@ const getDefaultState = () => ({
   toDate: functions.getSysDate().format,
   manualPDF: false,
   flagGetTProcess: false,
+  tab: 0,
   machineDetail: {
     operatorEdit: false,
     managerEdit: false,

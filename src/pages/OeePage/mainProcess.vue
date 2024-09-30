@@ -185,7 +185,6 @@ export default {
       msgResult: "",
       showResult: false,
       functions,
-      tab: 0,
       items: ["Detail", "Reason", "Problem"],
     };
   },

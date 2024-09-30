@@ -1088,6 +1088,7 @@ export default {
       this.machineDetail.adminEdit = ["ADMIN"].some((i) =>
         this.infoLogin.group.includes(i)
       );
+      this.tab = 0
       this.machineDetail.selectTransactionTProcess = val;
       this.machineDetail.machineStd = this.machineDetail.selectTransactionTProcess.machineSTD;
       this.machineDetail.QtyDz = 0;
