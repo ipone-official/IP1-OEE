@@ -9,7 +9,7 @@
        <h3>{{ headerProject }}</h3> 
     </v-toolbar>
     <v-list> 
-      <v-list-tile @click="changeRoute('ReportOee', 2)" v-if="(['MANAGER'].some((i) => infoLogin.group.includes(i)))">
+      <v-list-tile @click="changeRoute('ReportOee', 2)" v-if="(['MANAGER', 'ADMIN'].some((i) => infoLogin.group.includes(i)))">
           <v-list-tile-action>
             <v-icon>mdi-monitor-dashboard</v-icon>
           </v-list-tile-action>
