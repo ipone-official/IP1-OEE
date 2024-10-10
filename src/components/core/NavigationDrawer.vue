@@ -16,11 +16,11 @@
           <v-list-tile-title :class="[{'active': selectedIndex === 2}, 'item-title']">{{ $t('Report OEE') }}</v-list-tile-title>
         </v-list-tile>
 
-            <v-list-tile @click="changeRoute('MachineProcessOrder', 1)">
+            <v-list-tile @click="changeRoute('LineProcessOrder', 1)">
           <v-list-tile-action>
             <v-icon>mdi-file-sign</v-icon>
           </v-list-tile-action>
-          <v-list-tile-title :class="[{'active': selectedIndex === 1}, 'item-title']">{{ $t('Machine Process Order') }}</v-list-tile-title>
+          <v-list-tile-title :class="[{'active': selectedIndex === 1}, 'item-title']">{{ $t('Line Process Order') }}</v-list-tile-title>
         </v-list-tile>
 
 

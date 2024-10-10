@@ -3,7 +3,7 @@ import Router from 'vue-router';
 
 import Login from '../pages/core/Login.vue';
 import Error from '../pages/core/Error.vue';
-import MachineProcessOrder from '@/pages/MachineProcessOrder.vue';
+import LineProcessOrder from '@/pages/LineProcessOrder.vue';
 import ReportOee from '@/pages/Report/ReportOee.vue'
 
 Vue.use(Router);
@@ -21,12 +21,12 @@ export default new Router({
       }
     },
     {
-      path: '/MachineProcessOrder',
-      name: 'MachineProcessOrder',
-      component: MachineProcessOrder,
+      path: '/LineProcessOrder',
+      name: 'LineProcessOrder',
+      component: LineProcessOrder,
       meta: {
         breadcrumb: [
-          { name: 'Machine Process Order' }
+          { name: 'Line Process Order' }
         ]
       }
     },

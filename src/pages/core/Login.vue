@@ -117,7 +117,7 @@ export default {
                         localStorage.setItem('samAccountOEE', vm.infoLogin.samAccount)
                         localStorage.setItem('empIdOEE', vm.infoLogin.empId)
                         this.selectedIndexStr = 1
-                        vm.$router.push({ name: 'MachineProcessOrder' });
+                        vm.$router.push({ name: 'LineProcessOrder' });
                     } else {
                         vm.loading = false
                         vm.error = true;
