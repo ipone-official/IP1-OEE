@@ -43,6 +43,7 @@
 
 <script>
 import vuePdf from "vue-pdf";
+import { saveAs } from 'file-saver';
 
 export default {
   components: {
@@ -79,7 +80,7 @@ export default {
     },
     downloadPDF() {
       const url = "https://portal.ip-one.com/oee/manualPdf/Oee.pdf";
-      saveAs(url, "User Manual Oee.pdf");
+      saveAs(url, "UserManualOee.pdf");
     },
   },
 };
