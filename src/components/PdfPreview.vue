@@ -1,14 +1,30 @@
 <template>
-  <v-dialog v-model="dialog" fullscreen persistent hide-overlay @click:outside="close" style="z-index: 2000;"> 
+  <v-dialog
+    v-model="dialog"
+    fullscreen
+    persistent
+    hide-overlay
+    @click:outside="close"
+    style="z-index: 2000"
+  >
     <v-layout>
       <v-flex md12>
-        <div style="height: 100vh; overflow-y: auto;">
-          <v-toolbar id="toolbar-pdf-preview" color="primary" style="position: fixed; width: 100%; z-index: 1000;">
+        <div style="height: 100vh; overflow-y: auto">
+          <v-toolbar
+            id="toolbar-pdf-preview"
+            color="primary"
+            style="position: fixed; width: 100%; z-index: 1000"
+          >
             <v-layout align-center>
               <v-btn icon @click="close">
                 <v-icon color="white">mdi-keyboard-backspace</v-icon>
               </v-btn>
               <v-toolbar-title style="color: white">User Manual</v-toolbar-title>
+            </v-layout>
+            <v-layout justify-end>
+              <v-btn icon @click="downloadPDF">
+                <v-icon color="white">mdi-file-download-outline</v-icon>
+              </v-btn>
             </v-layout>
           </v-toolbar>
 
@@ -60,6 +76,10 @@ export default {
         this.dialog = true;
       });
       this.$emit("btncallback");
+    },
+    downloadPDF() {
+      const url = "https://portal.ip-one.com/oee/manualPdf/Oee.pdf";
+      saveAs(url, "User Manual Oee.pdf");
     },
   },
 };
