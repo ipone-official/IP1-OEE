@@ -47,7 +47,7 @@ export default {
   methods: {
     async openPdf() {
       this.src = vuePdf.createLoadingTask(
-        "https://portal.ip-one.com/payinForm/manualPdf/PayIn.pdf"
+        "https://portal.ip-one.com/oee/manualPdf/Oee.pdf"
       );
       await this.src.promise.then((vuePdf) => {
         this.numPages = vuePdf.numPages;

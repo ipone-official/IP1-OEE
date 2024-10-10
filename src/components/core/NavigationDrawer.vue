@@ -26,7 +26,7 @@
 
     </v-list>
 
-     <!-- <PdfPreview v-if="manualPDF" @btncallback="manualPDF=false" />
+     <PdfPreview v-if="manualPDF" @btncallback="manualPDF=false" />
     <footer class="footer">
     <v-divider></v-divider>
       <v-list>
@@ -37,7 +37,7 @@
           <v-list-tile-title >{{ $t('User Manual') }}</v-list-tile-title>
         </v-list-tile>
       </v-list>
-    </footer> -->
+    </footer>
   </v-navigation-drawer>
 </template>
 
