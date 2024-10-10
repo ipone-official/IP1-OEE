@@ -1,16 +1,16 @@
 <template>
   <v-container fluid grid-list-xs>
-    <v-layout row wrap   v-if="
+    <v-layout
+      row
+      wrap
+      v-if="
         machineDetail.operatorEdit ||
         machineDetail.supervisorEdit ||
         machineDetail.managerEdit ||
         machineDetail.adminEdit
-      ">
-      <v-flex
-        xs12
-        sm5
-        md4
-      >
+      "
+    >
+      <v-flex xs12 sm5 md4>
         <v-autocomplete
           placeholder="  Please select"
           v-model="mMachine"
@@ -26,12 +26,7 @@
         ></v-autocomplete>
       </v-flex>
 
-      <v-flex
-        xs12
-        sm4
-        md3
-        ml-4
-      >
+      <v-flex xs12 sm4 md3 ml-4>
         <v-radio-group v-model="selectedPlanStatus" row>
           <v-radio label="Plan" value="Plan"></v-radio>
           <v-radio label="UnPlan" value="UnPlan"></v-radio>
@@ -40,8 +35,7 @@
       <v-spacer></v-spacer>
 
       <v-flex xs12 sm4 md3 v-if="selectedPlanStatus == 'Plan'">
-        <div
-        >
+        <div>
           <v-checkbox v-model="UnControl" label="UnControl"></v-checkbox>
         </div>
       </v-flex>
@@ -81,26 +75,45 @@
           @keydown.native="keyFilter($event, 'decimal')"
         ></v-text-field>
       </v-flex>
-      <v-spacer></v-spacer>
-      <v-tooltip top color="teal">
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            fab
-            small
-            color="#007fc4"
-            dark
-            @click="addTransactionProblem(editMode)"
-            class="ma-2 small-export-button"
-            v-bind="attrs"
-            v-on="on"
-          >
-            <v-icon size="20"> {{ editMode ? "mdi-pencil-outline" : "mdi-plus" }}</v-icon>
-          </v-btn>
-        </template>
-        <span>{{ editMode ? "Edit item damage" : "Add item damage" }}</span>
-      </v-tooltip>
+      <!-- <v-spacer></v-spacer> -->
+      <v-layout justify-end style="margin-top: 0rem">
+        <v-tooltip top color="teal">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              fab
+              small
+              color="#007fc4"
+              dark
+              @click="addTransactionProblem(editMode)"
+              class="ma-2 small-export-button"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon size="20">
+                {{ editMode ? "mdi-pencil-outline" : "mdi-plus" }}</v-icon
+              >
+            </v-btn>
+          </template>
+          <span>{{ editMode ? "Edit item damage" : "Add item damage" }}</span>
+        </v-tooltip>
+      </v-layout>
+    </v-layout>
+    <v-layout style="margin-top: -1.2rem" v-if="isGreaterThanPB9000">
+      <v-flex xs12 sm12 md12>
+        <v-textarea
+          v-model="fOther"
+          prepend-icon="mdi-note-text-outline"
+          maxlength="100"
+          counter="100"
+          prefix="*"
+           style="color: red"
+          rows="2"
+          label="Remark"
+        ></v-textarea>
+      </v-flex>
     </v-layout>
     <v-data-table
+      style="margin-top: 1.2rem"
       :headers="headers"
       :items="machineDetail.itemProblemTable"
       item-key="problemID"
@@ -176,6 +189,7 @@ export default {
   },
   data() {
     return {
+      fOther: "",
       UnControl: false,
       selectedPlanStatus: "",
       keyFilter,
@@ -219,6 +233,7 @@ export default {
       editMode: false,
       editId: 0,
       editItem: {},
+      ThanPB9000: false,
     };
   },
   computed: {
@@ -230,6 +245,11 @@ export default {
         { text: "50", value: 50 },
         { text: "100", value: 100 },
       ];
+    },
+    isGreaterThanPB9000() {
+      if(this.mProblemDesc == '') return this.ThanPB9000 = false
+      const problemNumber = parseInt(this.mProblemDesc.problemID.slice(2));
+      return  this.ThanPB9000 = problemNumber > 9000;
     },
     formattedDowntime: {
       get() {
@@ -247,6 +267,7 @@ export default {
       this.itemProblemDesc = [];
       this.UnControl = false;
       this.mDowntime = 0;
+      this.fOther = "";
       const status = this.selectedPlanStatus == "UnPlan" ? "N" : "Y";
       const unControl = this.UnControl == true ? "Y" : "N";
       if (this.mMachine.machineID == "M000") {
@@ -267,6 +288,8 @@ export default {
         );
         this.UnControl = false;
       }
+      if (this.editMode) return;
+      this.mProblemDesc = "";
     },
     selectedPlanStatus(val) {
       this.itemProblemDesc = [];
@@ -289,6 +312,8 @@ export default {
             result.unControlStatus == unControl
         );
       }
+      if (this.editMode) return;
+      this.mProblemDesc = "";
     },
     UnControl(val) {
       if (this.selectedPlanStatus == "") return (this.itemProblemDesc = []);
@@ -302,10 +327,13 @@ export default {
           result.unControlStatus == unControl &&
           result.machineID == this.mMachine.machineID
       );
+      if (this.editMode) return;
+      this.mProblemDesc = "";
     },
     mProblemDesc(val) {
       this.mDowntime = 0;
       if (this.editMode) return;
+      this.fOther = "";
       this.mDowntime = val.stdTime;
     },
   },
@@ -360,6 +388,10 @@ export default {
         this.showResult = true;
         return (this.msgResult = "Downtime cannot be blank or set to 0.");
       }
+      if (this.ThanPB9000 && this.fOther == '') {
+        this.showResult = true;
+        return (this.msgResult = "Remark cannot be blank or set to 0.");
+      }
       if (mode) {
         Swal.fire({
           html: `Would you like to edit the item no. ${this.editId} `,
@@ -375,7 +407,9 @@ export default {
             this.machineDetail.itemProblemTable.splice(index, 1);
             this.machineDetail.itemProblemTable.push({
               problemID: this.mProblemDesc.problemID,
-              problemDescription: this.mProblemDesc.problemDescription,
+              problemDescription: this.ThanPB9000
+                ? this.fOther
+                : this.mProblemDesc.problemDescription,
               lineProcessID: this.mMachine.lineProcessID,
               lineProcessName: this.mMachine.lineProcessName,
               machineID: this.mMachine.machineID,
@@ -394,6 +428,7 @@ export default {
             this.mMachine = "";
             this.mProblemDesc = "";
             this.selectedPlanStatus = "";
+            this.fOther = "";
             this.itemProblemDesc = [];
             this.UnControl = false;
             const init = this.itemMachine.filter(
@@ -408,6 +443,7 @@ export default {
             this.editItem = {};
             this.mDowntime = 0;
             this.mMachine = "";
+            this.fOther = "";
             this.mProblemDesc = "";
             this.selectedPlanStatus = "";
             this.itemProblemDesc = [];
@@ -424,7 +460,9 @@ export default {
       } else {
         this.machineDetail.itemProblemTable.push({
           problemID: this.mProblemDesc.problemID,
-          problemDescription: this.mProblemDesc.problemDescription,
+          problemDescription: this.ThanPB9000
+            ? this.fOther
+            : this.mProblemDesc.problemDescription,
           lineProcessID: this.mMachine.lineProcessID,
           lineProcessName: this.mMachine.lineProcessName,
           machineID: this.mMachine.machineID,
@@ -459,6 +497,7 @@ export default {
         this.mDowntime = 0;
         this.mMachine = "";
         this.mProblemDesc = "";
+        this.fOther = "";
         this.selectedPlanStatus = "";
         this.itemProblemDesc = [];
         this.UnControl = false;
@@ -469,12 +508,14 @@ export default {
       }
     },
     editItemProblem(val) {
+      console.log("val", val);
       this.editMode = true;
       this.editId = val.itemNo;
       this.editItem = val;
       const initEdit = this.itemMachine.filter(
         (result) => result.problemID === val.problemID
       );
+      console.log("initEdit", initEdit);
       this.mMachine = {
         machineID: initEdit[0].machineID,
         machineDescription: initEdit[0].machineDescription,
@@ -488,6 +529,9 @@ export default {
       this.selectedPlanStatus = statusPlan;
       const statusUncontrol = initEdit[0].unControlStatus == "Y" ? true : false;
       this.UnControl = statusUncontrol;
+      const problemNumber = parseInt(this.mProblemDesc.problemID.slice(2));
+      this.ThanPB9000 = problemNumber > 9000;
+      this.fOther = this.ThanPB9000 ? val.problemDescription : "";
     },
     deleteItemProblem(item) {
       const index = this.machineDetail.itemProblemTable.indexOf(item);
