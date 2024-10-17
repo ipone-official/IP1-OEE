@@ -6,8 +6,111 @@
       max-width="1180px"
     >
       <v-card>
+        <v-layout justify-end>
+          <v-flex xs12 sm4>
+            <div class="pa-3 inner-card mt-4">
+              <v-layout>
+                <div class="font-weight-bold mb-2">Operator :</div>
+                <div style="margin-left: 0.7rem">
+                  {{
+                    `${machineDetail.selectTransactionTProcess.username} (${machineDetail.selectTransactionTProcess.shift})`
+                  }}
+                </div>
+              </v-layout>
+            </div>
+          </v-flex>
+        </v-layout>
         <v-card-title>
-          <v-flex xs12 sm5 md4>
+          <v-layout row wrap align-center justify-space-between>
+            <!-- Check-In Time Label -->
+            <v-flex
+              xs12
+              sm1
+              class="pa-sm-2 pa-xs-1"
+              v-if="
+                machineDetail.operatorEdit ||
+                machineDetail.supervisorEdit ||
+                machineDetail.managerEdit ||
+                machineDetail.adminEdit
+              "
+            >
+              <div class="font-weight-bold mb-2">Check-In Time:</div>
+            </v-flex>
+
+            <!-- Check-In Date Picker -->
+            <v-flex
+              xs12
+              sm2
+              class="pa-sm-2 pa-xs-1"
+              v-if="
+                machineDetail.operatorEdit ||
+                machineDetail.supervisorEdit ||
+                machineDetail.managerEdit ||
+                machineDetail.adminEdit
+              "
+            >
+              <calendar :value.sync="CheckInDate" label="Check Date" :readonly="true" />
+            </v-flex>
+
+            <!-- Check-In Time Picker -->
+            <v-flex
+              xs12
+              sm2
+              class="pa-sm-2 pa-xs-1"
+              v-if="
+                machineDetail.operatorEdit ||
+                machineDetail.supervisorEdit ||
+                machineDetail.managerEdit ||
+                machineDetail.adminEdit
+              "
+            >
+              <timepicker v-model="CheckInTime" ref="timeCheckinRef" />
+            </v-flex>
+
+            <!-- Check-Out Time Label -->
+            <v-flex
+              xs12
+              sm1
+              class="pa-sm-2 pa-xs-1"
+              v-if="
+                machineDetail.supervisorEdit ||
+                machineDetail.managerEdit ||
+                machineDetail.adminEdit
+              "
+            >
+              <div class="font-weight-bold mb-2">Check-Out Time:</div>
+            </v-flex>
+
+            <!-- Check-Out Date Picker -->
+            <v-flex
+              xs12
+              sm2
+              class="pa-sm-2 pa-xs-1"
+              v-if="
+                machineDetail.supervisorEdit ||
+                machineDetail.managerEdit ||
+                machineDetail.adminEdit
+              "
+            >
+              <calendar :value.sync="CheckOutDate" label="Check Out" :readonly="true" />
+            </v-flex>
+
+            <!-- Check-Out Time Picker -->
+            <v-flex
+              xs12
+              sm2
+              class="pa-sm-2 pa-xs-1"
+              v-if="
+                machineDetail.supervisorEdit ||
+                machineDetail.managerEdit ||
+                machineDetail.adminEdit
+              "
+            >
+              <timepicker v-model="CheckOutTime" ref="timeCheckoutRef" />
+            </v-flex>
+          </v-layout>
+
+          <!-- <v-flex xs12 sm5 md4>
             <div class="pa-3 inner-card mt-3">
               <v-layout>
                 <div class="font-weight-bold mb-2">Check-In Time :</div>
@@ -22,18 +125,7 @@
             </div>
           </v-flex>
           <v-spacer></v-spacer>
-          <v-flex xs12 sm5 md4>
-            <div class="pa-3 inner-card mt-3">
-              <v-layout>
-                <div class="font-weight-bold mb-2">Operator :</div>
-                <div style="margin-left: 0.7rem">
-                  {{
-                    `${machineDetail.selectTransactionTProcess.username} (${machineDetail.selectTransactionTProcess.shift})`
-                  }}
-                </div>
-              </v-layout>
-            </div>
-          </v-flex>
+       -->
           <v-tooltip top color="teal">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -171,6 +263,8 @@ import functions from "@/plugins/functions";
 import Detail from "@/pages/OeePage/Detail.vue";
 import Reason from "@/pages/OeePage/Reason.vue";
 import Problem from "@/pages/OeePage/Problem.vue";
+import timepicker from "@/components/TimePicker.vue";
+import calendar from "@/components/DatePiker.vue";
 
 export default {
   components: {
@@ -178,6 +272,8 @@ export default {
     Detail,
     Reason,
     Problem,
+    timepicker,
+    calendar,
   },
   data() {
     return {
@@ -218,6 +314,8 @@ export default {
             userID: empId,
             machine_STD: parseInt(machineStd, 10),
             qty_Dozen: parseInt(QtyDz, 10),
+            checkIN: `${this.CheckInDate} ${this.CheckInTime}`,
+            checkOut: `${this.CheckOutDate} ${this.CheckOutTime}`,
             detailProblem: itemProblemTable.map(
               ({ machineID, problemID, problemDescription, downtime }) => ({
                 machineID,
@@ -283,7 +381,8 @@ export default {
             prodOrderID: "",
             material_Code: materialCode,
             filmID: filmID,
-            checkINOut: functions.formatDate(),
+            checkIN: `${this.CheckInDate} ${this.CheckInDate}`,
+            checkOut: `${this.CheckOutDate} ${this.CheckOutTime}`,
             status: val,
           };
           const response = await axios.post(

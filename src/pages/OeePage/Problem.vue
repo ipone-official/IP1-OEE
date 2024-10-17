@@ -508,14 +508,12 @@ export default {
       }
     },
     editItemProblem(val) {
-      console.log("val", val);
       this.editMode = true;
       this.editId = val.itemNo;
       this.editItem = val;
       const initEdit = this.itemMachine.filter(
         (result) => result.problemID === val.problemID
       );
-      console.log("initEdit", initEdit);
       this.mMachine = {
         machineID: initEdit[0].machineID,
         machineDescription: initEdit[0].machineDescription,

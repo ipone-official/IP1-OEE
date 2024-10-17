@@ -28,7 +28,16 @@
           :disabled="DateDisibled"
         />
       </v-flex>
-      <div style="margin-left: 3rem; margin-top: 1rem; font-weight: bold">TO</div>
+      <div
+        style="
+          margin-left: 3rem;
+          margin-top: 1.5rem;
+          font-weight: bold;
+          margin-right: 3rem;
+        "
+      >
+        TO
+      </div>
       <v-flex xs9 sm3 md2>
         <calendar
           :value.sync="toDate"
@@ -217,25 +226,37 @@
     <v-dialog v-model="dialogTransactionOee" persistent max-width="1180px">
       <v-card>
         <v-card-title>
-          <v-flex xs12 sm5 md4>
-            <div class="pa-3 inner-card mt-3">
-              <v-layout>
-                <div class="font-weight-bold mb-2">Check-In Time :</div>
-                <div style="margin-left: 0.7rem">
-                  {{ CheckInDate == "" ? " " : functions.formatDateFormat(CheckInDate) }}
-                </div>
-              </v-layout>
-            </div>
-          </v-flex>
-          <v-spacer></v-spacer>
-          <v-flex xs12 sm5 md4>
-            <div class="pa-3 inner-card mt-3">
-              <v-layout>
-                <div class="font-weight-bold mb-2">Operator :</div>
-                <div style="margin-left: 0.7rem">{{ infoLogin.samAccount }}</div>
-              </v-layout>
-            </div>
-          </v-flex>
+          <v-layout row wrap align-center justify-space-between>
+            <v-flex xs12 sm2>
+              <div class="font-weight-bold mb-2 mt-sm-4 mt-0">Check-In Time:</div>
+            </v-flex>
+            <v-flex xs12 sm3>
+              <calendar
+                v-model="CheckInDate"
+                label="Check Date"
+                :readonly="true"
+                class="mt-sm-4 mt-0"
+              />
+            </v-flex>
+            <v-spacer></v-spacer>
+            <v-flex xs12 sm2>
+              <timepicker
+                v-model="CheckInTime"
+                ref="timeCheckinRef"
+                class="mt-sm-4 mt-0"
+              />
+            </v-flex>
+            <v-spacer></v-spacer>
+            <v-flex xs12 sm4>
+              <div class="pa-3 inner-card mt-sm-4 mt-2">
+                <v-layout>
+                  <div class="font-weight-bold mb-2">Operator :</div>
+                  <div style="margin-left: 0.7rem">{{ infoLogin.samAccount }}</div>
+                </v-layout>
+              </div>
+            </v-flex>
+          </v-layout>
+
           <v-tooltip top color="teal">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -399,6 +420,43 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="dialogCheckOut" persistent max-width="600px">
+      <v-card>
+        <v-card-title style="background-color: #007fc4; color: white">
+          <span class="headline">Check Out</span>
+        </v-card-title>
+        <v-card-text>
+          <v-layout row wrap align-center justify-space-between>
+            <v-flex xs12 sm3 class="pa-sm-2 pa-xs-1">
+              <div class="font-weight-bold mb-2">Check-Out Time:</div>
+            </v-flex>
+            <v-flex xs12 sm4 class="pa-sm-2 pa-xs-1">
+              <calendar :value.sync="CheckOutDate" label="Check Out" :readonly="true" />
+            </v-flex>
+            <v-flex xs12 sm3 class="pa-sm-2 pa-xs-1">
+              <timepicker v-model="CheckOutTime" ref="timeCheckoutRef" />
+            </v-flex>
+          </v-layout>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            @click="saveCheckOut(dataCheckOut)"
+            style="color: white; background-color: #007fc4; border-radius: 12px"
+          >
+            Save
+          </v-btn>
+          <v-btn
+            @click="dialogCheckOut = false"
+            flat
+            style="border-radius: 12px; color: #007fc4"
+          >
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <DetailProcess />
     <v-snackbar color="orange" v-model="showResult" :timeout="3500">
       {{ msgResult }}
@@ -417,15 +475,18 @@ import { isEmpty } from "lodash";
 import Swal from "sweetalert2";
 import functions from "@/plugins/functions";
 import DetailProcess from "@/pages/OeePage/mainProcess.vue";
+import timepicker from "@/components/TimePicker.vue";
 
 export default {
   components: {
     calendar,
     Loading,
     DetailProcess,
+    timepicker,
   },
   data() {
     return {
+      dataCheckOut: [],
       msgResult: "",
       showResult: false,
       DateDisibled: false,
@@ -433,6 +494,7 @@ export default {
       functions,
       itemOee: [],
       dialogTransactionOee: false,
+      dialogCheckOut: false,
       itemLineProcess: [],
       loadingDialog: false,
       mLineProcess: "",
@@ -494,7 +556,6 @@ export default {
         page: 1,
         rowsPerPage: 5,
       },
-      CheckInDate: "",
       itemTransactionTProcess: [],
       headersTProcess: [
         { text: "Process ID", align: "left", sortable: false, value: "processID" },
@@ -726,6 +787,8 @@ export default {
       this.loadingDialog = true;
       this.itemTransactionTProcess = [];
       this.rawData = [];
+      this.mFilterStatus = []
+      this.mFilterProcess = []
       this.flagGetTProcess = false;
       let pProcessDate = {
         startDate: this.formDate,
@@ -911,7 +974,8 @@ export default {
                 : "",
             material_Code: this.selected[0].materialCode,
             filmID: this.mFilm == "" ? "" : this.mFilm.filmID,
-            checkINOut: this.CheckInDate,
+            checkIN: `${this.CheckInDate} ${this.CheckInTime}`,
+            checkOut: "",
             status: "InProcess",
           };
           const response = await axios.post(
@@ -1088,7 +1152,17 @@ export default {
       this.machineDetail.adminEdit = ["ADMIN"].some((i) =>
         this.infoLogin.group.includes(i)
       );
-      this.tab = 0
+      if(val.checkIn != '') {
+        const dateCheckin = val.checkIn.split(" ");
+        this.CheckInDate = dateCheckin[0];
+        this.CheckInTime = dateCheckin[1];
+      }
+      if(val.checkOut != '') {
+        const dateCheckOut = val.checkOut.split(" ");
+        this.CheckOutDate = dateCheckOut[0];
+        this.CheckOutTime = dateCheckOut[1];
+      }
+      this.tab = 0;
       this.machineDetail.selectTransactionTProcess = val;
       this.machineDetail.machineStd = this.machineDetail.selectTransactionTProcess.machineSTD;
       this.machineDetail.QtyDz = 0;
@@ -1145,6 +1219,14 @@ export default {
         this.showResult = true;
         return (this.msgResult = "Quantity (DZ) cannot be blank or set to 0.");
       }
+      this.CheckOutDate = functions.getSysDate().format;
+      this.$refs.timeCheckoutRef.clearTime();
+      this.CheckOutTime = "00:00";
+      this.dataCheckOut = [];
+      this.dialogCheckOut = true;
+      this.dataCheckOut = val;
+    },
+    async saveCheckOut(val) {
       Swal.fire({
         html: `Would you like to check out?`,
         icon: "warning",
@@ -1164,7 +1246,8 @@ export default {
             prodOrderID: "",
             material_Code: val.materialCode,
             filmID: val.filmID,
-            checkINOut: functions.formatDate(),
+            checkIN: val.checkIN,
+            checkOut: `${this.CheckOutDate} ${this.CheckOutTime}`,
             status: "WaitConfirm",
           };
           const response = await axios.post(
@@ -1183,6 +1266,8 @@ export default {
             }).then(async (result) => {
               if (result.isConfirmed) {
                 this.loadingDialog = false;
+                this.dialogCheckOut = false;
+                this.dataCheckOut = [];
                 this.flagGetTProcess = true;
               }
             });
@@ -1203,7 +1288,9 @@ export default {
     },
     async openDialogTranOee() {
       this.dialogTransactionOee = true;
-      this.CheckInDate = functions.formatDate();
+      this.CheckInDate = functions.getSysDate().format;
+      this.$refs.timeCheckinRef.clearTime();
+      this.CheckInTime = "00:00";
       this.selected = [];
       this.mLineProcess = "";
       this.mFilm = "";

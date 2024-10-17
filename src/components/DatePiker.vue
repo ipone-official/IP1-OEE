@@ -3,11 +3,11 @@
     <v-flex md12>
       <v-layout>
         <v-flex md11>
-          <v-text-field v-model="dateText" prepend-icon=" " :label="label" mask="##/##/####" placeholder=" " persistent-hint :readonly="setReadonly"  :class="{&quot;text-no-border&quot; : setDisabled}" />
+          <v-text-field v-model="dateText"  :label="label" mask="##/##/####" placeholder=" " persistent-hint :readonly="setReadonly"  />
         </v-flex>
         <v-flex md1>
           <v-menu ref="menu" v-model="menu" :close-on-content-click="false" lazy transition="scale-transition" offset-y full-width :disabled="setDisabled" >
-            <v-icon slot="activator" ref="icon" style="margin-top:10px" color="primary" :disabled="setDisabled" >
+            <v-icon slot="activator" ref="icon" style="margin-top:20px" color="primary" :disabled="setDisabled" >
               event
             </v-icon>
             <v-date-picker v-model="dateCalendar" :max="maxDate" :min="minDate" color="primary" header-color="primary"  :disabled="setDisabled"/>
