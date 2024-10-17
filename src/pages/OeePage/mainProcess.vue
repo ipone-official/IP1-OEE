@@ -74,6 +74,7 @@
             <v-flex xs12 sm1 class="pa-sm-2 pa-xs-1">
               <div
                 class="font-weight-bold mb-2"
+                v-show="machineDetail.selectTransactionTProcess.status != 'InProcess'"
                 v-if="
                   machineDetail.supervisorEdit ||
                   machineDetail.managerEdit ||
@@ -88,6 +89,7 @@
                 :value.sync="CheckOutDate"
                 label="Check Out"
                 :readonly="true"
+                v-show="machineDetail.selectTransactionTProcess.status != 'InProcess'"
                 v-if="
                   machineDetail.supervisorEdit ||
                   machineDetail.managerEdit ||
@@ -99,6 +101,7 @@
               <timepicker
                 v-model="CheckOutTime"
                 ref="timeCheckoutRef"
+                v-show="machineDetail.selectTransactionTProcess.status != 'InProcess'"
                 v-if="
                   machineDetail.supervisorEdit ||
                   machineDetail.managerEdit ||
@@ -296,7 +299,7 @@ export default {
             machine_STD: parseInt(machineStd, 10),
             qty_Dozen: parseInt(QtyDz, 10),
             checkIN: `${this.CheckInDate} ${this.CheckInTime}`,
-            checkOut: ["OPERATOR"].some((i) => this.infoLogin.group.includes(i))
+            checkOut: this.machineDetail.selectTransactionTProcess.status == 'InProcess'
               ? ""
               : `${this.CheckOutDate} ${this.CheckOutTime}`,
             detailProblem: itemProblemTable.map(
@@ -372,7 +375,6 @@ export default {
             `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
             init
           );
-          console.log(response, 'response')
           if (response.data.status == 200) {
             Swal.fire({
               html: `Successfully`,
