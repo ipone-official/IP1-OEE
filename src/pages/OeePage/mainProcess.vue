@@ -8,7 +8,7 @@
       <v-card>
         <v-layout justify-end>
           <v-flex xs12 sm4>
-            <div class="pa-3 inner-card mt-4">
+            <div class="pa-3 inner-card mt-4 mr-4">
               <v-layout>
                 <div class="font-weight-bold mb-2">Operator :</div>
                 <div style="margin-left: 0.7rem">
@@ -21,111 +21,92 @@
           </v-flex>
         </v-layout>
         <v-card-title>
-          <v-layout row wrap align-center justify-space-between>
-            <!-- Check-In Time Label -->
-            <v-flex
-              xs12
-              sm1
-              class="pa-sm-2 pa-xs-1"
-              v-if="
-                machineDetail.operatorEdit ||
-                machineDetail.supervisorEdit ||
-                machineDetail.managerEdit ||
-                machineDetail.adminEdit
-              "
-            >
-              <div class="font-weight-bold mb-2">Check-In Time:</div>
+          <v-layout
+            row
+            wrap
+            align-center
+            justify-space-between
+            v-if="
+              machineDetail.operatorEdit ||
+              machineDetail.supervisorEdit ||
+              machineDetail.managerEdit ||
+              machineDetail.adminEdit
+            "
+          >
+            <v-flex xs12 sm1 class="pa-sm-2 pa-xs-1">
+              <div
+                class="font-weight-bold mb-2"
+                v-if="
+                  machineDetail.operatorEdit ||
+                  machineDetail.supervisorEdit ||
+                  machineDetail.managerEdit ||
+                  machineDetail.adminEdit
+                "
+              >
+                Check-In Time:
+              </div>
             </v-flex>
-
-            <!-- Check-In Date Picker -->
-            <v-flex
-              xs12
-              sm2
-              class="pa-sm-2 pa-xs-1"
-              v-if="
-                machineDetail.operatorEdit ||
-                machineDetail.supervisorEdit ||
-                machineDetail.managerEdit ||
-                machineDetail.adminEdit
-              "
-            >
-              <calendar :value.sync="CheckInDate" label="Check Date" :readonly="true" />
+            <v-flex xs12 sm2 class="pa-sm-2 pa-xs-1">
+              <calendar
+                :value.sync="CheckInDate"
+                label="Check Date"
+                :readonly="true"
+                v-if="
+                  machineDetail.operatorEdit ||
+                  machineDetail.supervisorEdit ||
+                  machineDetail.managerEdit ||
+                  machineDetail.adminEdit
+                "
+              />
             </v-flex>
-
-            <!-- Check-In Time Picker -->
-            <v-flex
-              xs12
-              sm2
-              class="pa-sm-2 pa-xs-1"
-              v-if="
-                machineDetail.operatorEdit ||
-                machineDetail.supervisorEdit ||
-                machineDetail.managerEdit ||
-                machineDetail.adminEdit
-              "
-            >
-              <timepicker v-model="CheckInTime" ref="timeCheckinRef" />
+            <v-flex xs12 sm2 class="pa-sm-2 pa-xs-1">
+              <timepicker
+                v-model="CheckInTime"
+                ref="timeCheckinRef"
+                v-if="
+                  machineDetail.operatorEdit ||
+                  machineDetail.supervisorEdit ||
+                  machineDetail.managerEdit ||
+                  machineDetail.adminEdit
+                "
+              />
             </v-flex>
-
-            <!-- Check-Out Time Label -->
-            <v-flex
-              xs12
-              sm1
-              class="pa-sm-2 pa-xs-1"
-              v-if="
-                machineDetail.supervisorEdit ||
-                machineDetail.managerEdit ||
-                machineDetail.adminEdit
-              "
-            >
-              <div class="font-weight-bold mb-2">Check-Out Time:</div>
+            <v-flex xs12 sm1 class="pa-sm-2 pa-xs-1">
+              <div
+                class="font-weight-bold mb-2"
+                v-if="
+                  machineDetail.supervisorEdit ||
+                  machineDetail.managerEdit ||
+                  machineDetail.adminEdit
+                "
+              >
+                Check-Out Time:
+              </div>
             </v-flex>
-
-            <!-- Check-Out Date Picker -->
-            <v-flex
-              xs12
-              sm2
-              class="pa-sm-2 pa-xs-1"
-              v-if="
-                machineDetail.supervisorEdit ||
-                machineDetail.managerEdit ||
-                machineDetail.adminEdit
-              "
-            >
-              <calendar :value.sync="CheckOutDate" label="Check Out" :readonly="true" />
+            <v-flex xs12 sm2 class="pa-sm-2 pa-xs-1">
+              <calendar
+                :value.sync="CheckOutDate"
+                label="Check Out"
+                :readonly="true"
+                v-if="
+                  machineDetail.supervisorEdit ||
+                  machineDetail.managerEdit ||
+                  machineDetail.adminEdit
+                "
+              />
             </v-flex>
-
-            <!-- Check-Out Time Picker -->
-            <v-flex
-              xs12
-              sm2
-              class="pa-sm-2 pa-xs-1"
-              v-if="
-                machineDetail.supervisorEdit ||
-                machineDetail.managerEdit ||
-                machineDetail.adminEdit
-              "
-            >
-              <timepicker v-model="CheckOutTime" ref="timeCheckoutRef" />
+            <v-flex xs12 sm2 class="pa-sm-2 pa-xs-1">
+              <timepicker
+                v-model="CheckOutTime"
+                ref="timeCheckoutRef"
+                v-if="
+                  machineDetail.supervisorEdit ||
+                  machineDetail.managerEdit ||
+                  machineDetail.adminEdit
+                "
+              />
             </v-flex>
           </v-layout>
-
-          <!-- <v-flex xs12 sm5 md4>
-            <div class="pa-3 inner-card mt-3">
-              <v-layout>
-                <div class="font-weight-bold mb-2">Check-In Time :</div>
-                <div style="margin-left: 0.7rem">
-                  {{
-                    functions.formatDateFormat(
-                      machineDetail.selectTransactionTProcess.checkIn
-                    )
-                  }}
-                </div>
-              </v-layout>
-            </div>
-          </v-flex>
-          <v-spacer></v-spacer>
-       -->
           <v-tooltip top color="teal">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -315,7 +296,9 @@ export default {
             machine_STD: parseInt(machineStd, 10),
             qty_Dozen: parseInt(QtyDz, 10),
             checkIN: `${this.CheckInDate} ${this.CheckInTime}`,
-            checkOut: `${this.CheckOutDate} ${this.CheckOutTime}`,
+            checkOut: ["OPERATOR"].some((i) => this.infoLogin.group.includes(i))
+              ? ""
+              : `${this.CheckOutDate} ${this.CheckOutTime}`,
             detailProblem: itemProblemTable.map(
               ({ machineID, problemID, problemDescription, downtime }) => ({
                 machineID,
@@ -381,7 +364,7 @@ export default {
             prodOrderID: "",
             material_Code: materialCode,
             filmID: filmID,
-            checkIN: `${this.CheckInDate} ${this.CheckInDate}`,
+            checkIN: `${this.CheckInDate} ${this.CheckInTime}`,
             checkOut: `${this.CheckOutDate} ${this.CheckOutTime}`,
             status: val,
           };
@@ -389,6 +372,7 @@ export default {
             `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
             init
           );
+          console.log(response, 'response')
           if (response.data.status == 200) {
             Swal.fire({
               html: `Successfully`,

@@ -1246,7 +1246,7 @@ export default {
             prodOrderID: "",
             material_Code: val.materialCode,
             filmID: val.filmID,
-            checkIN: val.checkIN,
+            checkIN: val.checkIn,
             checkOut: `${this.CheckOutDate} ${this.CheckOutTime}`,
             status: "WaitConfirm",
           };
