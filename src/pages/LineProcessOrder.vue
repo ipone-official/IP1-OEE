@@ -1152,6 +1152,12 @@ export default {
       this.machineDetail.adminEdit = ["ADMIN"].some((i) =>
         this.infoLogin.group.includes(i)
       );
+      this.CheckInDate = functions.getSysDate().format;
+      this.$refs.timeCheckinRef.clearTime();
+      this.CheckInTime = "00:00";
+      this.CheckOutDate = functions.getSysDate().format;
+      this.$refs.timeCheckoutRef.clearTime();
+      this.CheckOutTime = "00:00";
       if(val.checkIn != '') {
         const dateCheckin = val.checkIn.split(" ");
         this.CheckInDate = dateCheckin[0];
@@ -1291,6 +1297,9 @@ export default {
       this.CheckInDate = functions.getSysDate().format;
       this.$refs.timeCheckinRef.clearTime();
       this.CheckInTime = "00:00";
+      this.CheckOutDate = functions.getSysDate().format;
+      this.$refs.timeCheckoutRef.clearTime();
+      this.CheckOutTime = "00:00";
       this.selected = [];
       this.mLineProcess = "";
       this.mFilm = "";
