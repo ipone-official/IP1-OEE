@@ -230,32 +230,35 @@ export default {
     async GetReason() {
       this.loadingDialog = true;
       this.itemReason = [];
+      try {
+        const response = await axios.get(
+          `${this.EndpointPortal}/ApiOEE/OEE/v1/GetReasonDamage`
+        );
+        if (response.data.status == 200) {
+          this.loadingDialog = false;
+          this.itemReason = response.data.results;
 
-      const response = await axios.get(
-        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetReasonDamage`
-      );
-      if (response.data.status == 200) {
-        this.loadingDialog = false;
-        this.itemReason = response.data.results;
-
-        const reasonIDs = new Set();
-        this.itemReason.forEach((result) => {
-          reasonIDs.add(result.reasonID);
-        });
-        if (Array.from(reasonIDs).length == 1) {
-          this.mReason = this.itemReason[0];
+          const reasonIDs = new Set();
+          this.itemReason.forEach((result) => {
+            reasonIDs.add(result.reasonID);
+          });
+          if (Array.from(reasonIDs).length == 1) {
+            this.mReason = this.itemReason[0];
+          }
+        } else {
+          this.loadingDialog = false;
+          Swal.fire({
+            text: `Internal Server Error`,
+            icon: "error",
+            showCancelButton: false,
+            allowOutsideClick: false,
+            confirmButtonColor: "#0c80c4",
+            cancelButtonColor: "#C0C0C0",
+            confirmButtonText: "Ok",
+          });
         }
-      } else {
+      } catch (error) {
         this.loadingDialog = false;
-        Swal.fire({
-          text: `Internal Server Error`,
-          icon: "error",
-          showCancelButton: false,
-          allowOutsideClick: false,
-          confirmButtonColor: "#0c80c4",
-          cancelButtonColor: "#C0C0C0",
-          confirmButtonText: "Ok",
-        });
       }
     },
     addTransactionDamage(mode) {

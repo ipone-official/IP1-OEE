@@ -299,9 +299,10 @@ export default {
             machine_STD: parseInt(machineStd, 10),
             qty_Dozen: parseInt(QtyDz, 10),
             checkIN: `${this.CheckInDate} ${this.CheckInTime}`,
-            checkOut: this.machineDetail.selectTransactionTProcess.status == 'InProcess'
-              ? ""
-              : `${this.CheckOutDate} ${this.CheckOutTime}`,
+            checkOut:
+              this.machineDetail.selectTransactionTProcess.status == "InProcess"
+                ? ""
+                : `${this.CheckOutDate} ${this.CheckOutTime}`,
             detailProblem: itemProblemTable.map(
               ({ machineID, problemID, problemDescription, downtime }) => ({
                 machineID,
@@ -316,26 +317,30 @@ export default {
               qty: QtyEA,
             })),
           };
-          const response = await axios.post(
-            `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertDetailReasonAndProblem`,
-            initHeadDetail
-          );
-          if (response.data.status == 200) {
-            Swal.fire({
-              html: `Successfully`,
-              icon: "success",
-              showCancelButton: false,
-              allowOutsideClick: false,
-              confirmButtonColor: "#0c80c4",
-              cancelButtonColor: "#C0C0C0",
-              confirmButtonText: "OK",
-            }).then(async (result) => {
-              if (result.isConfirmed) {
-                this.machineDetail.dialogTransactionDetail = false;
-                this.flagGetTProcess = true;
-                this.tab = 0;
-              }
-            });
+          try {
+            const response = await axios.post(
+              `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertDetailReasonAndProblem`,
+              initHeadDetail
+            );
+            if (response.data.status == 200) {
+              Swal.fire({
+                html: `Successfully`,
+                icon: "success",
+                showCancelButton: false,
+                allowOutsideClick: false,
+                confirmButtonColor: "#0c80c4",
+                cancelButtonColor: "#C0C0C0",
+                confirmButtonText: "OK",
+              }).then(async (result) => {
+                if (result.isConfirmed) {
+                  this.machineDetail.dialogTransactionDetail = false;
+                  this.flagGetTProcess = true;
+                  this.tab = 0;
+                }
+              });
+            }
+          } catch (error) {
+            console.error(error);
           }
         }
       });
@@ -371,38 +376,42 @@ export default {
             checkOut: `${this.CheckOutDate} ${this.CheckOutTime}`,
             status: val,
           };
-          const response = await axios.post(
-            `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
-            init
-          );
-          if (response.data.status == 200) {
-            Swal.fire({
-              html: `Successfully`,
-              icon: "success",
-              showCancelButton: false,
-              allowOutsideClick: false,
-              confirmButtonColor: "#0c80c4",
-              cancelButtonColor: "#C0C0C0",
-              confirmButtonText: "OK",
-            }).then(async (result) => {
-              if (result.isConfirmed) {
-                this.loadingDialog = false;
-                this.flagGetTProcess = true;
-                this.machineDetail.dialogTransactionDetail = false;
-                this.tab = 0;
-              }
-            });
-          } else {
+          try {
+            const response = await axios.post(
+              `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
+              init
+            );
+            if (response.data.status == 200) {
+              Swal.fire({
+                html: `Successfully`,
+                icon: "success",
+                showCancelButton: false,
+                allowOutsideClick: false,
+                confirmButtonColor: "#0c80c4",
+                cancelButtonColor: "#C0C0C0",
+                confirmButtonText: "OK",
+              }).then(async (result) => {
+                if (result.isConfirmed) {
+                  this.loadingDialog = false;
+                  this.flagGetTProcess = true;
+                  this.machineDetail.dialogTransactionDetail = false;
+                  this.tab = 0;
+                }
+              });
+            } else {
+              this.loadingDialog = false;
+              Swal.fire({
+                text: `Internal Server Error`,
+                icon: "error",
+                showCancelButton: false,
+                allowOutsideClick: false,
+                confirmButtonColor: "#0c80c4",
+                cancelButtonColor: "#C0C0C0",
+                confirmButtonText: "Ok",
+              });
+            }
+          } catch (error) {
             this.loadingDialog = false;
-            Swal.fire({
-              text: `Internal Server Error`,
-              icon: "error",
-              showCancelButton: false,
-              allowOutsideClick: false,
-              confirmButtonColor: "#0c80c4",
-              cancelButtonColor: "#C0C0C0",
-              confirmButtonText: "Ok",
-            });
           }
         }
       });

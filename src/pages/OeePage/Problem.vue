@@ -106,7 +106,7 @@
           maxlength="100"
           counter="100"
           prefix="*"
-           style="color: red"
+          style="color: red"
           rows="2"
           label="Remark"
         ></v-textarea>
@@ -247,9 +247,9 @@ export default {
       ];
     },
     isGreaterThanPB9000() {
-      if(this.mProblemDesc == '') return this.ThanPB9000 = false
+      if (this.mProblemDesc == "") return (this.ThanPB9000 = false);
       const problemNumber = parseInt(this.mProblemDesc.problemID.slice(2));
-      return  this.ThanPB9000 = problemNumber > 9000;
+      return (this.ThanPB9000 = problemNumber > 9000);
     },
     formattedDowntime: {
       get() {
@@ -344,35 +344,38 @@ export default {
     async GetProblem() {
       this.loadingDialog = true;
       this.itemMachine = [];
-
-      const response = await axios.get(
-        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProblems?lineProcessID=${this.machineDetail.selectTransactionTProcess.lineProcessID}`
-      );
-      if (response.data.status == 200) {
-        this.loadingDialog = false;
-        this.itemMachine = response.data.results;
-        const machineIDs = new Set();
-        this.itemMachine.forEach((result) => {
-          machineIDs.add(result.machineID);
-        });
-        if (Array.from(machineIDs).length == 1) {
-          this.mMachine = this.itemMachine[0];
+      try {
+        const response = await axios.get(
+          `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProblems?lineProcessID=${this.machineDetail.selectTransactionTProcess.lineProcessID}`
+        );
+        if (response.data.status == 200) {
+          this.loadingDialog = false;
+          this.itemMachine = response.data.results;
+          const machineIDs = new Set();
+          this.itemMachine.forEach((result) => {
+            machineIDs.add(result.machineID);
+          });
+          if (Array.from(machineIDs).length == 1) {
+            this.mMachine = this.itemMachine[0];
+          }
+          const init = this.itemMachine.filter((problem) => problem.machineID === "M000");
+          if (init.length > 0) {
+            this.mMachine = init[0];
+          }
+        } else {
+          this.loadingDialog = false;
+          Swal.fire({
+            text: `Internal Server Error`,
+            icon: "error",
+            showCancelButton: false,
+            allowOutsideClick: false,
+            confirmButtonColor: "#0c80c4",
+            cancelButtonColor: "#C0C0C0",
+            confirmButtonText: "Ok",
+          });
         }
-        const init = this.itemMachine.filter((problem) => problem.machineID === "M000");
-        if (init.length > 0) {
-          this.mMachine = init[0];
-        }
-      } else {
+      } catch (error) {
         this.loadingDialog = false;
-        Swal.fire({
-          text: `Internal Server Error`,
-          icon: "error",
-          showCancelButton: false,
-          allowOutsideClick: false,
-          confirmButtonColor: "#0c80c4",
-          cancelButtonColor: "#C0C0C0",
-          confirmButtonText: "Ok",
-        });
       }
     },
     addTransactionProblem(mode) {
@@ -388,7 +391,7 @@ export default {
         this.showResult = true;
         return (this.msgResult = "Downtime cannot be blank or set to 0.");
       }
-      if (this.ThanPB9000 && this.fOther == '') {
+      if (this.ThanPB9000 && this.fOther == "") {
         this.showResult = true;
         return (this.msgResult = "Remark cannot be blank or set to 0.");
       }

@@ -23,8 +23,6 @@
   </div>
 </template>
 
-
-
 <script>
 import { sync } from "vuex-pathify";
 import axios from "axios";
@@ -45,20 +43,20 @@ export default {
       this.toggle = val;
     },
   },
- async mounted() {
+  async mounted() {
     if (!localStorage.getItem("samAccountOEE")) {
-      localStorage.removeItem('samAccountOEE')
-      localStorage.removeItem('selectedIndexOEE')
-      localStorage.removeItem('empIdOEE')
-      localStorage.removeItem('routeNameOEE')
+      localStorage.removeItem("samAccountOEE");
+      localStorage.removeItem("selectedIndexOEE");
+      localStorage.removeItem("empIdOEE");
+      localStorage.removeItem("routeNameOEE");
       this.$router.push({ name: "Login" });
     } else {
       this.$store.commit("resetState");
-      await this.getImageProfile(localStorage.getItem("empIdOEE"))
+      await this.getImageProfile(localStorage.getItem("empIdOEE"));
       await this.getUser(localStorage.getItem("samAccountOEE"));
       this.$router.push({ name: localStorage.getItem("routeNameOEE") });
       this.selectedIndexStr = Number(localStorage.getItem("selectedIndexOEE"));
-          // Start the inactivity timer
+      // Start the inactivity timer
       this.startInactivityTimer();
       window.addEventListener("mousemove", this.resetTimer);
       window.addEventListener("keypress", this.resetTimer);
@@ -94,10 +92,10 @@ export default {
         confirmButtonText: "OK",
       }).then(() => {
         this.$store.commit("resetState");
-        localStorage.removeItem('samAccountOEE')
-        localStorage.removeItem('selectedIndex')
-        localStorage.removeItem('empId')
-        localStorage.removeItem('routeName')
+        localStorage.removeItem("samAccountOEE");
+        localStorage.removeItem("selectedIndex");
+        localStorage.removeItem("empId");
+        localStorage.removeItem("routeName");
         this.$router.push({ name: "Login" });
       });
     },
@@ -124,12 +122,16 @@ export default {
         console.error(error);
       }
     },
-     async getImageProfile(empId) {
-      const response = await axios.get(
-        `${this.EndpointPortal}/AdsControl/IP1Potal/v1/getUserProfile?empId=${empId}`
-      );
-      if (response.data.statusCode.statusCode == 200) {
-        this.imageProfile = response.data.results[0].pathUrl;
+    async getImageProfile(empId) {
+      try {
+        const response = await axios.get(
+          `${this.EndpointPortal}/AdsControl/IP1Potal/v1/getUserProfile?empId=${empId}`
+        );
+        if (response.data.statusCode.statusCode == 200) {
+          this.imageProfile = response.data.results[0].pathUrl;
+        }
+      } catch (error) {
+        console.error(error);
       }
     },
   },

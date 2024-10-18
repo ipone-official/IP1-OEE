@@ -209,8 +209,7 @@
                 props.item.status == 'InProcess') ||
               ['ADMIN'].some((i) => infoLogin.group.includes(i)) ||
               (['MANAGER'].some((i) => infoLogin.group.includes(i)) &&
-                props.item.status != 'Completed')
-                ||
+                props.item.status != 'Completed') ||
               (['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) &&
                 props.item.status != 'WaitApproved')
             "
@@ -790,125 +789,137 @@ export default {
       this.loadingDialog = true;
       this.itemTransactionTProcess = [];
       this.rawData = [];
-      this.mFilterStatus = []
-      this.mFilterProcess = []
+      this.mFilterStatus = [];
+      this.mFilterProcess = [];
       this.flagGetTProcess = false;
       let pProcessDate = {
         startDate: this.formDate,
         endDate: this.toDate,
       };
-      const response = await axios.post(
-        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetTProcessList`,
-        pProcessDate
-      );
-      if (response.data.status == 200) {
-        this.loadingDialog = false;
-        this.DateDisibled = true;
-        const Role = ["OPERATOR"].some((i) => this.infoLogin.group.includes(i));
-        if (Role) {
-          const dataFilter = response.data.results.filter(
-            (result) => result.userID == this.infoLogin.empId
-          );
-          console.log(dataFilter);
-          dataFilter.forEach((element, index) =>
-            this.rawData.push({
-              processID: element.processID,
-              lineProcessID: element.lineProcessID,
-              lineProcessName: element.lineProcessName,
-              userID: element.userID,
-              username: element.username,
-              shift: element.shift,
-              materialCode: element.materialCode,
-              materialDesc: element.materialDesc,
-              materialColor: element.materialColor,
-              materialSize: element.materialSize,
-              materialCategory: element.materialCategory,
-              filmID: element.filmID,
-              filmDescription: element.filmDescription,
-              machineSTD: element.machineSTD,
-              qtyDozen: element.qtyDozen,
-              qtyEA: element.qtyEA,
-              stdCycleTime: element.stdCycleTime,
-              operatingTime: element.operatingTime,
-              workingTime: element.workingTime,
-              workingTimeMin: element.workingTimeMin,
-              machineWorkingTime: element.machineWorkingTime,
-              plannedDowntime: element.plannedDowntime,
-              unplannedDowntime: element.unplannedDowntime,
-              speedLose: element.speedLose,
-              summaryDowntime: element.summaryDowntime,
-              damagePercentage: element.damagePercentage,
-              checkIn: element.checkIn,
-              checkOut: element.checkOut,
-              status: element.status,
-              availability: element.availability,
-              performance: element.performance,
-              quality: element.quality,
-              oeePercentage: element.oeePercentage,
-            })
-          );
+      try {
+        const response = await axios.post(
+          `${this.EndpointPortal}/ApiOEE/OEE/v1/GetTProcessList`,
+          pProcessDate
+        );
+        if (response.data.status == 200) {
+          this.loadingDialog = false;
+          this.DateDisibled = true;
+          const Role = ["OPERATOR"].some((i) => this.infoLogin.group.includes(i));
+          if (Role) {
+            const dataFilter = response.data.results.filter(
+              (result) => result.userID == this.infoLogin.empId
+            );
+            dataFilter.forEach((element, index) =>
+              this.rawData.push({
+                processID: element.processID,
+                lineProcessID: element.lineProcessID,
+                lineProcessName: element.lineProcessName,
+                userID: element.userID,
+                username: element.username,
+                shift: element.shift,
+                materialCode: element.materialCode,
+                materialDesc: element.materialDesc,
+                materialColor: element.materialColor,
+                materialSize: element.materialSize,
+                materialCategory: element.materialCategory,
+                filmID: element.filmID,
+                filmDescription: element.filmDescription,
+                machineSTD: element.machineSTD,
+                qtyDozen: element.qtyDozen,
+                qtyEA: element.qtyEA,
+                stdCycleTime: element.stdCycleTime,
+                operatingTime: element.operatingTime,
+                workingTime: element.workingTime,
+                workingTimeMin: element.workingTimeMin,
+                machineWorkingTime: element.machineWorkingTime,
+                plannedDowntime: element.plannedDowntime,
+                unplannedDowntime: element.unplannedDowntime,
+                speedLose: element.speedLose,
+                summaryDowntime: element.summaryDowntime,
+                damagePercentage: element.damagePercentage,
+                checkIn: element.checkIn,
+                checkOut: element.checkOut,
+                status: element.status,
+                availability: element.availability,
+                performance: element.performance,
+                quality: element.quality,
+                oeePercentage: element.oeePercentage,
+              })
+            );
+          } else {
+            response.data.results.forEach((element, index) =>
+              this.rawData.push({
+                processID: element.processID,
+                lineProcessID: element.lineProcessID,
+                lineProcessName: element.lineProcessName,
+                userID: element.userID,
+                username: element.username,
+                shift: element.shift,
+                materialCode: element.materialCode,
+                materialDesc: element.materialDesc,
+                materialColor: element.materialColor,
+                materialSize: element.materialSize,
+                materialCategory: element.materialCategory,
+                filmID: element.filmID,
+                filmDescription: element.filmDescription,
+                machineSTD: element.machineSTD,
+                qtyDozen: element.qtyDozen,
+                qtyEA: element.qtyEA,
+                stdCycleTime: element.stdCycleTime,
+                operatingTime: element.operatingTime,
+                workingTime: element.workingTime,
+                workingTimeMin: element.workingTimeMin,
+                machineWorkingTime: element.machineWorkingTime,
+                plannedDowntime: element.plannedDowntime,
+                unplannedDowntime: element.unplannedDowntime,
+                speedLose: element.speedLose,
+                summaryDowntime: element.summaryDowntime,
+                damagePercentage: element.damagePercentage,
+                checkIn: element.checkIn,
+                checkOut: element.checkOut,
+                status: element.status,
+                availability: element.availability,
+                performance: element.performance,
+                quality: element.quality,
+                oeePercentage: element.oeePercentage,
+              })
+            );
+          }
+          this.itemTransactionTProcess = this.rawData;
+          this.lineProcessItem = [];
+          const distinctLineProcess = [
+            ...new Set(this.rawData.map((item) => item.lineProcessName)),
+          ];
+          const lineProcessItems = distinctLineProcess.map((process, index) => ({
+            key: (index + 1).toString(),
+            text: process,
+          }));
+          this.lineProcessItem = this.lineProcessItem.concat(lineProcessItems);
+        } else if (response.data.status == 404) {
+          this.loadingDialog = false;
+          this.DateDisibled = false;
+          Swal.fire({
+            text: `${response.data.message}`,
+            icon: "warning",
+            showCancelButton: false,
+            allowOutsideClick: false,
+            confirmButtonColor: "#0c80c4",
+            cancelButtonColor: "#C0C0C0",
+            confirmButtonText: "Ok",
+          });
         } else {
-          response.data.results.forEach((element, index) =>
-            this.rawData.push({
-              processID: element.processID,
-              lineProcessID: element.lineProcessID,
-              lineProcessName: element.lineProcessName,
-              userID: element.userID,
-              username: element.username,
-              shift: element.shift,
-              materialCode: element.materialCode,
-              materialDesc: element.materialDesc,
-              materialColor: element.materialColor,
-              materialSize: element.materialSize,
-              materialCategory: element.materialCategory,
-              filmID: element.filmID,
-              filmDescription: element.filmDescription,
-              machineSTD: element.machineSTD,
-              qtyDozen: element.qtyDozen,
-              qtyEA: element.qtyEA,
-              stdCycleTime: element.stdCycleTime,
-              operatingTime: element.operatingTime,
-              workingTime: element.workingTime,
-              workingTimeMin: element.workingTimeMin,
-              machineWorkingTime: element.machineWorkingTime,
-              plannedDowntime: element.plannedDowntime,
-              unplannedDowntime: element.unplannedDowntime,
-              speedLose: element.speedLose,
-              summaryDowntime: element.summaryDowntime,
-              damagePercentage: element.damagePercentage,
-              checkIn: element.checkIn,
-              checkOut: element.checkOut,
-              status: element.status,
-              availability: element.availability,
-              performance: element.performance,
-              quality: element.quality,
-              oeePercentage: element.oeePercentage,
-            })
-          );
+          this.loadingDialog = false;
+          Swal.fire({
+            text: `Internal Server Error`,
+            icon: "error",
+            showCancelButton: false,
+            allowOutsideClick: false,
+            confirmButtonColor: "#0c80c4",
+            cancelButtonColor: "#C0C0C0",
+            confirmButtonText: "Ok",
+          });
         }
-        this.itemTransactionTProcess = this.rawData;
-        this.lineProcessItem = [];
-        const distinctLineProcess = [
-          ...new Set(this.rawData.map((item) => item.lineProcessName)),
-        ];
-        const lineProcessItems = distinctLineProcess.map((process, index) => ({
-          key: (index + 1).toString(),
-          text: process,
-        }));
-        this.lineProcessItem = this.lineProcessItem.concat(lineProcessItems);
-      } else if (response.data.status == 404) {
-        this.loadingDialog = false;
-        this.DateDisibled = false;
-        Swal.fire({
-          text: `${response.data.message}`,
-          icon: "warning",
-          showCancelButton: false,
-          allowOutsideClick: false,
-          confirmButtonColor: "#0c80c4",
-          cancelButtonColor: "#C0C0C0",
-          confirmButtonText: "Ok",
-        });
-      } else {
+      } catch (error) {
         this.loadingDialog = false;
         Swal.fire({
           text: `Internal Server Error`,
@@ -924,26 +935,30 @@ export default {
     async getFilm() {
       this.loadingDialog = true;
       this.itemFilms = [];
-      const response = await axios.get(`${this.EndpointPortal}/ApiOEE/OEE/v1/GetFilms`);
-      if (response.data.status == 200) {
+      try {
+        const response = await axios.get(`${this.EndpointPortal}/ApiOEE/OEE/v1/GetFilms`);
+        if (response.data.status == 200) {
+          this.loadingDialog = false;
+          response.data.results.forEach((element, index) =>
+            this.itemFilms.push({
+              filmID: element.filmID,
+              filmDescription: element.filmDescription,
+            })
+          );
+        } else {
+          this.loadingDialog = false;
+          Swal.fire({
+            text: `Internal Server Error`,
+            icon: "error",
+            showCancelButton: false,
+            allowOutsideClick: false,
+            confirmButtonColor: "#0c80c4",
+            cancelButtonColor: "#C0C0C0",
+            confirmButtonText: "Ok",
+          });
+        }
+      } catch (error) {
         this.loadingDialog = false;
-        response.data.results.forEach((element, index) =>
-          this.itemFilms.push({
-            filmID: element.filmID,
-            filmDescription: element.filmDescription,
-          })
-        );
-      } else {
-        this.loadingDialog = false;
-        Swal.fire({
-          text: `Internal Server Error`,
-          icon: "error",
-          showCancelButton: false,
-          allowOutsideClick: false,
-          confirmButtonColor: "#0c80c4",
-          cancelButtonColor: "#C0C0C0",
-          confirmButtonText: "Ok",
-        });
       }
     },
     async CreateTProcessList() {
@@ -981,31 +996,44 @@ export default {
             checkOut: "",
             status: "InProcess",
           };
-          const response = await axios.post(
-            `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
-            init
-          );
-          if (response.data.status == 200) {
-            this.loadingDialog = false;
-            Swal.fire({
-              html: `Successfully`,
-              icon: "success",
-              showCancelButton: false,
-              allowOutsideClick: false,
-              confirmButtonColor: "#0c80c4",
-              cancelButtonColor: "#C0C0C0",
-              confirmButtonText: "OK",
-            }).then(async (result) => {
-              if (result.isConfirmed) {
-                this.flagGetTProcess = true;
-                this.dialogTransactionOee = false;
-                this.selectedOption = "productionOrder";
-                this.mLineProcess = "";
-                this.mFilm = "";
-                this.selected = [];
-              }
-            });
-          } else {
+          try {
+            const response = await axios.post(
+              `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
+              init
+            );
+            if (response.data.status == 200) {
+              this.loadingDialog = false;
+              Swal.fire({
+                html: `Successfully`,
+                icon: "success",
+                showCancelButton: false,
+                allowOutsideClick: false,
+                confirmButtonColor: "#0c80c4",
+                cancelButtonColor: "#C0C0C0",
+                confirmButtonText: "OK",
+              }).then(async (result) => {
+                if (result.isConfirmed) {
+                  this.flagGetTProcess = true;
+                  this.dialogTransactionOee = false;
+                  this.selectedOption = "productionOrder";
+                  this.mLineProcess = "";
+                  this.mFilm = "";
+                  this.selected = [];
+                }
+              });
+            } else {
+              this.loadingDialog = false;
+              Swal.fire({
+                text: `Internal Server Error`,
+                icon: "error",
+                showCancelButton: false,
+                allowOutsideClick: false,
+                confirmButtonColor: "#0c80c4",
+                cancelButtonColor: "#C0C0C0",
+                confirmButtonText: "Ok",
+              });
+            }
+          } catch (error) {
             this.loadingDialog = false;
             Swal.fire({
               text: `Internal Server Error`,
@@ -1023,80 +1051,89 @@ export default {
     async getLineProcess() {
       this.loadingDialog = true;
       this.itemLineProcess = [];
-      const response = await axios.get(
-        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetLineProcess`
-      );
-      if (response.data.status == 200) {
-        this.loadingDialog = false;
-        response.data.results.forEach((element, index) =>
-          this.itemLineProcess.push({
-            lineProcessID: element.lineProcessID,
-            lineProcessName: element.lineProcessName,
-          })
+      try {
+        const response = await axios.get(
+          `${this.EndpointPortal}/ApiOEE/OEE/v1/GetLineProcess`
         );
-      } else {
+        if (response.data.status == 200) {
+          this.loadingDialog = false;
+          response.data.results.forEach((element, index) =>
+            this.itemLineProcess.push({
+              lineProcessID: element.lineProcessID,
+              lineProcessName: element.lineProcessName,
+            })
+          );
+        } else {
+          this.loadingDialog = false;
+          Swal.fire({
+            text: `Internal Server Error`,
+            icon: "error",
+            showCancelButton: false,
+            allowOutsideClick: false,
+            confirmButtonColor: "#0c80c4",
+            cancelButtonColor: "#C0C0C0",
+            confirmButtonText: "Ok",
+          });
+        }
+      } catch (error) {
         this.loadingDialog = false;
-        Swal.fire({
-          text: `Internal Server Error`,
-          icon: "error",
-          showCancelButton: false,
-          allowOutsideClick: false,
-          confirmButtonColor: "#0c80c4",
-          cancelButtonColor: "#C0C0C0",
-          confirmButtonText: "Ok",
-        });
       }
     },
     async GetMaterialMaster(vlineProcessID) {
       this.loadingDialog = true;
       this.itemMaterialMaster = [];
-      const response = await axios.get(
-        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetMaterialMaster?lineProcessID=${vlineProcessID}`
-      );
-      if (response.data.status == 200) {
-        this.loadingDialog = false;
-        response.data.results.forEach((element, index) =>
-          this.itemMaterialMaster.push({
-            hgLv1: element.hgLv1,
-            hgLv3: element.hgLv3,
-            hgLv5: element.hgLv5,
-            hgDescLv7: element.hgDescLv7,
-            materialCode: element.materialCode,
-            materialDescriptionTh: element.materialDescriptionTh,
-            materialDescriptionEn: element.materialDescriptionEn,
-            displayHg1_3: `${element.hgLv1} ${
-              element.hgLv3 == "" ? "" : `- ${element.hgLv3}`
-            }`,
-            speedStd: element.speedStd,
-          })
+      try {
+        const response = await axios.get(
+          `${this.EndpointPortal}/ApiOEE/OEE/v1/GetMaterialMaster?lineProcessID=${vlineProcessID}`
         );
-      } else if (response.data.status == 404) {
+        if (response.data.status == 200) {
+          this.loadingDialog = false;
+          response.data.results.forEach((element, index) =>
+            this.itemMaterialMaster.push({
+              hgLv1: element.hgLv1,
+              hgLv3: element.hgLv3,
+              hgLv5: element.hgLv5,
+              hgDescLv7: element.hgDescLv7,
+              materialCode: element.materialCode,
+              materialDescriptionTh: element.materialDescriptionTh,
+              materialDescriptionEn: element.materialDescriptionEn,
+              displayHg1_3: `${element.hgLv1} ${
+                element.hgLv3 == "" ? "" : `- ${element.hgLv3}`
+              }`,
+              speedStd: element.speedStd,
+            })
+          );
+        } else if (response.data.status == 404) {
+          this.loadingDialog = false;
+          Swal.fire({
+            text: `${response.data.message}`,
+            icon: "warning",
+            showCancelButton: false,
+            allowOutsideClick: false,
+            confirmButtonColor: "#0c80c4",
+            cancelButtonColor: "#C0C0C0",
+            confirmButtonText: "Ok",
+          });
+        } else {
+          this.loadingDialog = false;
+          Swal.fire({
+            text: `Internal Server Error`,
+            icon: "error",
+            showCancelButton: false,
+            allowOutsideClick: false,
+            confirmButtonColor: "#0c80c4",
+            cancelButtonColor: "#C0C0C0",
+            confirmButtonText: "Ok",
+          });
+        }
+      } catch (error) {
         this.loadingDialog = false;
-        Swal.fire({
-          text: `${response.data.message}`,
-          icon: "warning",
-          showCancelButton: false,
-          allowOutsideClick: false,
-          confirmButtonColor: "#0c80c4",
-          cancelButtonColor: "#C0C0C0",
-          confirmButtonText: "Ok",
-        });
-      } else {
-        this.loadingDialog = false;
-        Swal.fire({
-          text: `Internal Server Error`,
-          icon: "error",
-          showCancelButton: false,
-          allowOutsideClick: false,
-          confirmButtonColor: "#0c80c4",
-          cancelButtonColor: "#C0C0C0",
-          confirmButtonText: "Ok",
-        });
       }
     },
     async GetProductionOrder(vlineProcessID) {
       this.loadingDialog = true;
       this.itemProductionOrder = [];
+      try{
       const response = await axios.get(
         `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProductionOrder?lineProcessID=${vlineProcessID}`
       );
@@ -1141,6 +1178,9 @@ export default {
           confirmButtonText: "Ok",
         });
       }
+    } catch (error) {
+        this.loadingDialog = false;
+      }
     },
     async SelectProcesList(val) {
       this.machineDetail.operatorEdit =
@@ -1161,12 +1201,12 @@ export default {
       this.CheckOutDate = functions.getSysDate().format;
       this.$refs.timeCheckoutRef.clearTime();
       this.CheckOutTime = "00:00";
-      if(val.checkIn != '') {
+      if (val.checkIn != "") {
         const dateCheckin = val.checkIn.split(" ");
         this.CheckInDate = dateCheckin[0];
         this.CheckInTime = dateCheckin[1];
       }
-      if(val.checkOut != '') {
+      if (val.checkOut != "") {
         const dateCheckOut = val.checkOut.split(" ");
         this.CheckOutDate = dateCheckOut[0];
         this.CheckOutTime = dateCheckOut[1];
@@ -1185,42 +1225,50 @@ export default {
       this.itemTransactionTProcess = [];
     },
     async getProblemDetail(processID) {
-      const response = await axios.get(
-        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProblemDetailByID?processID=${processID}`
-      );
-      if (response.data.status == 200) {
-        for (let i = 0; i < response.data.results.length; i++) {
-          this.machineDetail.itemProblemTable.push({
-            problemID: response.data.results[i].problemID,
-            problemDescription: response.data.results[i].problemDescription,
-            lineProcessID: response.data.results[i].lineProcessID,
-            lineProcessName: response.data.results[i].lineProcessName,
-            machineID: response.data.results[i].machineID,
-            machineDescription: response.data.results[i].machineDescription,
-            planStatus: response.data.results[i].planStatus == "Y" ? "Plan" : "UnPlan",
-            unControlStatus:
-              response.data.results[i].unControlStatus == "N" ? true : false,
-            downtime: response.data.results[i].downtime,
-            itemNo: i + 1,
-          });
+      try {
+        const response = await axios.get(
+          `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProblemDetailByID?processID=${processID}`
+        );
+        if (response.data.status == 200) {
+          for (let i = 0; i < response.data.results.length; i++) {
+            this.machineDetail.itemProblemTable.push({
+              problemID: response.data.results[i].problemID,
+              problemDescription: response.data.results[i].problemDescription,
+              lineProcessID: response.data.results[i].lineProcessID,
+              lineProcessName: response.data.results[i].lineProcessName,
+              machineID: response.data.results[i].machineID,
+              machineDescription: response.data.results[i].machineDescription,
+              planStatus: response.data.results[i].planStatus == "Y" ? "Plan" : "UnPlan",
+              unControlStatus:
+                response.data.results[i].unControlStatus == "N" ? true : false,
+              downtime: response.data.results[i].downtime,
+              itemNo: i + 1,
+            });
+          }
         }
+      } catch (error) {
+        console.error(error);
       }
     },
     async getReasonDetail(processID) {
-      const response = await axios.get(
-        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetReasonDetailByID?processID=${processID}`
-      );
-      if (response.data.status == 200) {
-        for (let i = 0; i < response.data.results.length; i++) {
-          this.machineDetail.itemDamageTable.push({
-            reasonID: response.data.results[i].reasonID,
-            reasonHeader: response.data.results[i].reasonHeader,
-            reasonDescID: response.data.results[i].reasonDescID,
-            reasonDesc: response.data.results[i].reasonDesc,
-            QtyEA: response.data.results[i].qty,
-            itemNo: i + 1,
-          });
+      try {
+        const response = await axios.get(
+          `${this.EndpointPortal}/ApiOEE/OEE/v1/GetReasonDetailByID?processID=${processID}`
+        );
+        if (response.data.status == 200) {
+          for (let i = 0; i < response.data.results.length; i++) {
+            this.machineDetail.itemDamageTable.push({
+              reasonID: response.data.results[i].reasonID,
+              reasonHeader: response.data.results[i].reasonHeader,
+              reasonDescID: response.data.results[i].reasonDescID,
+              reasonDesc: response.data.results[i].reasonDesc,
+              QtyEA: response.data.results[i].qty,
+              itemNo: i + 1,
+            });
+          }
         }
+      } catch (error) {
+        console.error(error);
       }
     },
     UpdateCheckOut(val) {
@@ -1259,28 +1307,41 @@ export default {
             checkOut: `${this.CheckOutDate} ${this.CheckOutTime}`,
             status: "WaitConfirm",
           };
-          const response = await axios.post(
-            `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
-            init
-          );
-          if (response.data.status == 200) {
-            Swal.fire({
-              html: `Successfully`,
-              icon: "success",
-              showCancelButton: false,
-              allowOutsideClick: false,
-              confirmButtonColor: "#0c80c4",
-              cancelButtonColor: "#C0C0C0",
-              confirmButtonText: "OK",
-            }).then(async (result) => {
-              if (result.isConfirmed) {
-                this.loadingDialog = false;
-                this.dialogCheckOut = false;
-                this.dataCheckOut = [];
-                this.flagGetTProcess = true;
-              }
-            });
-          } else {
+          try {
+            const response = await axios.post(
+              `${this.EndpointPortal}/ApiOEE/OEE/v1/InsertProcessList`,
+              init
+            );
+            if (response.data.status == 200) {
+              Swal.fire({
+                html: `Successfully`,
+                icon: "success",
+                showCancelButton: false,
+                allowOutsideClick: false,
+                confirmButtonColor: "#0c80c4",
+                cancelButtonColor: "#C0C0C0",
+                confirmButtonText: "OK",
+              }).then(async (result) => {
+                if (result.isConfirmed) {
+                  this.loadingDialog = false;
+                  this.dialogCheckOut = false;
+                  this.dataCheckOut = [];
+                  this.flagGetTProcess = true;
+                }
+              });
+            } else {
+              this.loadingDialog = false;
+              Swal.fire({
+                text: `Internal Server Error`,
+                icon: "error",
+                showCancelButton: false,
+                allowOutsideClick: false,
+                confirmButtonColor: "#0c80c4",
+                cancelButtonColor: "#C0C0C0",
+                confirmButtonText: "Ok",
+              });
+            }
+          } catch (error) {
             this.loadingDialog = false;
             Swal.fire({
               text: `Internal Server Error`,
@@ -1328,26 +1389,39 @@ export default {
             processID: val.processID,
             userID: empId,
           };
-          const response = await axios.post(
-            `${this.EndpointPortal}/ApiOEE/OEE/v1/DeleteProcessList`,
-            init
-          );
-          if (response.data.status == 200) {
-            Swal.fire({
-              html: `Successfully`,
-              icon: "success",
-              showCancelButton: false,
-              allowOutsideClick: false,
-              confirmButtonColor: "#0c80c4",
-              cancelButtonColor: "#C0C0C0",
-              confirmButtonText: "OK",
-            }).then(async (result) => {
-              if (result.isConfirmed) {
-                this.loadingDialog = false;
-                this.flagGetTProcess = true;
-              }
-            });
-          } else {
+          try {
+            const response = await axios.post(
+              `${this.EndpointPortal}/ApiOEE/OEE/v1/DeleteProcessList`,
+              init
+            );
+            if (response.data.status == 200) {
+              Swal.fire({
+                html: `Successfully`,
+                icon: "success",
+                showCancelButton: false,
+                allowOutsideClick: false,
+                confirmButtonColor: "#0c80c4",
+                cancelButtonColor: "#C0C0C0",
+                confirmButtonText: "OK",
+              }).then(async (result) => {
+                if (result.isConfirmed) {
+                  this.loadingDialog = false;
+                  this.flagGetTProcess = true;
+                }
+              });
+            } else {
+              this.loadingDialog = false;
+              Swal.fire({
+                text: `Internal Server Error`,
+                icon: "error",
+                showCancelButton: false,
+                allowOutsideClick: false,
+                confirmButtonColor: "#0c80c4",
+                cancelButtonColor: "#C0C0C0",
+                confirmButtonText: "Ok",
+              });
+            }
+          } catch (error) {
             this.loadingDialog = false;
             Swal.fire({
               text: `Internal Server Error`,
