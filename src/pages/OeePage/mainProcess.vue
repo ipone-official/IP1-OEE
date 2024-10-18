@@ -143,7 +143,7 @@
                 small
                 color="#007fc4"
                 dark
-                v-if="machineDetail.supervisorEdit || machineDetail.adminEdit"
+                v-if="(machineDetail.supervisorEdit && machineDetail.selectTransactionTProcess.status == 'WaitConfirm') || machineDetail.adminEdit"
                 @click="UpdateProcessStatus('WaitApproved')"
                 class="ma-2 small-export-button"
                 v-bind="attrs"
@@ -163,7 +163,7 @@
                 color="#007fc4"
                 dark
                 @click="UpdateProcessStatus('Completed')"
-                v-if="machineDetail.managerEdit || machineDetail.adminEdit"
+                v-if="(machineDetail.managerEdit && machineDetail.selectTransactionTProcess.status == 'WaitApproved') || machineDetail.adminEdit"
                 class="ma-2 small-export-button"
                 v-bind="attrs"
                 v-on="on"
