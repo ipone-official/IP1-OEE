@@ -208,8 +208,11 @@
               (['OPERATOR'].some((i) => infoLogin.group.includes(i)) &&
                 props.item.status == 'InProcess') ||
               ['ADMIN'].some((i) => infoLogin.group.includes(i)) ||
-              (['SUPERVISOR', 'MANAGER'].some((i) => infoLogin.group.includes(i)) &&
+              (['MANAGER'].some((i) => infoLogin.group.includes(i)) &&
                 props.item.status != 'Completed')
+                ||
+              (['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) &&
+                props.item.status != 'WaitApproved')
             "
             color="red"
             fab
