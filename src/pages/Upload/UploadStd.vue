@@ -141,7 +141,7 @@ export default {
   },
   methods: {
     getColor(val) {
-      return val.RequiredLineProcessID || val.RequiredMaterialCode || RequiredSpeedSTD
+      return val.RequiredLineProcessID || val.RequiredMaterialCode || val.RequiredSpeedSTD
         ? "#f1948a"
         : "#82e0aa";
     },
@@ -173,6 +173,7 @@ export default {
             }));
 
             this.DataImport = this.arrayToObjects(jsonData);
+            console.log(this.DataImport, 'DataImport')
             this.DataImport.forEach((item, index) => {
               if (item.lineProcessID === "") {
                 this.DataImport[index].RequiredLineProcessID = true;
@@ -191,6 +192,7 @@ export default {
               }
               
             });
+            console.log(this.DataImport, 'DataImport')
           }
         };
         reader.readAsArrayBuffer(file);
