@@ -141,7 +141,7 @@ export default {
   },
   methods: {
     getColor(val) {
-      return val.RequiredLineProcessID || val.RequiredMaterialCode
+      return val.RequiredLineProcessID || val.RequiredMaterialCode || RequiredSpeedSTD
         ? "#f1948a"
         : "#82e0aa";
     },
@@ -184,6 +184,12 @@ export default {
               } else {
                 this.DataImport[index].RequiredMaterialCode = false;
               }
+              if (item.speedSTD === "") {
+                this.DataImport[index].RequiredSpeedSTD = true;
+              } else {
+                this.DataImport[index].RequiredSpeedSTD = false;
+              }
+              
             });
           }
         };
@@ -249,7 +255,7 @@ export default {
             const elementJson = {
               lineProcessID: this.DataImport[i].lineProcessID.toString(),
               materialCode: this.DataImport[i].materialCode.toString(),
-              speedSTD: this.DataImport[i].speedSTD,
+              speedSTD: Number(this.DataImport[i].speedSTD),
             };
             JsonDataImport.push(elementJson);
           }
@@ -288,7 +294,7 @@ export default {
       });
     },
     isDataInvalid(data) {
-      return data.RequiredLineProcessID || data.RequiredMaterialCode;
+      return data.RequiredLineProcessID || data.RequiredMaterialCode || data.RequiredSpeedSTD;
     },
     showErrorMessage(lineNumber) {
       // แสดงข้อความเตือนเมื่อพบข้อมูลที่ไม่ถูกต้อง
