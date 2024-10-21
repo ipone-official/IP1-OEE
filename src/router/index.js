@@ -5,11 +5,21 @@ import Login from '../pages/core/Login.vue';
 import Error from '../pages/core/Error.vue';
 import LineProcessOrder from '@/pages/LineProcessOrder.vue';
 import ReportOee from '@/pages/Report/ReportOee.vue'
-
+import UploadStd from '@/pages/Upload/UploadStd.vue'
 Vue.use(Router);
 
 export default new Router({
   routes: [
+    {
+      path: '/UploadStd',
+      name: 'UploadStd',
+      component: UploadStd,
+      meta: {
+        breadcrumb: [
+          { name: 'Upload Speed Standard' }
+        ]
+      }
+    },
     {
       path: '/ReportOee',
       name: 'ReportOee',

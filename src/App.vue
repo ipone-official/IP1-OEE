@@ -152,4 +152,17 @@ export default {
 .flex-grow-1 {
   flex-grow: 1;
 }
+/* Table header styling */
+.theme--light.v-table thead th {
+  background-image: linear-gradient(270deg, rgba(51, 148, 225, 0.18), transparent);
+  background-color: #007fc4 !important;
+  font-size: 15px !important;
+  color: #ffffff !important;
+}
+
+.theme--light.v-datatable thead th.column.sortable.active,
+.theme--light.v-datatable thead th.column.sortable.active .v-icon,
+.theme--light.v-datatable thead th.column.sortable:hover {
+  color: #ffffff !important;
+}
 </style>

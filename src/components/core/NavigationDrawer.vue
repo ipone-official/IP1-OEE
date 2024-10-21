@@ -23,6 +23,12 @@
           <v-list-tile-title :class="[{'active': selectedIndex === 1}, 'item-title']">{{ $t('Line Process Order') }}</v-list-tile-title>
         </v-list-tile>
 
+        <v-list-tile @click="changeRoute('UploadStd', 3)" v-if="(['MANAGER', 'ADMIN'].some((i) => infoLogin.group.includes(i)))">
+          <v-list-tile-action>
+            <v-icon>mdi-cloud-upload</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title :class="[{'active': selectedIndex === 3}, 'item-title']">{{ $t('Upload Speed') }}</v-list-tile-title>
+        </v-list-tile>
 
     </v-list>
 
