@@ -25,6 +25,7 @@ const getDefaultState = () => ({
     dialogTransactionDetail: false,
     selectTransactionTProcess: [],
     machineStd: 0,
+    selectProcessID: 0,
     QtyDz: 0,
     itemDamageTable: [],
     itemProblemTable: [],

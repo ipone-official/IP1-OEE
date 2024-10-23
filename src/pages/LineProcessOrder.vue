@@ -886,6 +886,10 @@ export default {
             );
           }
           this.itemTransactionTProcess = this.rawData;
+          if(this.machineDetail.selectProcessID != 0){
+            const result = this.rawData.find(item => item.processID == this.machineDetail.selectProcessID);
+            this.SelectProcesList(result)
+          }
           this.lineProcessItem = [];
           const distinctLineProcess = [
             ...new Set(this.rawData.map((item) => item.lineProcessName)),
@@ -1212,6 +1216,7 @@ export default {
         this.CheckOutTime = dateCheckOut[1];
       }
       this.tab = 0;
+      this.machineDetail.selectProcessID = val.processID
       this.machineDetail.selectTransactionTProcess = val;
       this.machineDetail.machineStd = this.machineDetail.selectTransactionTProcess.machineSTD;
       this.machineDetail.QtyDz = 0;

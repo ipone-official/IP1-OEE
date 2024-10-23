@@ -114,7 +114,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 icon
-                @click="machineDetail.dialogTransactionDetail = false"
+                @click="machineDetail.dialogTransactionDetail = false, machineDetail.selectProcessID = 0"
                 class="ma-2"
                 v-bind="attrs"
                 v-on="on"
@@ -224,7 +224,7 @@
             flat
             color="#007fc4"
             style="border-radius: 12px"
-            @click="machineDetail.dialogTransactionDetail = false"
+            @click="machineDetail.dialogTransactionDetail = false, machineDetail.selectProcessID = 0"
             >close</v-btn
           >
         </v-card-actions>
@@ -333,9 +333,9 @@ export default {
                 confirmButtonText: "OK",
               }).then(async (result) => {
                 if (result.isConfirmed) {
-                  this.machineDetail.dialogTransactionDetail = false;
+                  // this.machineDetail.dialogTransactionDetail = false;
                   this.flagGetTProcess = true;
-                  this.tab = 0;
+                  // this.tab = 0;
                 }
               });
             }
