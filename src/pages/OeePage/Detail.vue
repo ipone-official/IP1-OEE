@@ -161,7 +161,7 @@
     </v-layout>
 
     <v-layout row wrap class="custom-layout">
-      <v-flex xs12 sm3 md3 class="pa-0">
+      <!-- <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
           <v-card-title class="custom-title small-margin"
             >Working Time(Hrs.)</v-card-title
@@ -170,7 +170,7 @@
             machineDetail.selectTransactionTProcess.workingTime
           }}</v-card-text>
         </v-card>
-      </v-flex>
+      </v-flex> -->
 
       <v-flex xs12 sm3 md3 class="pa-0">
         <v-card flat class="small-card">
