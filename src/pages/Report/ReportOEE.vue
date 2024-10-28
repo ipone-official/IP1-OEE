@@ -1,5 +1,15 @@
 <template>
   <div style="margin: 1rem">
+
+  <v-layout justify-end>
+    <v-btn
+    color="primary"
+    @click="openNewTab"
+  >
+    <v-icon left>mdi-file-document-edit</v-icon>
+    Target OEE
+  </v-btn>
+  </v-layout>
     <iframe
       v-if="iframeSrc"
       :src="iframeSrc"
@@ -67,6 +77,9 @@ export default {
         console.error(error);
       }
     },
+    openNewTab() {
+      window.open('https://iphouses.sharepoint.com/:x:/r/sites/oee/_layouts/15/Doc.aspx?sourcedoc=%7B35684A47-4531-4AED-992D-6318C0826BC5%7D&file=TargetLineProcess.xlsx&action=default&mobileredirect=true', '_blank');
+    }
   },
 };
 </script>
