@@ -211,7 +211,7 @@
               (['MANAGER'].some((i) => infoLogin.group.includes(i)) &&
                 props.item.status != 'Completed') ||
               (['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) &&
-                props.item.status != 'WaitApproved')
+                props.item.status != 'WaitApproved' && props.item.status != 'Completed')
             "
             color="red"
             fab
@@ -1192,7 +1192,7 @@ export default {
         val.status == "InProcess";
       this.machineDetail.supervisorEdit =
         ["SUPERVISOR"].some((i) => this.infoLogin.group.includes(i)) &&
-        val.status != "WaitApproved";
+        val.status != "WaitApproved" && val.status != "Completed";
       this.machineDetail.managerEdit =
         ["MANAGER"].some((i) => this.infoLogin.group.includes(i)) &&
         val.status != "Completed";
