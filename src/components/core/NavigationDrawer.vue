@@ -62,9 +62,6 @@ export default {
     }
   },
   watch :{
-        'selectedIndexStr': function() {
-           this.selectedIndex =  Number(localStorage.getItem('selectedIndexOEE'))
-        },
         toggle(val){
             this.drawer = val
         }
@@ -74,12 +71,8 @@ export default {
     },
   methods: {
     changeRoute(routeName, selectedIndex) {
-      const vm = this;
-
-      vm.selectedIndex = selectedIndex;
-      localStorage.setItem('selectedIndexOEE', selectedIndex)
-      localStorage.setItem('routeNameOEE', routeName)
-      return vm.$router.push({ name: routeName });
+      this.selectedIndex = selectedIndex;
+      return this.$router.push({ name: routeName });
     },
   }
 }

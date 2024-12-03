@@ -1,38 +1,52 @@
 <template>
   <div>
-    <template v-if="!$route.meta.allowAnonymous">
-      <v-app id="inspire">
-        <toolbar @toggleNavigationBar="drawer = !drawer" />
-        <navigation :toggle="drawer" />
-        <!-- @mousemove="resetTimer" @keypress="resetTimer" @click="resetTimer" -->
-        <v-content>
-          <breadcrumbs />
-          <router-view />
-        </v-content>
-        <page-footer />
-      </v-app>
-    </template>
-
-    <template v-else>
+    <template v-if="$route.meta.allowAnonymous">
       <transition>
         <keep-alive>
-          <router-view></router-view>
+          <router-view />
         </keep-alive>
       </transition>
+    </template>
+
+    <!-- สำหรับหน้าอื่นๆ ที่ต้องการล็อกอิน -->
+    <template v-else>
+      <v-app>
+        <!-- แสดง loading จนกว่าข้อมูลผู้ใช้พร้อม -->
+        <loading v-if="!infoLogin.isLogin" :isLoading="isLoading" />
+        <template v-else>
+          <toolbar @toggleNavigationBar="drawer = !drawer" />
+          <navigation :toggle="drawer" />
+          <v-content>
+            <page-breadcrumbs />
+            <router-view />
+          </v-content>
+          <page-footer />
+        </template>
+      </v-app>
     </template>
   </div>
 </template>
 
 <script>
+import {
+  ValidateJwtToken,
+  getUser,
+  RenewToken,
+  isTokenNearExpiration,
+} from "@/services/apiService.js";
 import { sync } from "vuex-pathify";
-import axios from "axios";
 import Swal from "sweetalert2";
+import loading from "@/components/Loading.vue";
 
 export default {
+  components: {
+    loading,
+  },
   name: "App",
   data() {
     return {
-      inactivityTimer: null,
+      isDrawerOpen: true,
+      isLoading: false,
     };
   },
   computed: {
@@ -44,95 +58,101 @@ export default {
     },
   },
   async mounted() {
-    if (!localStorage.getItem("samAccountOEE")) {
-      localStorage.removeItem("samAccountOEE");
-      localStorage.removeItem("selectedIndexOEE");
-      localStorage.removeItem("empIdOEE");
-      localStorage.removeItem("routeNameOEE");
-      this.$router.push({ name: "Login" });
-    } else {
-      this.$store.commit("resetState");
-      await this.getImageProfile(localStorage.getItem("empIdOEE"));
-      await this.getUser(localStorage.getItem("samAccountOEE"));
-      this.$router.push({ name: localStorage.getItem("routeNameOEE") });
-      this.selectedIndexStr = Number(localStorage.getItem("selectedIndexOEE"));
-      // Start the inactivity timer
-      this.startInactivityTimer();
-      window.addEventListener("mousemove", this.resetTimer);
-      window.addEventListener("keypress", this.resetTimer);
-      window.addEventListener("click", this.resetTimer);
+    if (!this.$route.meta.allowAnonymous) {
+      // ตรวจสอบว่าหน้านั้นต้องการการล็อกอินหรือไม่
+      if (!localStorage.getItem("accessTokenOee")) {
+        this.$router.push({ name: "Login" });
+      } else {
+        await this.ValidateJwtToken();
+      }
     }
   },
-  beforeDestroy() {
-    window.removeEventListener("mousemove", this.resetTimer);
-    window.removeEventListener("keypress", this.resetTimer);
-    window.addEventListener("click", this.resetTimer);
-    clearTimeout(this.inactivityTimer);
-  },
+
+
   methods: {
-    scrollToTop() {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    },
-    startInactivityTimer() {
-      this.inactivityTimer = setTimeout(this.logoutUser, 3600000); // 3600000 ms = 60 minutes
-    },
-    resetTimer() {
-      clearTimeout(this.inactivityTimer);
-      if (localStorage.getItem("samAccountOEE")) {
-        this.startInactivityTimer();
+    async ValidateJwtToken() {
+      this.isLoading = true;
+      try {
+        const response = await ValidateJwtToken();
+        const nameClaim = response.claims.find((claim) => claim.type === "name");
+        if (nameClaim) {
+          if (isTokenNearExpiration()) {
+            // หาก Token ใกล้หมดอายุ ให้ Renew Token
+            await RenewToken(localStorage.getItem("refreshTokenOee"));
+          }
+          await this.getUser(nameClaim.value);
+        } else {
+          Swal.fire({
+            html: `Name claim not found`,
+            icon: "warning",
+            showCancelButton: false,
+            allowOutsideClick: false,
+            confirmButtonText: "OK",
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              localStorage.removeItem("accessTokenOee");
+              localStorage.removeItem("refreshTokenOee");
+
+              this.$router.push({ name: "Login" });
+            }
+          });
+        }
+      } catch (error) {
+        // หากเกิดข้อผิดพลาด ให้แสดงผลข้อความ
+        Swal.fire({
+          html: `Token is invalid or expired.`,
+          icon: "warning",
+          showCancelButton: false,
+          allowOutsideClick: false,
+          confirmButtonText: "OK",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            localStorage.removeItem("accessTokenOee");
+            localStorage.removeItem("refreshTokenOee");
+            this.$router.push({ name: "Login" });
+          }
+        });
+        return;
+      } finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
       }
-    },
-    logoutUser() {
-      Swal.fire({
-        text: "You have been logged out due to inactivity.",
-        icon: "warning",
-        showCancelButton: false,
-        allowOutsideClick: false,
-        confirmButtonColor: "#0c80c4",
-        confirmButtonText: "OK",
-      }).then(() => {
-        this.$store.commit("resetState");
-        localStorage.removeItem("samAccountOEE");
-        localStorage.removeItem("selectedIndex");
-        localStorage.removeItem("empId");
-        localStorage.removeItem("routeName");
-        this.$router.push({ name: "Login" });
-      });
     },
     async getUser(username) {
+      this.isLoading = true;
       try {
-        const getUserAd = {
-          username: username,
-        };
-        const response = await axios.post(
-          `${this.EndpointPortal}/adsControl/Ads/v1/ADsGetUser`,
-          getUserAd
-        );
-        if (!response.data.locked) {
-          this.infoLogin.name = response.data.name;
-          this.infoLogin.firstName = response.data.firstName;
-          this.infoLogin.lastName = response.data.lastName;
-          this.infoLogin.email = response.data.email;
-          this.infoLogin.empId = response.data.empId;
-          this.infoLogin.locked = response.data.locked;
-          this.infoLogin.group = response.data.group;
-          this.infoLogin.samAccount = response.data.samAccount;
-        }
+        const response = await getUser(username);
+        console.log(response, 'response')
+        console.log('getUser', this.infoLogin)
+        this.infoLogin.isLogin = true
+        this.infoLogin.name = response.name;
+        this.infoLogin.firstName = response.firstName;
+        this.infoLogin.lastName = response.lastName;
+        this.infoLogin.email = response.email;
+        this.infoLogin.empId = response.empId;
+        this.infoLogin.group = response.group;
+        this.infoLogin.samAccount = response.samAccount;
+        this.infoLogin.pathUrl = response.pathUrl;
       } catch (error) {
-        console.error(error);
+        // หากเกิดข้อผิดพลาด ให้แสดงผลข้อความ
+        Swal.fire({
+          html: `Error fetching user`,
+          icon: "error",
+          showCancelButton: false,
+          allowOutsideClick: false,
+          confirmButtonText: "OK",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            this.$router.push({ name: "Login" });
+          }
+        });
+      } finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
       }
     },
-    async getImageProfile(empId) {
-      try {
-        const response = await axios.get(
-          `${this.EndpointPortal}/AdsControl/IP1Potal/v1/getUserProfile?empId=${empId}`
-        );
-        if (response.data.statusCode.statusCode == 200) {
-          this.imageProfile = response.data.results[0].pathUrl;
-        }
-      } catch (error) {
-        console.error(error);
-      }
+    toggleDrawer() {
+      this.isDrawerOpen = !this.isDrawerOpen;
     },
   },
 };

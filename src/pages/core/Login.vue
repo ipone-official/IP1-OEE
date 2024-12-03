@@ -18,144 +18,109 @@
                             </div>
                             <v-form>
                                 <div class="white--text">Username</div>
-                                <v-text-field solo append-icon="person"  placeholder="Username" type="text" v-model="userName" :error="error" :rules="[rules.required]" />
+                                <v-text-field solo append-icon="person"  placeholder="Username" type="text" v-model="username"   />
                                 <div class="white--text">Password</div>
-                                <v-text-field solo placeholder="Password" @keyup.enter="login" :type="hidePassword ? 'password' : 'text'" :append-icon="hidePassword ? 'visibility_off' : 'visibility'"  id="password" :rules="[rules.required]" v-model="password" :error="error" @click:append="hidePassword = !hidePassword"
+                                <v-text-field solo placeholder="Password" @keyup.enter="login" :type="hidePassword ? 'password' : 'text'" :append-icon="hidePassword ? 'visibility_off' : 'visibility'"  id="password" v-model="password" @click:append="hidePassword = !hidePassword"
                                 />
                             </v-form>
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn round class=" white--text" block :color="$root.themeColorFooter" @click="login" :loading="loading">
+                            <v-btn round class=" white--text" block :color="$root.themeColorFooter" @click="login">
                                 <h3>Login</h3>
                             </v-btn>
                         </v-card-actions>
-                        <v-flex d-flex lg12 sm12 xs12>
-                            <!-- <v-spacer></v-spacer>
-                            <img src="static/Banner-login.png" width="80%"></img> -->
-                            <!-- <v-spacer></v-spacer> -->
-                        </v-flex>
                     </v-card>
                 </v-flex>
                 <v-spacer></v-spacer>
             </v-layout>
             </v-container>
-            <v-snackbar color="orange" v-model="showResult" :timeout="3500">
-                {{ result }}
-            </v-snackbar>
+            <v-snackbar
+        v-model="showSnackbar"
+        :timeout="6000"
+        :color="snackbarColor"
+        rounded="pill"
+        class="text-center"
+      >
+        {{ msgSnackbar }}
+      </v-snackbar>
     
         </v-content>
-              <v-footer dark height="auto">
-                <v-card class="flex" flat tile :color="$root.themeColorFooter">
-                    <v-card-actions class="black--text justify-center">
-                        &copy;copyright 2024 by I.P.One Co., Ltd.
-                    </v-card-actions>
-                </v-card>
-            </v-footer>
+            <loading :isLoading="isLoading" />
     </v-app>
 </template>
 
 <script>
-import axios from 'axios';
 import { sync } from "vuex-pathify";
-import Swal from "sweetalert2";
+import loading from "@/components/Loading.vue";
+import { loginUser } from "@/services/apiService.js";
 
 export default {
+    components: {
+    loading,
+  },
+    name: "PageLogin",
     data() {
         return {
-            loading: false,
-            userName: '',
+            username: '',
             password: '',
             hidePassword: true,
-            error: false,
-            showResult: false,
-            result: '',
-            rules: {
-                required: value => !!value || 'Required.'
-            }
+            showSnackbar: false,
+      msgSnackbar: "",
+      snackbarColor: this.$root.themeColorFooter,
+      isLoading: false,
         }
     },
     computed: {
         ...sync("*"),
     },
     methods: {
-        login() {
-            const vm = this;
-            if (!vm.userName || !vm.password) {
+        showError(message, color = this.$root.themeColorFooter) {
+      this.msgSnackbar = message;
+      this.snackbarColor = color;
+      this.showSnackbar = true;
+    },
 
-                vm.result = "Username and Password can't be null.";
-                vm.showResult = true;
+    async login() {
+      // ตรวจสอบว่ากรอก Username และ Password หรือไม่
+      if (!this.username || !this.password) {
+        this.showError("Username and Password can't be null.");
+        return;
+      }
+      // เริ่มการแสดงผล Loading
+      this.isLoading = true;
+      try {
+        // เรียกใช้งานฟังก์ชัน loginUser ด้วยข้อมูล Username และ Password
+        const response = await loginUser(this.username, this.password);
+        if (!response.locked) {
+            this.infoLogin.isLogin = true
+            this.infoLogin.name = response.name
+            this.infoLogin.firstName = response.firstName
+            this.infoLogin.lastName = response.lastName
+            this.infoLogin.email = response.email
+            this.infoLogin.empId = response.empId
+            this.infoLogin.group = response.group
+            this.infoLogin.samAccount = response.samAccount
+            this.infoLogin.pathUrl = response.pathUrl
+          // เก็บ accessToken ใน localStorage สำหรับการตรวจสอบสิทธิ์
+          localStorage.setItem("accessTokenOee", response.accessToken);
+          localStorage.setItem("refreshTokenOee", response.refreshToken);
 
-                return;
-            }
-            this.ValidateLogin(vm.userName, vm.password)
-        },
-           async ValidateLogin(usn, pwd) {
-            const vm = this;
-            vm.loading = true
-            try {
-                const auth = {
-                    username: usn,
-                    password: pwd
-                }
-                localStorage.removeItem('samAccountOEE')
-                localStorage.removeItem('empIdOEE')
-                const response = await axios.post(`${this.EndpointPortal}/AdsControl/Ads/v1/ADsAuthentication`, auth);
-                if (response.data.authentication) {
-                    if (!response.data.locked) {
-                        vm.loading = false
-                        vm.$store.commit('resetState');
-                        vm.infoLogin.authentication = response.data.authentication
-                        vm.infoLogin.name = response.data.name
-                        vm.infoLogin.firstName = response.data.firstName
-                        vm.infoLogin.lastName = response.data.lastName
-                        vm.infoLogin.email = response.data.email
-                        vm.infoLogin.empId = response.data.empId
-                        vm.infoLogin.locked = response.data.locked
-                        vm.infoLogin.group = response.data.group
-                        vm.infoLogin.samAccount = response.data.samAccount
-                        localStorage.setItem('samAccountOEE', vm.infoLogin.samAccount)
-                        localStorage.setItem('empIdOEE', vm.infoLogin.empId)
-                        this.selectedIndexStr = 1
-                        vm.$router.push({ name: 'LineProcessOrder' });
-                    } else {
-                        vm.loading = false
-                        vm.error = true;
-                        vm.result = "User is locked.";
-                        vm.showResult = true;
-                            Swal.fire({
-                        text: 'User is locked. Please contact admin',
-                        icon: "error",
-                        showCancelButton: false,
-                        confirmButtonColor: "#0c80c4",
-                        confirmButtonText: "OK",
-                    });
-                    }
-                } else {
-                    vm.loading = false
-                    vm.error = true;
-                      Swal.fire({
-                        text: 'Username or Password is incorrect.',
-                        icon: "error",
-                        showCancelButton: false,
-                        confirmButtonColor: "#0c80c4",
-                        confirmButtonText: "OK",
-                    });
-
-                }
-            } catch (error) {
-                console.error(error);
-                vm.error = true;
-                vm.loading = false
-                     Swal.fire({
-                        text: '500 Internal Server Error',
-                        icon: "error",
-                        showCancelButton: false,
-                        confirmButtonColor: "#0c80c4",
-                        confirmButtonText: "OK",
-                    });
-            }
+          // เปลี่ยนเส้นทางไปยังหน้าหลัก
+          this.$router.push({ name: "LineProcessOrder" });
+        } else {
+          this.showError("Login failed. User locked.", " red");
         }
+      } catch (error) {
+        // หากเกิดข้อผิดพลาด ให้แสดงผลข้อความ
+        this.showError("Login failed. Please check your credentials.", "red");
+      } finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
+      }
+    },
+
+
     }
 }
 </script>

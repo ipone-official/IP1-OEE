@@ -7,20 +7,13 @@
       <v-toolbar-side-icon @click="toggleNavigationBar"></v-toolbar-side-icon>
     </v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-snackbar
-      v-model="showResult"
-      :timeout="2000"
-      top>
-      {{ result }}
-    </v-snackbar>
     <div>
       <h3>{{ infoLogin.name }}</h3>
     </div>
     <v-menu class="toolbar-menu-item" offset-y origin="center center" :nudge-bottom="10" transition="scale-transition">
       <v-btn icon large flat slot="activator" :ripple="false">
         <v-avatar size="42px">
-        <img :src="computedImageUrl" />
-          <!-- <img :src="`${this.Endpoint}/ImagesVendor/${ infoLogin.name }.png`"/> -->
+        <img :src="avatarUrl" />
         </v-avatar>
       </v-btn>
       <v-list>
@@ -50,66 +43,33 @@ import { sync } from "vuex-pathify";
 export default {
   data() {
     return {
-      error: false,
-      showResult: false,
-      result: '',
       items: [
         {
           icon: 'exit_to_app',
           href: '#',
           title: 'Log Out',
           click: () => {
-            const vm = this;
-            vm.$store.commit("resetState");
-            localStorage.removeItem('samAccountOEE')
-            localStorage.removeItem('routeNameOEE')
-            localStorage.removeItem('selectedIndexOEE')
-            localStorage.removeItem('empIdOEE')
-            this.imageProfile = ""
-            vm.$router.push({ name: 'Login' });
+            this.$store.commit("resetState");
+            localStorage.removeItem('accessTokenOee')
+            localStorage.removeItem('refreshTokenOee')
+            this.$router.push({ name: 'Login' });
           }
         }
       ],
-     
-      languages: [
-        { name: 'English', languageCode: 'en', path: require('../../assets/flags/en.png') },
-        { name: 'Turkish', languageCode: 'tr', path: require('../../assets/flags/tr.png') },
-        { name: 'French', languageCode: 'fr', path: require('../../assets/flags/fr.png') },
-        { name: 'German', languageCode: 'de', path: require('../../assets/flags/de.png') },
-        { name: 'Japanese', languageCode: 'ja', path: require('../../assets/flags/ja.png') },
-        { name: 'Simplified Chinese', languageCode: 'ch', path: require('../../assets/flags/ch.png') }
-      ]
+      noImage: "@/assets/images/No-Image.png",
     }
   },
 
   computed: {
     ...sync("*"),
-    selectedLanguageFlag() {
-      const vm = this;
-
-      switch(vm.$i18n.locale) {
-        case 'en': return require('../../assets/flags/en.png');
-        case 'tr': return require('../../assets/flags/tr.png');
-        case 'fr': return require('../../assets/flags/fr.png');
-        case 'de': return require('../../assets/flags/de.png');
-        case 'ja': return require('../../assets/flags/ja.png');
-        case 'ch': return require('../../assets/flags/ch.png');
-      }
-    },
-    computedImageUrl: function () {
-      return this.imageProfile ? this.imageProfile : "../../../static/No-Image.png";
+    avatarUrl() {
+      return this.infoLogin.pathUrl || require("@/assets/images/No-Image.png");
     },
   },
   methods: {
     toggleNavigationBar() {
-      const vm = this;
-
-      vm.$emit('toggleNavigationBar');
+      this.$emit('toggleNavigationBar');
     },
-    selectLanguage(code) {
-      const vm = this;
-      vm.$root.setLanguage(code);
-    }
   }
 };
 </script>

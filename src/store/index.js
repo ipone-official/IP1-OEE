@@ -35,8 +35,6 @@ const loginInfo = () => ({
   drawer: false,
   toggle: false,
   headerProject: 'OEE',
-  selectedIndexStr: 1,
-  imageProfile: "",
   EndpointPortal: 'https://portal.ip-one.com',
   infoLogin: {
     isLogin: false,
@@ -46,9 +44,9 @@ const loginInfo = () => ({
     lastName: '',
     email: '',
     empId: '',
-    locked: false,
     group:[],
-    samAccount: ''
+    samAccount: '',
+    pathUrl: '',
   },
 })
 const state = Object.assign(getDefaultState(), loginInfo());
