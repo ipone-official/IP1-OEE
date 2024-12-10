@@ -17,7 +17,7 @@
           <toolbar @toggleNavigationBar="drawer = !drawer" />
           <navigation :toggle="drawer" />
           <v-content>
-            <page-breadcrumbs />
+            <breadcrumbs />
             <router-view />
           </v-content>
           <page-footer />
@@ -65,9 +65,13 @@ export default {
       } else {
         await this.ValidateJwtToken();
       }
+    } else {
+      if (localStorage.getItem("accessTokenOee")) {
+        await this.ValidateJwtToken();
+        this.$router.push({ name: "LineProcessOrder" });
+      }
     }
   },
-
 
   methods: {
     async ValidateJwtToken() {
@@ -122,9 +126,7 @@ export default {
       this.isLoading = true;
       try {
         const response = await getUser(username);
-        console.log(response, 'response')
-        console.log('getUser', this.infoLogin)
-        this.infoLogin.isLogin = true
+        this.infoLogin.isLogin = true;
         this.infoLogin.name = response.name;
         this.infoLogin.firstName = response.firstName;
         this.infoLogin.lastName = response.lastName;

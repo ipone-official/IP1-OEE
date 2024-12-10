@@ -211,7 +211,8 @@
               (['MANAGER'].some((i) => infoLogin.group.includes(i)) &&
                 props.item.status != 'Completed') ||
               (['SUPERVISOR'].some((i) => infoLogin.group.includes(i)) &&
-                props.item.status != 'WaitApproved' && props.item.status != 'Completed')
+                props.item.status != 'WaitApproved' &&
+                props.item.status != 'Completed')
             "
             color="red"
             fab
@@ -463,15 +464,13 @@
     <v-snackbar color="orange" v-model="showResult" :timeout="3500">
       {{ msgResult }}
     </v-snackbar>
-    <div v-if="loadingDialog">
-      <loading :value="loadingDialog" />
-    </div>
+    <loading :isLoading="isLoading" />
   </v-container>
 </template>
 <script>
 import axios from "axios";
 import { sync } from "vuex-pathify";
-import Loading from "@/components/core/Loading";
+import Loading from "@/components/Loading";
 import calendar from "@/components/DatePiker.vue";
 import { isEmpty } from "lodash";
 import Swal from "sweetalert2";
@@ -498,7 +497,7 @@ export default {
       dialogTransactionOee: false,
       dialogCheckOut: false,
       itemLineProcess: [],
-      loadingDialog: false,
+      isLoading: false,
       mLineProcess: "",
       itemFilms: [],
       mFilm: "",
@@ -786,7 +785,7 @@ export default {
       );
     },
     async GetTProcessList() {
-      this.loadingDialog = true;
+      this.isLoading = true;
       this.itemTransactionTProcess = [];
       this.rawData = [];
       this.mFilterStatus = [];
@@ -802,7 +801,6 @@ export default {
           pProcessDate
         );
         if (response.data.status == 200) {
-          this.loadingDialog = false;
           this.DateDisibled = true;
           const Role = ["OPERATOR"].some((i) => this.infoLogin.group.includes(i));
           if (Role) {
@@ -886,9 +884,11 @@ export default {
             );
           }
           this.itemTransactionTProcess = this.rawData;
-          if(this.machineDetail.selectProcessID != 0){
-            const result = this.rawData.find(item => item.processID == this.machineDetail.selectProcessID);
-            this.SelectProcesList(result)
+          if (this.machineDetail.selectProcessID != 0) {
+            const result = this.rawData.find(
+              (item) => item.processID == this.machineDetail.selectProcessID
+            );
+            this.SelectProcesList(result);
           }
           this.lineProcessItem = [];
           const distinctLineProcess = [
@@ -900,7 +900,6 @@ export default {
           }));
           this.lineProcessItem = this.lineProcessItem.concat(lineProcessItems);
         } else if (response.data.status == 404) {
-          this.loadingDialog = false;
           this.DateDisibled = false;
           Swal.fire({
             text: `${response.data.message}`,
@@ -912,7 +911,6 @@ export default {
             confirmButtonText: "Ok",
           });
         } else {
-          this.loadingDialog = false;
           Swal.fire({
             text: `Internal Server Error`,
             icon: "error",
@@ -924,7 +922,6 @@ export default {
           });
         }
       } catch (error) {
-        this.loadingDialog = false;
         Swal.fire({
           text: `Internal Server Error`,
           icon: "error",
@@ -934,15 +931,17 @@ export default {
           cancelButtonColor: "#C0C0C0",
           confirmButtonText: "Ok",
         });
+      } finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
       }
     },
     async getFilm() {
-      this.loadingDialog = true;
+      this.isLoading = true;
       this.itemFilms = [];
       try {
         const response = await axios.get(`${this.EndpointPortal}/ApiOEE/OEE/v1/GetFilms`);
         if (response.data.status == 200) {
-          this.loadingDialog = false;
           response.data.results.forEach((element, index) =>
             this.itemFilms.push({
               filmID: element.filmID,
@@ -950,7 +949,6 @@ export default {
             })
           );
         } else {
-          this.loadingDialog = false;
           Swal.fire({
             text: `Internal Server Error`,
             icon: "error",
@@ -961,8 +959,9 @@ export default {
             confirmButtonText: "Ok",
           });
         }
-      } catch (error) {
-        this.loadingDialog = false;
+      } finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
       }
     },
     async CreateTProcessList() {
@@ -984,7 +983,7 @@ export default {
         confirmButtonText: "OK",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          this.loadingDialog = true;
+          this.isLoading = true;
           let { empId } = this.infoLogin;
           const init = {
             processID: "",
@@ -1006,7 +1005,6 @@ export default {
               init
             );
             if (response.data.status == 200) {
-              this.loadingDialog = false;
               Swal.fire({
                 html: `Successfully`,
                 icon: "success",
@@ -1026,7 +1024,6 @@ export default {
                 }
               });
             } else {
-              this.loadingDialog = false;
               Swal.fire({
                 text: `Internal Server Error`,
                 icon: "error",
@@ -1038,7 +1035,6 @@ export default {
               });
             }
           } catch (error) {
-            this.loadingDialog = false;
             Swal.fire({
               text: `Internal Server Error`,
               icon: "error",
@@ -1048,19 +1044,21 @@ export default {
               cancelButtonColor: "#C0C0C0",
               confirmButtonText: "Ok",
             });
-          }
+          }finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
+      }
         }
       });
     },
     async getLineProcess() {
-      this.loadingDialog = true;
+      this.isLoading = true;
       this.itemLineProcess = [];
       try {
         const response = await axios.get(
           `${this.EndpointPortal}/ApiOEE/OEE/v1/GetLineProcess`
         );
         if (response.data.status == 200) {
-          this.loadingDialog = false;
           response.data.results.forEach((element, index) =>
             this.itemLineProcess.push({
               lineProcessID: element.lineProcessID,
@@ -1068,7 +1066,6 @@ export default {
             })
           );
         } else {
-          this.loadingDialog = false;
           Swal.fire({
             text: `Internal Server Error`,
             icon: "error",
@@ -1079,19 +1076,19 @@ export default {
             confirmButtonText: "Ok",
           });
         }
-      } catch (error) {
-        this.loadingDialog = false;
+      } finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
       }
     },
     async GetMaterialMaster(vlineProcessID) {
-      this.loadingDialog = true;
+      this.isLoading = true;
       this.itemMaterialMaster = [];
       try {
         const response = await axios.get(
           `${this.EndpointPortal}/ApiOEE/OEE/v1/GetMaterialMaster?lineProcessID=${vlineProcessID}`
         );
         if (response.data.status == 200) {
-          this.loadingDialog = false;
           response.data.results.forEach((element, index) =>
             this.itemMaterialMaster.push({
               hgLv1: element.hgLv1,
@@ -1108,7 +1105,6 @@ export default {
             })
           );
         } else if (response.data.status == 404) {
-          this.loadingDialog = false;
           Swal.fire({
             text: `${response.data.message}`,
             icon: "warning",
@@ -1119,7 +1115,6 @@ export default {
             confirmButtonText: "Ok",
           });
         } else {
-          this.loadingDialog = false;
           Swal.fire({
             text: `Internal Server Error`,
             icon: "error",
@@ -1130,60 +1125,59 @@ export default {
             confirmButtonText: "Ok",
           });
         }
-      } catch (error) {
-        this.loadingDialog = false;
+      } finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
       }
     },
     async GetProductionOrder(vlineProcessID) {
-      this.loadingDialog = true;
+      this.isLoading = true;
       this.itemProductionOrder = [];
-      try{
-      const response = await axios.get(
-        `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProductionOrder?lineProcessID=${vlineProcessID}`
-      );
-      if (response.data.status == 200) {
-        this.loadingDialog = false;
-        response.data.results.forEach((element, index) =>
-          this.itemProductionOrder.push({
-            productionOrderNumber: element.productionOrderNumber,
-            hgLv1: element.hgLv1,
-            hgLv3: element.hgLv3,
-            hgLv5: element.hgLv5,
-            hgDescLv7: element.hgDescLv7,
-            materialCode: element.materialCode,
-            materialDescriptionTh: element.materialDescriptionTh,
-            materialDescriptionEn: element.materialDescriptionEn,
-            displayHg1_3: `${element.hgLv1} ${
-              element.hgLv3 == "" ? "" : `- ${element.hgLv3}`
-            }`,
-            speedStd: element.speedStd,
-          })
+      try {
+        const response = await axios.get(
+          `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProductionOrder?lineProcessID=${vlineProcessID}`
         );
-      } else if (response.data.status == 404) {
-        this.loadingDialog = false;
-        Swal.fire({
-          text: `${response.data.message}`,
-          icon: "warning",
-          showCancelButton: false,
-          allowOutsideClick: false,
-          confirmButtonColor: "#0c80c4",
-          cancelButtonColor: "#C0C0C0",
-          confirmButtonText: "Ok",
-        });
-      } else {
-        this.loadingDialog = false;
-        Swal.fire({
-          text: `Internal Server Error`,
-          icon: "error",
-          showCancelButton: false,
-          allowOutsideClick: false,
-          confirmButtonColor: "#0c80c4",
-          cancelButtonColor: "#C0C0C0",
-          confirmButtonText: "Ok",
-        });
-      }
-    } catch (error) {
-        this.loadingDialog = false;
+        if (response.data.status == 200) {
+          response.data.results.forEach((element, index) =>
+            this.itemProductionOrder.push({
+              productionOrderNumber: element.productionOrderNumber,
+              hgLv1: element.hgLv1,
+              hgLv3: element.hgLv3,
+              hgLv5: element.hgLv5,
+              hgDescLv7: element.hgDescLv7,
+              materialCode: element.materialCode,
+              materialDescriptionTh: element.materialDescriptionTh,
+              materialDescriptionEn: element.materialDescriptionEn,
+              displayHg1_3: `${element.hgLv1} ${
+                element.hgLv3 == "" ? "" : `- ${element.hgLv3}`
+              }`,
+              speedStd: element.speedStd,
+            })
+          );
+        } else if (response.data.status == 404) {
+          Swal.fire({
+            text: `${response.data.message}`,
+            icon: "warning",
+            showCancelButton: false,
+            allowOutsideClick: false,
+            confirmButtonColor: "#0c80c4",
+            cancelButtonColor: "#C0C0C0",
+            confirmButtonText: "Ok",
+          });
+        } else {
+          Swal.fire({
+            text: `Internal Server Error`,
+            icon: "error",
+            showCancelButton: false,
+            allowOutsideClick: false,
+            confirmButtonColor: "#0c80c4",
+            cancelButtonColor: "#C0C0C0",
+            confirmButtonText: "Ok",
+          });
+        }
+      } finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
       }
     },
     async SelectProcesList(val) {
@@ -1192,7 +1186,8 @@ export default {
         val.status == "InProcess";
       this.machineDetail.supervisorEdit =
         ["SUPERVISOR"].some((i) => this.infoLogin.group.includes(i)) &&
-        val.status != "WaitApproved" && val.status != "Completed";
+        val.status != "WaitApproved" &&
+        val.status != "Completed";
       this.machineDetail.managerEdit =
         ["MANAGER"].some((i) => this.infoLogin.group.includes(i)) &&
         val.status != "Completed";
@@ -1216,7 +1211,7 @@ export default {
         this.CheckOutTime = dateCheckOut[1];
       }
       this.tab = 0;
-      this.machineDetail.selectProcessID = val.processID
+      this.machineDetail.selectProcessID = val.processID;
       this.machineDetail.selectTransactionTProcess = val;
       this.machineDetail.machineStd = this.machineDetail.selectTransactionTProcess.machineSTD;
       this.machineDetail.QtyDz = 0;
@@ -1299,7 +1294,7 @@ export default {
         confirmButtonText: "OK",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          this.loadingDialog = true;
+          this.isLoading = true;
           let { empId } = this.infoLogin;
           const init = {
             processID: val.processID,
@@ -1328,14 +1323,12 @@ export default {
                 confirmButtonText: "OK",
               }).then(async (result) => {
                 if (result.isConfirmed) {
-                  this.loadingDialog = false;
                   this.dialogCheckOut = false;
                   this.dataCheckOut = [];
                   this.flagGetTProcess = true;
                 }
               });
             } else {
-              this.loadingDialog = false;
               Swal.fire({
                 text: `Internal Server Error`,
                 icon: "error",
@@ -1347,7 +1340,6 @@ export default {
               });
             }
           } catch (error) {
-            this.loadingDialog = false;
             Swal.fire({
               text: `Internal Server Error`,
               icon: "error",
@@ -1357,7 +1349,10 @@ export default {
               cancelButtonColor: "#C0C0C0",
               confirmButtonText: "Ok",
             });
-          }
+          }finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
+      }
         }
       });
     },
@@ -1388,7 +1383,7 @@ export default {
         confirmButtonText: "OK",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          this.loadingDialog = true;
+          this.isLoading = true;
           let { empId } = this.infoLogin;
           const init = {
             processID: val.processID,
@@ -1410,12 +1405,10 @@ export default {
                 confirmButtonText: "OK",
               }).then(async (result) => {
                 if (result.isConfirmed) {
-                  this.loadingDialog = false;
                   this.flagGetTProcess = true;
                 }
               });
             } else {
-              this.loadingDialog = false;
               Swal.fire({
                 text: `Internal Server Error`,
                 icon: "error",
@@ -1427,7 +1420,6 @@ export default {
               });
             }
           } catch (error) {
-            this.loadingDialog = false;
             Swal.fire({
               text: `Internal Server Error`,
               icon: "error",
@@ -1437,7 +1429,10 @@ export default {
               cancelButtonColor: "#C0C0C0",
               confirmButtonText: "Ok",
             });
-          }
+          }finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
+      }
         }
       });
     },

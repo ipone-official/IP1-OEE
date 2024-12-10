@@ -169,9 +169,7 @@
     <v-snackbar color="orange" v-model="showResult" :timeout="3500">
       {{ msgResult }}
     </v-snackbar>
-    <div v-if="loadingDialog">
-      <loading :value="loadingDialog" />
-    </div>
+    <loading :isLoading="isLoading" />
   </v-container>
 </template>
 <script>
@@ -180,7 +178,7 @@ import axios from "axios";
 import { sync } from "vuex-pathify";
 import functions from "@/plugins/functions";
 import keyFilter from "@/plugins/keyFilter";
-import loading from "@/components/core/Loading";
+import loading from "@/components/Loading";
 import { isEmpty } from "lodash";
 
 export default {
@@ -196,7 +194,7 @@ export default {
       functions,
       msgResult: "",
       showResult: false,
-      loadingDialog: false,
+      isLoading: false,
       itemMachine: [],
       mMachine: "",
       mProblemDesc: "",
@@ -342,14 +340,13 @@ export default {
   },
   methods: {
     async GetProblem() {
-      this.loadingDialog = true;
+      this.isLoading = true;
       this.itemMachine = [];
       try {
         const response = await axios.get(
           `${this.EndpointPortal}/ApiOEE/OEE/v1/GetProblems?lineProcessID=${this.machineDetail.selectTransactionTProcess.lineProcessID}`
         );
         if (response.data.status == 200) {
-          this.loadingDialog = false;
           this.itemMachine = response.data.results;
           const machineIDs = new Set();
           this.itemMachine.forEach((result) => {
@@ -363,7 +360,6 @@ export default {
             this.mMachine = init[0];
           }
         } else {
-          this.loadingDialog = false;
           Swal.fire({
             text: `Internal Server Error`,
             icon: "error",
@@ -374,8 +370,9 @@ export default {
             confirmButtonText: "Ok",
           });
         }
-      } catch (error) {
-        this.loadingDialog = false;
+      } finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
       }
     },
     addTransactionProblem(mode) {

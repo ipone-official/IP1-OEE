@@ -127,16 +127,14 @@
     <v-snackbar color="orange" v-model="showResult" :timeout="3500">
       {{ msgResult }}
     </v-snackbar>
-    <div v-if="loadingDialog">
-      <loading :value="loadingDialog" />
-    </div>
+    <loading :isLoading="isLoading" />
   </v-container>
 </template>
 <script>
 import axios from "axios";
 import { sync } from "vuex-pathify";
 import Swal from "sweetalert2";
-import loading from "@/components/core/Loading";
+import loading from "@/components/Loading";
 import functions from "@/plugins/functions";
 import { isEmpty } from "lodash";
 import keyFilter from "@/plugins/keyFilter";
@@ -149,7 +147,7 @@ export default {
   },
   data() {
     return {
-      loadingDialog: false,
+      isLoading: false,
       keyFilter,
       msgResult: "",
       showResult: false,
@@ -228,14 +226,13 @@ export default {
       this.QtyEA = Number(value.replace(/,/g, "")); // ลบเครื่องหมายจุลภาคทั้งหมดก่อนบันทึกลง mTransferAmount
     },
     async GetReason() {
-      this.loadingDialog = true;
+      this.isLoading = true;
       this.itemReason = [];
       try {
         const response = await axios.get(
           `${this.EndpointPortal}/ApiOEE/OEE/v1/GetReasonDamage`
         );
         if (response.data.status == 200) {
-          this.loadingDialog = false;
           this.itemReason = response.data.results;
 
           const reasonIDs = new Set();
@@ -246,7 +243,6 @@ export default {
             this.mReason = this.itemReason[0];
           }
         } else {
-          this.loadingDialog = false;
           Swal.fire({
             text: `Internal Server Error`,
             icon: "error",
@@ -257,8 +253,9 @@ export default {
             confirmButtonText: "Ok",
           });
         }
-      } catch (error) {
-        this.loadingDialog = false;
+      } finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
       }
     },
     addTransactionDamage(mode) {

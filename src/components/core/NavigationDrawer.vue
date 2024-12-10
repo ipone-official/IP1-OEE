@@ -25,9 +25,16 @@
 
         <v-list-tile @click="changeRoute('UploadStd', 3)" v-if="(['MANAGER', 'ADMIN'].some((i) => infoLogin.group.includes(i)))">
           <v-list-tile-action>
-            <v-icon>mdi-cloud-upload</v-icon>
+            <v-icon>mdi-cloud-upload-outline</v-icon>
           </v-list-tile-action>
           <v-list-tile-title :class="[{'active': selectedIndex === 3}, 'item-title']">{{ $t('Upload Speed') }}</v-list-tile-title>
+        </v-list-tile>
+
+        <v-list-tile @click="changeRoute('UploadProblemReason', 4)" v-if="(['MANAGER', 'ADMIN'].some((i) => infoLogin.group.includes(i)))">
+          <v-list-tile-action>
+            <v-icon>mdi-file-document-arrow-right-outline</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title :class="[{'active': selectedIndex === 4}, 'item-title']">{{ $t('Problem & Reason') }}</v-list-tile-title>
         </v-list-tile>
 
     </v-list>
@@ -57,7 +64,7 @@ export default {
   },
   data() {
     return {
-      selectedIndex: 1,
+      selectedIndex: 0,
       menuOpen: true,
     }
   },

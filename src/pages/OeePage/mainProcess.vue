@@ -233,16 +233,14 @@
     <v-snackbar color="orange" v-model="showResult" :timeout="3500">
       {{ msgResult }}
     </v-snackbar>
-    <div v-if="loadingDialog">
-      <loading :value="loadingDialog" />
-    </div>
+    <loading :isLoading="isLoading" />
   </v-container>
 </template>
 <script>
 import axios from "axios";
 import { sync } from "vuex-pathify";
 import Swal from "sweetalert2";
-import loading from "@/components/core/Loading";
+import loading from "@/components/Loading";
 import functions from "@/plugins/functions";
 import Detail from "@/pages/OeePage/Detail.vue";
 import Reason from "@/pages/OeePage/Reason.vue";
@@ -261,7 +259,7 @@ export default {
   },
   data() {
     return {
-      loadingDialog: false,
+      isLoading: false,
       msgResult: "",
       showResult: false,
       functions,
@@ -357,7 +355,7 @@ export default {
         confirmButtonText: "OK",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          this.loadingDialog = true;
+          this.isLoading = true;
           let {
             processID,
             lineProcessID,
@@ -392,14 +390,12 @@ export default {
                 confirmButtonText: "OK",
               }).then(async (result) => {
                 if (result.isConfirmed) {
-                  this.loadingDialog = false;
                   this.flagGetTProcess = true;
                   this.machineDetail.dialogTransactionDetail = false;
                   this.tab = 0;
                 }
               });
             } else {
-              this.loadingDialog = false;
               Swal.fire({
                 text: `Internal Server Error`,
                 icon: "error",
@@ -410,9 +406,10 @@ export default {
                 confirmButtonText: "Ok",
               });
             }
-          } catch (error) {
-            this.loadingDialog = false;
-          }
+          } finally {
+        // ปิดการแสดงผล Loading ในทุกกรณี
+        this.isLoading = false;
+      }
         }
       });
     },

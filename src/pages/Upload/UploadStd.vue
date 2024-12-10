@@ -94,9 +94,7 @@
       </div>
     </div>
 
-    <div v-if="loadingDialog">
-      <Loading :value="loadingDialog" />
-    </div>
+    <loading :isLoading="isLoading" />
   </div>
 </template>
 
@@ -105,7 +103,7 @@ import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { sync } from "vuex-pathify";
-import Loading from "@/components/core/Loading";
+import Loading from "@/components/Loading";
 
 export default {
   components: {
@@ -115,7 +113,7 @@ export default {
     return {
       search: "",
       fileName: "",
-      loadingDialog: false,
+      isLoading: false,
       activeItem: 1,
       items: [],
       headers: [],
@@ -149,7 +147,7 @@ export default {
       this.$refs.fileInput.click(); // Trigger click on file input
     },
     handleFileUpload(event) {
-      this.loadingDialog = true;
+      this.isLoading = true;
       this.activeItem = 1;
       const file = event.target.files[0];
       if (file) {
@@ -192,12 +190,11 @@ export default {
               }
               
             });
-            console.log(this.DataImport, 'DataImport')
           }
         };
         reader.readAsArrayBuffer(file);
         this.activeItem = 0;
-        this.loadingDialog = false;
+        this.isLoading = false;
       } else {
         this.fileName = "";
       }
@@ -251,7 +248,7 @@ export default {
               return; // หยุดการทำงานของฟังก์ชันทันทีเมื่อพบข้อผิดพลาด
             }
           }
-          this.loadingDialog = true;
+          this.isLoading = true;
           let JsonDataImport = [];
           for (let i = 0; i < this.DataImport.length; i++) {
             const elementJson = {
@@ -261,12 +258,12 @@ export default {
             };
             JsonDataImport.push(elementJson);
           }
+          try {
           const response = await axios.post(
             ` ${this.EndpointPortal}/ApiOEE/OEE/v1/InsertSpeedStd`,
             JsonDataImport
           );
           if (response.data.status == 200) {
-            this.loadingDialog = false;
             Swal.fire({
               text: `Successfully`,
               icon: "success",
@@ -280,17 +277,19 @@ export default {
                 this.clearFile();
               }
             });
-          } else {
-            this.loadingDialog = false;
+          }
+        } catch (error) {
+            // หากเกิดข้อผิดพลาด ให้แสดงผลข้อความ
             Swal.fire({
-              text: `Internal Server Error`,
+              html: `Error ${error}`,
               icon: "error",
               showCancelButton: false,
               allowOutsideClick: false,
-              confirmButtonColor: "#0c80c4",
-              cancelButtonColor: "#C0C0C0",
-              confirmButtonText: "Ok",
+              confirmButtonText: "OK",
             });
+          } finally {
+            // ปิดการแสดงผล Loading ในทุกกรณี
+            this.isLoading = false;
           }
         }
       });
@@ -310,7 +309,7 @@ export default {
       });
     },
     async getOeeSpeedStd() {
-      this.loadingDialog = true;
+      this.isLoading = true;
       try {
         const response = await axios.get(
           `${this.EndpointPortal}/ApiOEE/OEE/v1/GetSpeedStd`
@@ -326,10 +325,8 @@ export default {
               speedSTD: element.speedSTD,
             })
           );
-          this.loadingDialog = false;
         }
       } catch (error) {
-        this.loadingDialog = false;
         Swal.fire({
           text: `ไม่สามารถทำการเชื่อมต่อระบบฐานข้อมูลได้ กรุณาลองใหม่อีกครั้ง`,
           icon: "warning",
@@ -339,7 +336,10 @@ export default {
           cancelButtonColor: "#C0C0C0",
           confirmButtonText: "Ok",
         });
-      }
+      } finally {
+            // ปิดการแสดงผล Loading ในทุกกรณี
+            this.isLoading = false;
+          }
     },
     async exportToExcel() {
       // Convert dataObjects to worksheet

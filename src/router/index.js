@@ -6,6 +6,8 @@ import Error from '../pages/core/Error.vue';
 import LineProcessOrder from '@/pages/LineProcessOrder.vue';
 import ReportOee from '@/pages/Report/ReportOee.vue'
 import UploadStd from '@/pages/Upload/UploadStd.vue'
+import UploadProblemReason from '@/pages/Upload/UploadProblemReason.vue'
+
 Vue.use(Router);
 
 export default new Router({
@@ -37,6 +39,16 @@ export default new Router({
       meta: {
         breadcrumb: [
           { name: 'Line Process Order' }
+        ]
+      }
+    },
+    {
+      path: '/UploadProblemReason',
+      name: 'UploadProblemReason',
+      component: UploadProblemReason,
+      meta: {
+        breadcrumb: [
+          { name: 'Problem & Reason' }
         ]
       }
     },
