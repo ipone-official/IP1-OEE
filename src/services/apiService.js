@@ -36,7 +36,7 @@ export function isTokenNearExpiration() {
       const response = await api.post('Ads/v1/RenewToken', 
         refreshToken,
       );
-      localStorage.setItem("accessTokenOee", response.data.accessTokenOee);
+      localStorage.setItem("accessTokenOee", response.data.accessToken);
       return response.data;
     } catch (error) {
       console.error('Error fetching user:', error);
