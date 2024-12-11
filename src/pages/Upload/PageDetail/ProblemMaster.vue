@@ -108,9 +108,10 @@
         </v-card-title>
 
         <!-- Close Button -->
-        <v-btn icon @click="resetForm" class="close-btn">
+        
+        <!-- <v-btn icon @click="resetForm" class="close-btn">
           <v-icon>mdi-close</v-icon>
-        </v-btn>
+        </v-btn> -->
         <v-card-text>
           <v-form ref="form" lazy-validation>
             <v-layout row wrap>
