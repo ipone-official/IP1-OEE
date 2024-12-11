@@ -439,6 +439,7 @@ export default {
         lineProcessID: val.lineProcessID,
         lineProcessName: val.lineProcessName,
       };
+      this.mStdTime = val.stdTime;
       this.mMachine = {
         machineID: val.machineID,
         machineDescription: val.machineDescription,
@@ -504,6 +505,7 @@ export default {
       this.mLineProcess = "";
       this.mMachine = "";
       this.editId = 0;
+      this.mStdTime = 0;
       this.selectedPlanStatus = "Plan";
       this.UnControl = false;
       this.mStatus = {
@@ -586,10 +588,6 @@ export default {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 50%;
   z-index: 10;
-}
-.close-btn:hover {
-  background-color: #f8c849;
-  color: white !important;
 }
 /* Actions */
 .dialog-actions {

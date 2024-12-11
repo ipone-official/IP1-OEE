@@ -378,10 +378,6 @@ export default {
   border-radius: 50%;
   z-index: 10;
 }
-.close-btn:hover {
-  background-color: #f8c849;
-  color: white !important;
-}
 /* Actions */
 .dialog-actions {
   justify-content: end;
