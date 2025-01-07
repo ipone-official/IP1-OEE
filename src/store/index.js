@@ -34,7 +34,7 @@ const getDefaultState = () => ({
 const loginInfo = () => ({
   drawer: false,
   toggle: false,
-  headerProject: 'OEE',
+  headerProject: 'I.P.One - OEE',
   EndpointPortal: 'https://portal.ip-one.com',
   infoLogin: {
     isLogin: false,

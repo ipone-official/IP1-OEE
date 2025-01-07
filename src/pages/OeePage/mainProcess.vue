@@ -6,20 +6,33 @@
       max-width="1180px"
     >
       <v-card>
-        <v-layout justify-end>
-          <v-flex xs12 sm4>
-            <div class="pa-3 inner-card mt-4 mr-4">
-              <v-layout>
-                <div class="font-weight-bold mb-2">Operator :</div>
-                <div style="margin-left: 0.7rem">
-                  {{
-                    `${machineDetail.selectTransactionTProcess.username} (${machineDetail.selectTransactionTProcess.shift})`
-                  }}
-                </div>
-              </v-layout>
-            </div>
-          </v-flex>
-        </v-layout>
+          <v-layout wrap>
+            <!-- Process ID Section -->
+            <v-flex xs12 sm4 md4>
+              <div class="pa-3 inner-card mt-4 mr-4 ml-2">
+                <v-layout>
+                  <div class="font-weight-bold mb-2">Process ID :</div>
+                  <div style="margin-left: 0.7rem">
+                    {{ machineDetail.selectTransactionTProcess.processID }}
+                  </div>
+                </v-layout>
+              </div>
+            </v-flex>
+          <v-spacer></v-spacer>
+            <!-- Operator Section -->
+            <v-flex xs12 sm4 md4>
+              <div class="pa-3 inner-card mt-4 mr-4 ml-2">
+                <v-layout>
+                  <div class="font-weight-bold mb-2">Operator :</div>
+                  <div style="margin-left: 0.7rem">
+                    {{ `${machineDetail.selectTransactionTProcess.username} (${machineDetail.selectTransactionTProcess.shift})` }}
+                  </div>
+                </v-layout>
+              </div>
+            </v-flex>
+          </v-layout>
+
+
         <v-card-title>
           <v-layout
             row
