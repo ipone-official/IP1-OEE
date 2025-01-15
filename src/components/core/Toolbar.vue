@@ -13,7 +13,7 @@
     <v-menu class="toolbar-menu-item" offset-y origin="center center" :nudge-bottom="10" transition="scale-transition">
       <v-btn icon large flat slot="activator" :ripple="false">
         <v-avatar size="42px">
-        <img :src="avatarUrl" />
+        <img :src="avatarUrl" style="width: 100%; height: 100%; object-fit: cover" />
         </v-avatar>
       </v-btn>
       <v-list>
