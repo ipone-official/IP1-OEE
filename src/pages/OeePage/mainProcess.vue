@@ -396,6 +396,7 @@ export default {
             lineProcessID,
             materialCode,
             filmID,
+            lotFilms
           } = this.machineDetail.selectTransactionTProcess;
           let { empId } = this.infoLogin;
           const init = {
@@ -405,6 +406,7 @@ export default {
             prodOrderID: "",
             material_Code: materialCode,
             filmID: filmID,
+            lotFilms: lotFilms,
             checkIN: `${this.CheckInDate} ${this.CheckInTime}`,
             checkOut: `${this.CheckOutDate} ${this.CheckOutTime}`,
             status: val,

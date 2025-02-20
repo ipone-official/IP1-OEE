@@ -1373,6 +1373,7 @@ export default {
             prodOrderID: "",
             material_Code: val.materialCode,
             filmID: val.filmID,
+            lotFilms: val.lotFilms,
             checkIN: val.checkIn,
             checkOut: `${this.CheckOutDate} ${this.CheckOutTime}`,
             status: "WaitConfirm",
