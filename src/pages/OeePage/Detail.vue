@@ -120,6 +120,49 @@
         ></v-text-field>
       </v-flex>
     </v-layout>
+    <v-layout v-if="this.machineDetail.selectTransactionTProcess.filmID">
+      <v-flex xs12 sm2 md2 class="pa-0 mt-3">
+        <v-card flat class="small-card">
+          <v-card-title class="custom-title small-margin">Lot Films</v-card-title>
+        </v-card>
+      </v-flex>
+      <v-flex xs12 sm10 md10>
+        <v-combobox
+          v-model="machineDetail.mLotFilms"
+          hide-selected
+          label="Lot Films"
+          :disabled="
+            !machineDetail.operatorEdit &&
+            !machineDetail.supervisorEdit &&
+            !machineDetail.managerEdit &&
+            !machineDetail.adminEdit
+          "
+          multiple
+          small-chips
+          solo
+           @keydown.native="keyFilter($event, 'LotFilms')"
+        >
+          <template v-slot:selection="{ item, parent, selected }">
+            <v-chip
+              v-if="item === Object(item)"
+              color="#007fc4"
+              :selected="selected"
+              style="color: white"
+              label
+              small
+            >
+              <span class="pr-2">
+                {{ item.text }}
+              </span>
+              <v-icon small style="color: #f8c849" @click="parent.selectItem(item)"
+                >close</v-icon
+              >
+            </v-chip>
+          </template>
+        </v-combobox>
+      </v-flex>
+    </v-layout>
+
     <hr class="custom-hr" />
     <v-layout row wrap class="custom-layout">
       <v-flex xs12 sm3 md3 class="pa-0">
@@ -350,6 +393,34 @@ export default {
       set(value) {
         this.machineDetail.QtyDz = Number(value.replace(/,/g, "")) || 0;
       },
+    },
+  },
+  watch: {
+    "machineDetail.mLotFilms": {
+      handler(newVal, oldVal) {
+        // ป้องกัน error เมื่อ newVal หรือ oldVal เป็น undefined
+        if (!Array.isArray(newVal) || !Array.isArray(oldVal)) return;
+
+        // ตรวจสอบว่าขนาด array เปลี่ยนแปลงหรือไม่
+        if (newVal.length === oldVal.length) return;
+
+        // อัปเดตค่าให้เป็นรูปแบบ { text: "ค่า" }
+        this.machineDetail.mLotFilms = newVal.map((v) => {
+          if (typeof v === "string") {
+            const newItem = { text: v };
+
+            // ตรวจสอบว่า newItem มีอยู่แล้วหรือยัง ก่อนเพิ่มเข้าไป
+            if (!this.machineDetail.itemsLotfilms.some((item) => item.text === v)) {
+              this.machineDetail.itemsLotfilms.push(newItem);
+            }
+
+            return newItem;
+          }
+          return v;
+        });
+      },
+      deep: true, // ตรวจสอบการเปลี่ยนแปลงของ array/object ภายใน
+      immediate: true, // ทำงานทันทีเมื่อ component ถูกโหลด
     },
   },
 };

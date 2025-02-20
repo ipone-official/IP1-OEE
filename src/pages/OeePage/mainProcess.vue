@@ -6,33 +6,33 @@
       max-width="1180px"
     >
       <v-card>
-          <v-layout wrap>
-            <!-- Process ID Section -->
-            <v-flex xs12 sm4 md4>
-              <div class="pa-3 inner-card mt-4 mr-4 ml-2">
-                <v-layout>
-                  <div class="font-weight-bold mb-2">Process ID :</div>
-                  <div style="margin-left: 0.7rem">
-                    {{ machineDetail.selectTransactionTProcess.processID }}
-                  </div>
-                </v-layout>
-              </div>
-            </v-flex>
+        <v-layout wrap>
+          <!-- Process ID Section -->
+          <v-flex xs12 sm4 md4>
+            <div class="pa-3 inner-card mt-4 mr-4 ml-2">
+              <v-layout>
+                <div class="font-weight-bold mb-2">Process ID :</div>
+                <div style="margin-left: 0.7rem">
+                  {{ machineDetail.selectTransactionTProcess.processID }}
+                </div>
+              </v-layout>
+            </div>
+          </v-flex>
           <v-spacer></v-spacer>
-            <!-- Operator Section -->
-            <v-flex xs12 sm4 md4>
-              <div class="pa-3 inner-card mt-4 mr-4 ml-2">
-                <v-layout>
-                  <div class="font-weight-bold mb-2">Operator :</div>
-                  <div style="margin-left: 0.7rem">
-                    {{ `${machineDetail.selectTransactionTProcess.username} (${machineDetail.selectTransactionTProcess.shift})` }}
-                  </div>
-                </v-layout>
-              </div>
-            </v-flex>
-          </v-layout>
-
-
+          <!-- Operator Section -->
+          <v-flex xs12 sm4 md4>
+            <div class="pa-3 inner-card mt-4 mr-4 ml-2">
+              <v-layout>
+                <div class="font-weight-bold mb-2">Operator :</div>
+                <div style="margin-left: 0.7rem">
+                  {{
+                    `${machineDetail.selectTransactionTProcess.username} (${machineDetail.selectTransactionTProcess.shift})`
+                  }}
+                </div>
+              </v-layout>
+            </div>
+          </v-flex>
+        </v-layout>
         <v-card-title>
           <v-layout
             row
@@ -127,7 +127,10 @@
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 icon
-                @click="machineDetail.dialogTransactionDetail = false, machineDetail.selectProcessID = 0"
+                @click="
+                  (machineDetail.dialogTransactionDetail = false),
+                    (machineDetail.selectProcessID = 0)
+                "
                 class="ma-2"
                 v-bind="attrs"
                 v-on="on"
@@ -156,7 +159,11 @@
                 small
                 color="#007fc4"
                 dark
-                v-if="(machineDetail.supervisorEdit && machineDetail.selectTransactionTProcess.status == 'WaitConfirm') || machineDetail.adminEdit"
+                v-if="
+                  (machineDetail.supervisorEdit &&
+                    machineDetail.selectTransactionTProcess.status == 'WaitConfirm') ||
+                  machineDetail.adminEdit
+                "
                 @click="UpdateProcessStatus('WaitApproved')"
                 class="ma-2 small-export-button"
                 v-bind="attrs"
@@ -176,7 +183,11 @@
                 color="#007fc4"
                 dark
                 @click="UpdateProcessStatus('Completed')"
-                v-if="(machineDetail.managerEdit && machineDetail.selectTransactionTProcess.status == 'WaitApproved') || machineDetail.adminEdit"
+                v-if="
+                  (machineDetail.managerEdit &&
+                    machineDetail.selectTransactionTProcess.status == 'WaitApproved') ||
+                  machineDetail.adminEdit
+                "
                 class="ma-2 small-export-button"
                 v-bind="attrs"
                 v-on="on"
@@ -237,7 +248,10 @@
             flat
             color="#007fc4"
             style="border-radius: 12px"
-            @click="machineDetail.dialogTransactionDetail = false, machineDetail.selectProcessID = 0"
+            @click="
+              (machineDetail.dialogTransactionDetail = false),
+                (machineDetail.selectProcessID = 0)
+            "
             >close</v-btn
           >
         </v-card-actions>
@@ -301,7 +315,13 @@ export default {
             QtyDz,
             itemProblemTable,
             itemDamageTable,
+            mLotFilms,
           } = this.machineDetail;
+
+          let LotFilms = "";
+          if (mLotFilms.length > 0) {
+            LotFilms = mLotFilms.map((film) => film.text).join(", ");
+          }
 
           let initHeadDetail = {
             processID: processID,
@@ -314,6 +334,8 @@ export default {
               this.machineDetail.selectTransactionTProcess.status == "InProcess"
                 ? ""
                 : `${this.CheckOutDate} ${this.CheckOutTime}`,
+            lotFilms:
+              this.machineDetail.selectTransactionTProcess.filmID == "" ? "" : LotFilms,
             detailProblem: itemProblemTable.map(
               ({ machineID, problemID, problemDescription, downtime }) => ({
                 machineID,
@@ -420,9 +442,9 @@ export default {
               });
             }
           } finally {
-        // ปิดการแสดงผล Loading ในทุกกรณี
-        this.isLoading = false;
-      }
+            // ปิดการแสดงผล Loading ในทุกกรณี
+            this.isLoading = false;
+          }
         }
       });
     },

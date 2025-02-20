@@ -306,7 +306,7 @@
               </v-radio-group>
             </v-flex>
             <v-spacer></v-spacer>
-            <v-flex xs12 sm3 md2>
+            <v-flex xs12 sm3 :class="mFilm ? 'md2' : 'md3'">
               <v-autocomplete
                 placeholder="  Please select"
                 v-model="mLineProcess"
@@ -323,7 +323,7 @@
               ></v-autocomplete>
             </v-flex>
             <v-spacer></v-spacer>
-            <v-flex xs12 sm3 md2>
+            <v-flex xs12 sm3 :class="mFilm ? 'md2' : 'md3'">
               <v-autocomplete
                 placeholder="Please select"
                 v-model="mFilm"
@@ -332,6 +332,7 @@
                 item-value="filmID"
                 item-text="filmDescription"
                 dense
+                clearable
                 label="Films"
                 return-object
                 hide-details
@@ -339,6 +340,36 @@
               ></v-autocomplete>
             </v-flex>
             <v-spacer></v-spacer>
+            <v-flex xs12 sm3 md3 v-if="mFilm">
+              <v-combobox
+                v-model="mLotFilms"
+                hide-selected
+                label="Lot Films"
+                multiple
+                small-chips
+                @keydown.native="keyFilter($event, 'LotFilms')"
+              >
+                <template v-slot:selection="{ item, parent, selected }">
+                  <v-chip
+                    v-if="item === Object(item)"
+                    color="#007fc4"
+                    :selected="selected"
+                    style="color: white"
+                    label
+                    small
+                  >
+                    <span class="pr-2">
+                      {{ item.text }}
+                    </span>
+                    <v-icon small style="color: #f8c849" @click="parent.selectItem(item)"
+                      >close</v-icon
+                    >
+                  </v-chip>
+                </template>
+              </v-combobox>
+            </v-flex>
+          </v-layout>
+          <v-layout justify-end>
             <v-flex xs12 sm3 md3>
               <v-text-field
                 v-model="searchMaterial"
@@ -477,6 +508,7 @@ import Swal from "sweetalert2";
 import functions from "@/plugins/functions";
 import DetailProcess from "@/pages/OeePage/mainProcess.vue";
 import timepicker from "@/components/TimePicker.vue";
+import keyFilter from "@/plugins/keyFilter";
 
 export default {
   components: {
@@ -487,6 +519,11 @@ export default {
   },
   data() {
     return {
+      keyFilter,
+
+      itemsLotfilms: [],
+      mLotFilms: [],
+
       dataCheckOut: [],
       msgResult: "",
       showResult: false,
@@ -622,6 +659,21 @@ export default {
     },
   },
   watch: {
+    mLotFilms(val, prev) {
+      if (val.length === prev.length) return;
+
+      this.mLotFilms = val.map((v) => {
+        if (typeof v === "string") {
+          v = {
+            text: v,
+          };
+
+          this.itemsLotfilms.push(v);
+        }
+
+        return v;
+      });
+    },
     flagGetTProcess(val) {
       if (val && this.DateDisibled) return this.GetTProcessList();
     },
@@ -842,6 +894,7 @@ export default {
                 performance: element.performance,
                 quality: element.quality,
                 oeePercentage: element.oeePercentage,
+                lotFilms: element.lotFilms,
               })
             );
           } else {
@@ -880,6 +933,7 @@ export default {
                 performance: element.performance,
                 quality: element.quality,
                 oeePercentage: element.oeePercentage,
+                lotFilms: element.lotFilms,
               })
             );
           }
@@ -940,7 +994,9 @@ export default {
       this.isLoading = true;
       this.itemFilms = [];
       try {
-        const response = await axios.get(`${this.EndpointPortal}/ApiOEE/OEE/v1/GetFilms`);
+        const response = await axios.get(
+          `${this.EndpointPortal}/ApiOEE/OEE/v1/GetFilms`
+        );
         if (response.data.status == 200) {
           response.data.results.forEach((element, index) =>
             this.itemFilms.push({
@@ -985,6 +1041,11 @@ export default {
         if (result.isConfirmed) {
           this.isLoading = true;
           let { empId } = this.infoLogin;
+          let LotFilms = "";
+
+          if (this.mLotFilms.length > 0) {
+            LotFilms = this.mLotFilms.map((film) => film.text).join(", ");
+          }
           const init = {
             processID: "",
             lineProcessID: this.mLineProcess.lineProcessID,
@@ -994,7 +1055,8 @@ export default {
                 ? this.selected[0].productionOrderNumber
                 : "",
             material_Code: this.selected[0].materialCode,
-            filmID: this.mFilm == "" ? "" : this.mFilm.filmID,
+            filmID: this.mFilm == "" || this.mFilm == undefined ? "" : this.mFilm.filmID,
+            lotFilms: this.mFilm == "" || this.mFilm == undefined ? "" : LotFilms,
             checkIN: `${this.CheckInDate} ${this.CheckInTime}`,
             checkOut: "",
             status: "InProcess",
@@ -1044,10 +1106,10 @@ export default {
               cancelButtonColor: "#C0C0C0",
               confirmButtonText: "Ok",
             });
-          }finally {
-        // ปิดการแสดงผล Loading ในทุกกรณี
-        this.isLoading = false;
-      }
+          } finally {
+            // ปิดการแสดงผล Loading ในทุกกรณี
+            this.isLoading = false;
+          }
         }
       });
     },
@@ -1215,6 +1277,14 @@ export default {
       this.machineDetail.selectTransactionTProcess = val;
       this.machineDetail.machineStd = this.machineDetail.selectTransactionTProcess.machineSTD;
       this.machineDetail.QtyDz = 0;
+      if (this.machineDetail.selectTransactionTProcess.lotFilms !== "") {
+        this.machineDetail.mLotFilms = this.machineDetail.selectTransactionTProcess.lotFilms
+          .split(", ") // แยก string เป็น array
+          .map((film) => ({ text: film })); // แปลงแต่ละค่าเป็น object { text: value }
+      } else {
+        this.machineDetail.mLotFilms = []; // ถ้าเป็น "" ให้ใช้ array ว่าง
+      }
+
       this.machineDetail.itemDamageTable = [];
       this.machineDetail.itemProblemTable = [];
       this.getProblemDetail(this.machineDetail.selectTransactionTProcess.processID);
@@ -1349,10 +1419,10 @@ export default {
               cancelButtonColor: "#C0C0C0",
               confirmButtonText: "Ok",
             });
-          }finally {
-        // ปิดการแสดงผล Loading ในทุกกรณี
-        this.isLoading = false;
-      }
+          } finally {
+            // ปิดการแสดงผล Loading ในทุกกรณี
+            this.isLoading = false;
+          }
         }
       });
     },
@@ -1367,6 +1437,8 @@ export default {
       this.selected = [];
       this.mLineProcess = "";
       this.mFilm = "";
+      this.itemsLotfilms = [];
+      this.mLotFilms = [];
       this.itemMaterialMaster = [];
       this.itemProductionOrder = [];
       await this.getLineProcess();
@@ -1429,10 +1501,10 @@ export default {
               cancelButtonColor: "#C0C0C0",
               confirmButtonText: "Ok",
             });
-          }finally {
-        // ปิดการแสดงผล Loading ในทุกกรณี
-        this.isLoading = false;
-      }
+          } finally {
+            // ปิดการแสดงผล Loading ในทุกกรณี
+            this.isLoading = false;
+          }
         }
       });
     },

@@ -29,6 +29,8 @@ const getDefaultState = () => ({
     QtyDz: 0,
     itemDamageTable: [],
     itemProblemTable: [],
+    itemsLotfilms: [],
+    mLotFilms: [],
   }
 });
 const loginInfo = () => ({
